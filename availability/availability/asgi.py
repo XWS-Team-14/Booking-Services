@@ -1,16 +1,17 @@
-"""
-ASGI config for availability project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
-"""
-
 import os
+from concurrent import futures
 
-from django.core.asgi import get_asgi_application
+import grpc
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'availability.settings')
 
-application = get_asgi_application()
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
+
+
+def serve(port):
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    # Add services
+
+    server.add_insecure_port('[::]:'+port)
+    server.start()
+    print('Server has started, waiting for termination')
+    server.wait_for_termination()

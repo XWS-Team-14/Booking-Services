@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&7l)!jk+yv%6^i936os#43)t&etxa9wmhy6gno-o9$d_h42x6%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'service'
 ]
 
 MIDDLEWARE = [
@@ -67,16 +68,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'user_control.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+ASGI_APPLICATION = 'search.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        "NAME": 'user_control',
+        "CLIENT": {
+            "host": 'mongo-user_control:27017',
+            "port": 27017,
+            "username": 'root',
+            "password": 'root',
+        },
     }
 }
 
