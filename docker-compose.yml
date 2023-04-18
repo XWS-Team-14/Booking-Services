@@ -72,14 +72,7 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-reservation
-  
-  mongo-search:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-
+ 
   search:
     build: ./search
     image: search:latest
@@ -88,8 +81,6 @@ services:
     command: "python manage.py runserver 50055"
     volumes:
       - ./proto:/app/proto
-    depends_on:
-      - mongo-search
 
   mongo-user_control:
     image: mongo
@@ -103,7 +94,7 @@ services:
     image: user_control:latest
     container_name: user_control
     restart: always
-    command: "python manage.py runserver 50055"
+    command: "python manage.py runserver 50056"
     volumes:
       - ./proto:/app/proto
     depends_on:
