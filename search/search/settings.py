@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-gb(m+v(q3hz*6#_ql*eb5vr7gft6+h@)az*en8(v2_xhgueo08
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -57,20 +57,6 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = 'search.asgi.application'
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        "NAME": 'search',
-        "CLIENT": {
-            "host": 'mongo-search:27017',
-            "port": 27017,
-            "username": 'root',
-            "password": 'root',
-        },
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
