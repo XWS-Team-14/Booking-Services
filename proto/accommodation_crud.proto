@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+service AccommodationCrud {
+  rpc GetAll (Empty) returns (Accommodations);
+  rpc GetById (AccommodationId) returns (Accommodation);
+  rpc Create (Accommodation) returns (Empty);
+  rpc Delete (AccommodationId) returns (Empty);
+  rpc Update (Accommodation) returns (Empty);
+}
+
+message Empty {
+}
+
+message Location {
+  string id = 1;
+  string country = 2;
+  string city = 3;
+  string address = 4;
+}
+
+message Accommodation {
+  string id = 1;
+  string name = 2;
+  Location location = 3;
+  repeated string features = 4;
+  string image_url = 5;
+  bytes image_data = 6;
+  int32 min_guests = 7;
+  int32 max_guests = 8;
+}
+
+message Accommodations {
+  repeated Accommodation items = 1;
+}
+
+message AccommodationId {
+  string id = 1;
+}
