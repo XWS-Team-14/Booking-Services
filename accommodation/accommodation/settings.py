@@ -56,14 +56,12 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'accommodation.asgi.application'
-
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         "NAME": 'accommodations',
         "CLIENT": {
-            "host": 'mongo-accommodations:27017',
+            "host": 'mongo-accommodation:27017',
             "port": 27017,
             "username": 'root',
             "password": 'root',

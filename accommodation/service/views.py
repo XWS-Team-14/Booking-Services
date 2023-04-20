@@ -1,10 +1,17 @@
-from proto import test_pb2, test_pb2_grpc
+import asyncio
+import threading
+import time
+import uuid
+
+from proto import accommodation_crud_pb2_grpc, accommodation_crud_pb2
+from .models import Question
 
 
-class TestGreeter(test_pb2_grpc.GreeterServicer):
+class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudServicer):
 
-    def SayHello(self, request, context):
-        return test_pb2.HelloResponse(message=f'Hello, {request.name}!')
-
-    def SayHelloAgain(self, request, context):
-        return test_pb2.HelloResponse(message=f'Hello again, {request.name}!')
+    def Delete(self, request, context):
+        # compute data and stuff
+        time.sleep(5)
+        a = Question(title='test', credit="15", id=uuid.uuid4(), contest_name='test2')
+        a.save()
+        return accommodation_crud_pb2.Empty()

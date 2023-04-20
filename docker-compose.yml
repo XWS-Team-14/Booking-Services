@@ -7,6 +7,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    
 
   accommodation:
     build: ./accommodation
@@ -18,6 +19,30 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-accommodation
+
+
+  mongo-accommodationv2:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - 27017:27017
+
+  accommodationv2:
+    build: ./accommodationv2
+    image: accommodationv2:latest
+    container_name: accommodationv2
+    restart: always
+    command: "python main.py runserver 50051"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      mongo-accommodationv2:
+        condition: service_started
+    ports:
+      - 50051:50051
 
   mongo-auth:
     image: mongo

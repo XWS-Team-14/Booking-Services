@@ -2,14 +2,17 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from accommodation.asgi import serve
+
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api_gateway.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'accommodation.settings')
+    import django
+    django.setup()
     try:
         from django.core.management import execute_from_command_line
+        from accommodation.asgi import serve
     except ImportError as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "
@@ -18,11 +21,13 @@ def main():
         ) from exc
     # if command is 'runserver' it runs it on port that can be passed after or on port 50051
     if sys.argv[1] == 'runserver':
-        if sys.argv[2] is not None:
+
+        if len(sys.argv) == 3:
             serve(sys.argv[2])
         else:
             serve('50051')
-    execute_from_command_line(sys.argv)
+    else:
+        execute_from_command_line(sys.argv)
 
 
 if __name__ == '__main__':
