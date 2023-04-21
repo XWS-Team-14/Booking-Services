@@ -1,0 +1,6 @@
+mongodb:
+  ip: "mongo-exampledb"
+  port: "27017"
+  username: "root"
+  password: "root"
+  db: "accommodation"

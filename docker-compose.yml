@@ -1,27 +1,7 @@
 version: "3.9"
 
 services:
-  mongo-accommodation:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-    
-
-  accommodation:
-    build: ./accommodation
-    image: accommodation:latest
-    container_name: accommodation
-    restart: always
-    command: "python manage.py runserver 50051"
-    volumes:
-      - ./proto:/app/proto
-    depends_on:
-      - mongo-accommodation
-
-
-  mongo-accommodationv2:
+  mongo-exampledb:
     image: mongo
     restart: always
     environment:
@@ -30,100 +10,28 @@ services:
     ports:
       - 27017:27017
 
-  accommodationv2:
-    build: ./accommodationv2
-    image: accommodationv2:latest
-    container_name: accommodationv2
-    restart: always
-    command: "python main.py runserver 50051"
+  code_example_1:
+    build: ./grpc_server_example_1
+    image: code_example_1:latest
+    container_name:  code_example_1
+    command: "python manage.py runserver 50051"
     volumes:
       - ./proto:/app/proto
     depends_on:
-      mongo-accommodationv2:
+      mongo-exampledb:
         condition: service_started
     ports:
       - 50051:50051
 
-  mongo-auth:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-
-  auth:
-    build: ./auth
-    image: auth:latest
-    container_name: auth
-    restart: always
-    command: "python manage.py runserver 50052"
+  code_example_2:
+    build: ./grpc_server_example_2
+    image: code_example_2:latest
+    container_name: code_example_2
+    command: "python main.py runserver 50051"
     volumes:
       - ./proto:/app/proto
     depends_on:
-      - mongo-auth
-  
-  mongo-availability:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-
-  availability:
-    build: ./availability
-    image: availability:latest
-    container_name: availability
-    restart: always
-    command: "python manage.py runserver 50053"
-    volumes:
-      - ./proto:/app/proto
-    depends_on:
-      - mongo-availability
-  
-  mongo-reservation:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-
-  reservation:
-    build: ./reservation
-    image: reservation:latest
-    container_name: reservation
-    restart: always
-    command: "python manage.py runserver 50054"
-    volumes:
-      - ./proto:/app/proto
-    depends_on:
-      - mongo-reservation
- 
-  search:
-    build: ./search
-    image: search:latest
-    container_name: search
-    restart: always
-    command: "python manage.py runserver 50055"
-    volumes:
-      - ./proto:/app/proto
-
-  mongo-user_control:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-
-  user_control:
-    build: ./user_control
-    image: user_control:latest
-    container_name: user_control
-    restart: always
-    command: "python manage.py runserver 50056"
-    volumes:
-      - ./proto:/app/proto
-    depends_on:
-      - mongo-user_control
-    
-
-  
+      mongo-exampledb:
+        condition: service_started
+    ports:
+      - 50051:50051

@@ -1,10 +1,10 @@
-# General workflow and explanation
-## Workflow
-1. Write proto files
-2. Compile proto files
-3. Write implementation in views.py
-4. Add service to server in asgi.py
-5. Run service with docker compose
-6. Test service <br/>
-	6a. Expose port and check service with tools like postman and grpcurl <br/>
-	6b. Use it with other service <br/>
+# Branch only for server code examples
+## Example 1
+- Using djongo to handle access to database
+- For grpc server using grpc server with 10 workers
+- Django is mainly here for access to djongo
+- Not really rich implementation, probably won't be used in the future
+## Example 2
+- Using beanie as ODM that uses Pydantic and Motor
+- For grpc server using grpc.aio server
+- Has better exception handling and probably better support for the future 

@@ -1,6 +1,0 @@
-mongodb:
-  ip: "localhost"
-  port: "27017"
-  username: "root"
-  password: "root"
-  db: "accommodation"
