@@ -1,23 +1,15 @@
 version: "3.9"
 
 services:
+  # Databases, uncomment ports if you want to check data in a given database 
   mongo-accommodation:
     image: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-
-  accommodation:
-    build: ./accommodation
-    image: accommodation:latest
-    container_name: accommodation
-    restart: always
-    command: "python manage.py runserver 50051"
-    volumes:
-      - ./proto:/app/proto
-    depends_on:
-      - mongo-accommodation
+    #ports:
+    #- 27017:27017
 
   mongo-auth:
     image: mongo
@@ -25,35 +17,17 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    #ports:
+    #- 27017:27017
 
-  auth:
-    build: ./auth
-    image: auth:latest
-    container_name: auth
-    restart: always
-    command: "python manage.py runserver 50052"
-    volumes:
-      - ./proto:/app/proto
-    depends_on:
-      - mongo-auth
-  
   mongo-availability:
     image: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-
-  availability:
-    build: ./availability
-    image: availability:latest
-    container_name: availability
-    restart: always
-    command: "python manage.py runserver 50053"
-    volumes:
-      - ./proto:/app/proto
-    depends_on:
-      - mongo-availability
+    #ports:
+    #- 27017:27017
   
   mongo-reservation:
     image: mongo
@@ -61,44 +35,95 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-
-  reservation:
-    build: ./reservation
-    image: reservation:latest
-    container_name: reservation
-    restart: always
-    command: "python manage.py runserver 50054"
-    volumes:
-      - ./proto:/app/proto
-    depends_on:
-      - mongo-reservation
- 
-  search:
-    build: ./search
-    image: search:latest
-    container_name: search
-    restart: always
-    command: "python manage.py runserver 50055"
-    volumes:
-      - ./proto:/app/proto
-
+    #ports:
+    #- 27017:27017
+  
   mongo-user_control:
     image: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    #ports:
+    #- 27017:27017
+  
+  # Services, expose ports when you want to test your grpc service manually
+  # Running ports are not that important, but it can be easier to differentiate between services
+  accommodation:
+    build: ./accommodation
+    image: accommodation:latest
+    container_name: accommodation
+    command: "python main.py runserver 50051"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      - mongo-accommodation
+    #ports:
+    #- 50051:50051
+ 
+  auth:
+    build: ./auth
+    image: auth:latest
+    container_name: auth
+    command: "python main.py runserver 50052"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      - mongo-auth
+    #ports:
+    #- 50052:50052 
+ 
+  availability:
+    build: ./availability
+    image: availability:latest
+    container_name: availability
+    command: "python main.py runserver 50053"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      - mongo-availability
+    #ports:
+    #- 50053:50053
+
+  reservation:
+    build: ./reservation
+    image: reservation:latest
+    container_name: reservation
+    command: "python main.py runserver 50054"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      - mongo-reservation
+    #ports:
+    #- 50054:50054
+  
+  search:
+    build: ./search
+    image: search:latest
+    container_name: search
+    command: "python main.py runserver 50055"
+    volumes:
+      - ./proto:/app/proto
+    #ports:
+    #- 50055:50055
 
   user_control:
     build: ./user_control
     image: user_control:latest
     container_name: user_control
-    restart: always
-    command: "python manage.py runserver 50056"
+    command: "python main.py runserver 50056"
     volumes:
       - ./proto:/app/proto
     depends_on:
       - mongo-user_control
-    
+    #ports:
+    #- 50056:50056
 
+  api_gateway:
+    build: ./api_gateway
+    image: api_gateway:latest
+    container_name: api_gateway
+    command: "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
   

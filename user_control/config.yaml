@@ -1,0 +1,6 @@
+mongodb:
+  ip: "mongo-user_control"
+  port: "27017"
+  username: "root"
+  password: "root"
+  db: "user_control"
