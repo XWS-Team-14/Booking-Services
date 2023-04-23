@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import credential_pb2 as credential__pb2
+from . import credential_pb2 as credential__pb2
 
 
 class CredentialServiceStub(object):

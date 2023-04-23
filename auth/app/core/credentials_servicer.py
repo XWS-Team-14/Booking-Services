@@ -1,8 +1,7 @@
-import uuid
-
-from proto import credential_pb2, credential_pb2_grpc
 from loguru import logger
 from passlib.hash import bcrypt
+
+from proto import credential_pb2, credential_pb2_grpc
 from ..models.credential import Credential
 
 
