@@ -4,3 +4,5 @@ motor
 beanie
 loguru
 PyYAML
+passlib[bcrypt]
+email-validator

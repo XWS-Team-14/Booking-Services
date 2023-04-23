@@ -73,7 +73,7 @@ async def start_async_mongodb() -> None:
         await init_beanie(
             database=async_mongodb_database,
             document_models=[
-                Question
+                Credentials
             ],
         )
         logger.success("Started mongodb connection")
