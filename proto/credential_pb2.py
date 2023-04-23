@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10\x63redential.proto\"\x07\n\x05\x45mpty\"9\n\nCredential\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"L\n\x11\x43heckedCredential\x12\r\n\x05\x65mail\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\x12\x16\n\x0epassword_check\x18\x03 \x01(\t\"\x1a\n\x0c\x43redentialId\x12\n\n\x02id\x18\x01 \x01(\t\" \n\x0f\x43redentialEmail\x12\r\n\x05\x65mail\x18\x01 \x01(\t2\xad\x02\n\x11\x43redentialService\x12$\n\x06\x43reate\x12\x12.CheckedCredential\x1a\x06.Empty\x12%\n\x07GetById\x12\r.CredentialId\x1a\x0b.Credential\x12+\n\nGetByEmail\x12\x10.CredentialEmail\x1a\x0b.Credential\x12\x1d\n\x06Update\x12\x0b.Credential\x1a\x06.Empty\x12,\n\x0eUpdatePassword\x12\x12.CheckedCredential\x1a\x06.Empty\x12)\n\x0bUpdateEmail\x12\x12.CheckedCredential\x1a\x06.Empty\x12&\n\nDeactivate\x12\x10.CredentialEmail\x1a\x06.Emptyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10\x63redential.proto\"\x07\n\x05\x45mpty\"9\n\nCredential\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"L\n\x11\x43heckedCredential\x12\r\n\x05\x65mail\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\x12\x16\n\x0epassword_check\x18\x03 \x01(\t\"\x1a\n\x0c\x43redentialId\x12\n\n\x02id\x18\x01 \x01(\t\" \n\x0f\x43redentialEmail\x12\r\n\x05\x65mail\x18\x01 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t2\xc6\x02\n\x11\x43redentialService\x12\x1f\n\x08Register\x12\x0b.Credential\x1a\x06.Empty\x12\x1c\n\x05Login\x12\x0b.Credential\x1a\x06.Token\x12%\n\x07GetById\x12\r.CredentialId\x1a\x0b.Credential\x12+\n\nGetByEmail\x12\x10.CredentialEmail\x1a\x0b.Credential\x12\x1d\n\x06Update\x12\x0b.Credential\x1a\x06.Empty\x12,\n\x0eUpdatePassword\x12\x12.CheckedCredential\x1a\x06.Empty\x12)\n\x0bUpdateEmail\x12\x12.CheckedCredential\x1a\x06.Empty\x12&\n\nDeactivate\x12\x10.CredentialEmail\x1a\x06.Emptyb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'credential_pb2', globals())
@@ -30,6 +30,8 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _CREDENTIALID._serialized_end=192
   _CREDENTIALEMAIL._serialized_start=194
   _CREDENTIALEMAIL._serialized_end=226
-  _CREDENTIALSERVICE._serialized_start=229
-  _CREDENTIALSERVICE._serialized_end=530
+  _TOKEN._serialized_start=228
+  _TOKEN._serialized_end=250
+  _CREDENTIALSERVICE._serialized_start=253
+  _CREDENTIALSERVICE._serialized_end=579
 # @@protoc_insertion_point(module_scope)

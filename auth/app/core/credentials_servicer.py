@@ -6,7 +6,7 @@ from ..models.credential import Credential
 
 
 class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
-    async def Create(self, request, context):
+    async def Register(self, request, context):
         logger.info('Request received')
         try:
             credential = Credential(email=request.email, password=bcrypt.hash(request.password))

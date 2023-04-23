@@ -14,10 +14,15 @@ class CredentialServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Create = channel.unary_unary(
-                '/CredentialService/Create',
-                request_serializer=credential__pb2.CheckedCredential.SerializeToString,
+        self.Register = channel.unary_unary(
+                '/CredentialService/Register',
+                request_serializer=credential__pb2.Credential.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
+                )
+        self.Login = channel.unary_unary(
+                '/CredentialService/Login',
+                request_serializer=credential__pb2.Credential.SerializeToString,
+                response_deserializer=credential__pb2.Token.FromString,
                 )
         self.GetById = channel.unary_unary(
                 '/CredentialService/GetById',
@@ -54,7 +59,13 @@ class CredentialServiceStub(object):
 class CredentialServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def Create(self, request, context):
+    def Register(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Login(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -99,10 +110,15 @@ class CredentialServiceServicer(object):
 
 def add_CredentialServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Create': grpc.unary_unary_rpc_method_handler(
-                    servicer.Create,
-                    request_deserializer=credential__pb2.CheckedCredential.FromString,
+            'Register': grpc.unary_unary_rpc_method_handler(
+                    servicer.Register,
+                    request_deserializer=credential__pb2.Credential.FromString,
                     response_serializer=credential__pb2.Empty.SerializeToString,
+            ),
+            'Login': grpc.unary_unary_rpc_method_handler(
+                    servicer.Login,
+                    request_deserializer=credential__pb2.Credential.FromString,
+                    response_serializer=credential__pb2.Token.SerializeToString,
             ),
             'GetById': grpc.unary_unary_rpc_method_handler(
                     servicer.GetById,
@@ -145,7 +161,7 @@ class CredentialService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def Create(request,
+    def Register(request,
             target,
             options=(),
             channel_credentials=None,
@@ -155,9 +171,26 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/Create',
-            credential__pb2.CheckedCredential.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/CredentialService/Register',
+            credential__pb2.Credential.SerializeToString,
             credential__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Login(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/CredentialService/Login',
+            credential__pb2.Credential.SerializeToString,
+            credential__pb2.Token.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
