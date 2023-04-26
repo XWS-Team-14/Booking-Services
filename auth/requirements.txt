@@ -6,3 +6,4 @@ loguru
 PyYAML
 passlib[bcrypt]
 email-validator
+pyjwt

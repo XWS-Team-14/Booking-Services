@@ -27,32 +27,52 @@ class CredentialServiceStub(object):
         self.GetById = channel.unary_unary(
                 '/CredentialService/GetById',
                 request_serializer=credential__pb2.CredentialId.SerializeToString,
-                response_deserializer=credential__pb2.Credential.FromString,
+                response_deserializer=credential__pb2.CredentialResponse.FromString,
                 )
         self.GetByEmail = channel.unary_unary(
                 '/CredentialService/GetByEmail',
                 request_serializer=credential__pb2.CredentialEmail.SerializeToString,
-                response_deserializer=credential__pb2.Credential.FromString,
+                response_deserializer=credential__pb2.CredentialResponse.FromString,
                 )
-        self.Update = channel.unary_unary(
-                '/CredentialService/Update',
-                request_serializer=credential__pb2.Credential.SerializeToString,
+        self.GetActive = channel.unary_unary(
+                '/CredentialService/GetActive',
+                request_serializer=credential__pb2.Token.SerializeToString,
+                response_deserializer=credential__pb2.ActiveResponse.FromString,
+                )
+        self.UpdateEmail = channel.unary_unary(
+                '/CredentialService/UpdateEmail',
+                request_serializer=credential__pb2.EmailUpdate.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
                 )
         self.UpdatePassword = channel.unary_unary(
                 '/CredentialService/UpdatePassword',
-                request_serializer=credential__pb2.CheckedCredential.SerializeToString,
-                response_deserializer=credential__pb2.Empty.FromString,
-                )
-        self.UpdateEmail = channel.unary_unary(
-                '/CredentialService/UpdateEmail',
-                request_serializer=credential__pb2.CheckedCredential.SerializeToString,
+                request_serializer=credential__pb2.PasswordUpdate.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
                 )
         self.Deactivate = channel.unary_unary(
                 '/CredentialService/Deactivate',
-                request_serializer=credential__pb2.CredentialEmail.SerializeToString,
+                request_serializer=credential__pb2.Token.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
+                )
+        self.Delete = channel.unary_unary(
+                '/CredentialService/Delete',
+                request_serializer=credential__pb2.Token.SerializeToString,
+                response_deserializer=credential__pb2.Empty.FromString,
+                )
+        self.ValidateToken = channel.unary_unary(
+                '/CredentialService/ValidateToken',
+                request_serializer=credential__pb2.Token.SerializeToString,
+                response_deserializer=credential__pb2.ValidateResponse.FromString,
+                )
+        self.RefreshToken = channel.unary_unary(
+                '/CredentialService/RefreshToken',
+                request_serializer=credential__pb2.TokenRefresh.SerializeToString,
+                response_deserializer=credential__pb2.Token.FromString,
+                )
+        self.CheckAuthority = channel.unary_unary(
+                '/CredentialService/CheckAuthority',
+                request_serializer=credential__pb2.Token.SerializeToString,
+                response_deserializer=credential__pb2.ValidateResponse.FromString,
                 )
 
 
@@ -83,13 +103,7 @@ class CredentialServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Update(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def UpdatePassword(self, request, context):
+    def GetActive(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -101,7 +115,37 @@ class CredentialServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UpdatePassword(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def Deactivate(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Delete(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ValidateToken(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RefreshToken(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CheckAuthority(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -123,32 +167,52 @@ def add_CredentialServiceServicer_to_server(servicer, server):
             'GetById': grpc.unary_unary_rpc_method_handler(
                     servicer.GetById,
                     request_deserializer=credential__pb2.CredentialId.FromString,
-                    response_serializer=credential__pb2.Credential.SerializeToString,
+                    response_serializer=credential__pb2.CredentialResponse.SerializeToString,
             ),
             'GetByEmail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetByEmail,
                     request_deserializer=credential__pb2.CredentialEmail.FromString,
-                    response_serializer=credential__pb2.Credential.SerializeToString,
+                    response_serializer=credential__pb2.CredentialResponse.SerializeToString,
             ),
-            'Update': grpc.unary_unary_rpc_method_handler(
-                    servicer.Update,
-                    request_deserializer=credential__pb2.Credential.FromString,
+            'GetActive': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetActive,
+                    request_deserializer=credential__pb2.Token.FromString,
+                    response_serializer=credential__pb2.ActiveResponse.SerializeToString,
+            ),
+            'UpdateEmail': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateEmail,
+                    request_deserializer=credential__pb2.EmailUpdate.FromString,
                     response_serializer=credential__pb2.Empty.SerializeToString,
             ),
             'UpdatePassword': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdatePassword,
-                    request_deserializer=credential__pb2.CheckedCredential.FromString,
-                    response_serializer=credential__pb2.Empty.SerializeToString,
-            ),
-            'UpdateEmail': grpc.unary_unary_rpc_method_handler(
-                    servicer.UpdateEmail,
-                    request_deserializer=credential__pb2.CheckedCredential.FromString,
+                    request_deserializer=credential__pb2.PasswordUpdate.FromString,
                     response_serializer=credential__pb2.Empty.SerializeToString,
             ),
             'Deactivate': grpc.unary_unary_rpc_method_handler(
                     servicer.Deactivate,
-                    request_deserializer=credential__pb2.CredentialEmail.FromString,
+                    request_deserializer=credential__pb2.Token.FromString,
                     response_serializer=credential__pb2.Empty.SerializeToString,
+            ),
+            'Delete': grpc.unary_unary_rpc_method_handler(
+                    servicer.Delete,
+                    request_deserializer=credential__pb2.Token.FromString,
+                    response_serializer=credential__pb2.Empty.SerializeToString,
+            ),
+            'ValidateToken': grpc.unary_unary_rpc_method_handler(
+                    servicer.ValidateToken,
+                    request_deserializer=credential__pb2.Token.FromString,
+                    response_serializer=credential__pb2.ValidateResponse.SerializeToString,
+            ),
+            'RefreshToken': grpc.unary_unary_rpc_method_handler(
+                    servicer.RefreshToken,
+                    request_deserializer=credential__pb2.TokenRefresh.FromString,
+                    response_serializer=credential__pb2.Token.SerializeToString,
+            ),
+            'CheckAuthority': grpc.unary_unary_rpc_method_handler(
+                    servicer.CheckAuthority,
+                    request_deserializer=credential__pb2.Token.FromString,
+                    response_serializer=credential__pb2.ValidateResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -207,7 +271,7 @@ class CredentialService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/CredentialService/GetById',
             credential__pb2.CredentialId.SerializeToString,
-            credential__pb2.Credential.FromString,
+            credential__pb2.CredentialResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -224,12 +288,12 @@ class CredentialService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/CredentialService/GetByEmail',
             credential__pb2.CredentialEmail.SerializeToString,
-            credential__pb2.Credential.FromString,
+            credential__pb2.CredentialResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Update(request,
+    def GetActive(request,
             target,
             options=(),
             channel_credentials=None,
@@ -239,8 +303,25 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/Update',
-            credential__pb2.Credential.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/CredentialService/GetActive',
+            credential__pb2.Token.SerializeToString,
+            credential__pb2.ActiveResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateEmail(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/CredentialService/UpdateEmail',
+            credential__pb2.EmailUpdate.SerializeToString,
             credential__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -257,24 +338,7 @@ class CredentialService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/CredentialService/UpdatePassword',
-            credential__pb2.CheckedCredential.SerializeToString,
-            credential__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def UpdateEmail(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/UpdateEmail',
-            credential__pb2.CheckedCredential.SerializeToString,
+            credential__pb2.PasswordUpdate.SerializeToString,
             credential__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -291,7 +355,75 @@ class CredentialService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/CredentialService/Deactivate',
-            credential__pb2.CredentialEmail.SerializeToString,
+            credential__pb2.Token.SerializeToString,
             credential__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Delete(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/CredentialService/Delete',
+            credential__pb2.Token.SerializeToString,
+            credential__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ValidateToken(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/CredentialService/ValidateToken',
+            credential__pb2.Token.SerializeToString,
+            credential__pb2.ValidateResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RefreshToken(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/CredentialService/RefreshToken',
+            credential__pb2.TokenRefresh.SerializeToString,
+            credential__pb2.Token.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CheckAuthority(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/CredentialService/CheckAuthority',
+            credential__pb2.Token.SerializeToString,
+            credential__pb2.ValidateResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
