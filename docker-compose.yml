@@ -35,3 +35,13 @@ services:
         condition: service_started
     ports:
       - 50051:50051
+    
+  fast_api_example:
+    build: ./fast_api_example
+    image: fast_api_example:latest
+    container_name: fast_api_example
+    command: "uvicorn main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - ./proto:/app/proto
+    ports:
+      - 8000:8000
