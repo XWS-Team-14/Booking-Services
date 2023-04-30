@@ -1,3 +1,8 @@
-Django==4.1.7
-djangorestframework==3.14.0
-django-cors-headers
+fastapi==0.95.1
+fastapi_utils==0.2.1
+grpcio==1.53.0
+grpcio-tools==1.53.0
+pyyaml==6.0
+loguru==0.7.0
+pydantic==1.10.7
+uvicorn==0.21.1
