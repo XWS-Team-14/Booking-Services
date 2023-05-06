@@ -16,6 +16,7 @@ router = APIRouter()
 async def register(details: Register) -> None:
     logger.info(f"Register HTTP request received")
 
+
 @router.post(
     "/auth/login",
     status_code=status.HTTP_200_OK,
