@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+service UserService {
+  rpc Register(User) returns (Empty);
+  rpc GetById(UserId) returns (UserResponse);
+  rpc Update(User) returns (Empty);
+  rpc Delete(UserId) returns (Empty);
+}
+
+message Empty {
+  optional string error_message = 1;
+  optional int32 error_code = 2;
+}
+
+message User {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string home_address = 4;
+  string gender = 5;
+}
+
+message UserResponse {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string home_address = 4;
+  string gender = 5;
+  optional string error_message = 6;
+  optional int32 error_code = 7;
+}
+
+message UserId {
+  string id = 1;
+}
