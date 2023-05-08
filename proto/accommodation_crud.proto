@@ -23,8 +23,7 @@ message Accommodation {
   string name = 2;
   Location location = 3;
   repeated string features = 4;
-  string image_url = 5;
-  bytes image_data = 6;
+  repeated string image_urls = 5;
   int32 min_guests = 7;
   int32 max_guests = 8;
 }

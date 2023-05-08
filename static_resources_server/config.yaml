@@ -1,0 +1,10 @@
+app:
+  debug: True
+  title: "Static Resources Server"
+  version: "1.0"
+  api_prefix: "resources"
+  image_resources_location: 
+    - "app"
+    - "resources"
+    - "images"
+
