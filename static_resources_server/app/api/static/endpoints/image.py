@@ -25,7 +25,7 @@ async def get_image(image_uri: str):
 
     # Create a response with the appropriate content type
     img_io = io.BytesIO()
-    image.save(img_io, format='JPEG')
+    image.save(img_io, format='PNG')
     img_io.seek(0)
     return Response(content=img_io.getvalue(), media_type='image/jpeg')
 
