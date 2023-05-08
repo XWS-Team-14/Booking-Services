@@ -4,4 +4,5 @@ pyyaml==6.0
 loguru==0.7.0
 pydantic==1.10.7
 uvicorn==0.21.1
-pillow
+pillow==9.5.0
+python-multipart

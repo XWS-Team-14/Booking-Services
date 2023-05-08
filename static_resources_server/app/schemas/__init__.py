@@ -1,2 +1,2 @@
-from .image import ImageDelete
+from .image import ImageURI
 from .image import ImagePost
