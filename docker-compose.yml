@@ -123,7 +123,9 @@ services:
     build: ./api_gateway
     image: api_gateway:latest
     container_name: api_gateway
-    command: "python manage.py runserver 0.0.0.0:8000"
+    command: "uvicorn main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - ./proto:/app/proto
     ports:
       - 8000:8000
   
