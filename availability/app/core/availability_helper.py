@@ -1,5 +1,6 @@
 import datetime
 from availability.app.models.availability import Availability
+from availability.app.models.holiday import Holiday
 from availability.app.models.interval import Interval
 from availability.app.models.pricing_type import PricingTypeEnum
 from availability.app.models.special_pricing import SpecialPricing
@@ -60,4 +61,48 @@ class AvailabilityHelper():
             ocuppied_intervals_list.append(interval)
         retVal.occupied_intervals = ocuppied_intervals_list
         return retVal
+    
+    def isAvailable(requested_interval, availability):
+        for interval in availability.occupied_intervals :
+            if AvailabilityHelper.dateIntersection(interval,requested_interval) : return False;
+        return True
         
+    def dateIntersection(intervalA, intervalB):
+        #(StartA <= EndB) and (EndA >= StartB)
+        if intervalA.start_date.date < intervalB.end_date.date and intervalA.end_date.date > intervalB.start_date.date : return True
+        return False
+        
+    async def calculatePrice(requested_interval, num_of_guests, availability):
+        guest_mul = 1;
+        price = 0;
+        if availability.pricing_type.name == 'Per_guest':
+            guest_mul = num_of_guests;
+        if not availability.special_pricing:
+            #list of special price modifiers is empty
+            return (requested_interval.end_date - requested_interval.start_date).days*availability.base_price*guest_mul;
+        else:
+            holidays = await Holiday.find_all()
+            holiday_mul = AvailabilityHelper.getSpecialPrice(availability,'Holiday')
+            weekend_mul = AvailabilityHelper.getSpecialPrice(availability,'Weekend')
+            for day_num in range(int(requested_interval.end_date - requested_interval.start_date).days):
+                curr_date = requested_interval.start_date + datetime.timedelta(day_num)
+                if AvailabilityHelper.isHoliday(curr_date,holidays) :
+                    price = price + availability.base_price*guest_mul * holiday_mul;
+                    continue
+                if AvailabilityHelper.isWeekend(curr_date) :
+                    price = price + availability.base_price*guest_mul * weekend_mul;
+                    continue
+                price = price + availability.base_price*guest_mul;
+        return price;
+                
+    def isWeekend(date):
+        if date.weekday() > 4 : return True
+        return False
+    
+    def isHoliday(date, holidays):
+        for holiday in holidays:
+            if holiday.date == date : return True
+        return False
+
+    def getSpecialPrice(availability ,title):
+        return any(special_price for special_price in availability.special_pricing if special_price.title == title).pricing_markup

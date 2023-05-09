@@ -62,3 +62,16 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             return availability_crud_pb2.Result(status ="Failed, not found");
         logger.success('Succesfully fetched');
         return AvailabilityHelper.convertToDto(item);
+    
+    async def GetAllSearch(self, request, context):
+        logger.success('Request for search fetch Availability accepted');
+        list = await Availability.find(
+            Availability.available_interval.date_start.date < request.interval.date_start.date,
+            Availability.available_interval.date_end.date > request.interval.date_end.date,
+        )
+        realList = [x for x in list if not AvailabilityHelper.isAvailable(request.interval,x)]
+        for item in realList:
+            item.base_price = AvailabilityHelper.calculatePrice(request.interval, request.num_of_guests, item);
+        ## you need to fetch acomodation service to check min/max guest numbers
+        return list;
+            
