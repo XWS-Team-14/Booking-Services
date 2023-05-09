@@ -8,22 +8,21 @@ router = APIRouter(
     tags=["Auth"],
 )
 
+
 @cbv(router)
-class Accommodation:
-    # Useful for shared dependencies
-    @router.delete(
-        "/test",
-        status_code=status.HTTP_204_NO_CONTENT,
-        description="Test fastapi",
+class Auth:
+    @router.post(
+        "/register",
+        status_code=status.HTTP_200_OK,
+        description="Register user",
     )
-    async def test(self, payload: schemas.AccommodationDelete) -> None:
-        logger.info(f"App tested and got number {payload.id}")
+    async def register(self, payload: schemas.Register) -> None:
+        logger.info(f"Tested register {payload.email}")
 
-
-@router.delete(
-    "/test2",
-    status_code=status.HTTP_204_NO_CONTENT,
-    description="Test fastapi",
-)
-async def test(self, payload: schemas.AccommodationDelete) -> None:
-    logger.info(f"App tested and got number {payload.id}")
+    @router.post(
+        "/login",
+        status_code=status.HTTP_200_OK,
+        description="Log in user",
+    )
+    async def login(self, payload: schemas.Login) -> None:
+        logger.info(f"Tested login {payload.email}")
