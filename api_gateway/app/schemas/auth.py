@@ -15,4 +15,9 @@ class Register(BaseModel):
     home_address: str
     email: EmailStr
     password: str
-    
+
+
+class PasswordUpdate(BaseModel):
+    old_password: str
+    new_password: str
+    new_password_check: str

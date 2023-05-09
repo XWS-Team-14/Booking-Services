@@ -26,3 +26,4 @@ class Auth:
     )
     async def login(self, payload: schemas.Login) -> None:
         logger.info(f"Tested login {payload.email}")
+
