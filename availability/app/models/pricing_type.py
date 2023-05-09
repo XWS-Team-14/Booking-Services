@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class PricingTypeEnum(str, Enum):
-    room = 'Per accomodation unit'
-    guest = 'Per guest'
+    Per_accomodation_unit = 1
+    Per_guest = 2
