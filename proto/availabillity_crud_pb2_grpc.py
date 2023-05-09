@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import availabillity_crud_pb2 as availabillity__crud__pb2
+import availabillity_crud_pb2 as availabillity__crud__pb2
 
 
-class AccommodationCrudStub(object):
+class AvailabilityCrudStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,38 +15,38 @@ class AccommodationCrudStub(object):
             channel: A grpc.Channel.
         """
         self.GetAll = channel.unary_unary(
-                '/AccommodationCrud/GetAll',
+                '/AvailabilityCrud/GetAll',
                 request_serializer=availabillity__crud__pb2.Empty.SerializeToString,
                 response_deserializer=availabillity__crud__pb2.AvailabilityDtos.FromString,
                 )
         self.GetAllSearch = channel.unary_unary(
-                '/AccommodationCrud/GetAllSearch',
+                '/AvailabilityCrud/GetAllSearch',
                 request_serializer=availabillity__crud__pb2.SearchDetails.SerializeToString,
                 response_deserializer=availabillity__crud__pb2.AvailabilityDtos.FromString,
                 )
         self.GetById = channel.unary_unary(
-                '/AccommodationCrud/GetById',
+                '/AvailabilityCrud/GetById',
                 request_serializer=availabillity__crud__pb2.AvailabilityId.SerializeToString,
                 response_deserializer=availabillity__crud__pb2.AvailabilityDto.FromString,
                 )
         self.Create = channel.unary_unary(
-                '/AccommodationCrud/Create',
+                '/AvailabilityCrud/Create',
                 request_serializer=availabillity__crud__pb2.AvailabilityDto.SerializeToString,
                 response_deserializer=availabillity__crud__pb2.Result.FromString,
                 )
         self.Delete = channel.unary_unary(
-                '/AccommodationCrud/Delete',
+                '/AvailabilityCrud/Delete',
                 request_serializer=availabillity__crud__pb2.AvailabilityId.SerializeToString,
                 response_deserializer=availabillity__crud__pb2.Result.FromString,
                 )
         self.Update = channel.unary_unary(
-                '/AccommodationCrud/Update',
+                '/AvailabilityCrud/Update',
                 request_serializer=availabillity__crud__pb2.AvailabilityDto.SerializeToString,
                 response_deserializer=availabillity__crud__pb2.Result.FromString,
                 )
 
 
-class AccommodationCrudServicer(object):
+class AvailabilityCrudServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetAll(self, request, context):
@@ -86,7 +86,7 @@ class AccommodationCrudServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_AccommodationCrudServicer_to_server(servicer, server):
+def add_AvailabilityCrudServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetAll': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAll,
@@ -120,12 +120,12 @@ def add_AccommodationCrudServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'AccommodationCrud', rpc_method_handlers)
+            'AvailabilityCrud', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class AccommodationCrud(object):
+class AvailabilityCrud(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -139,7 +139,7 @@ class AccommodationCrud(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/GetAll',
+        return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/GetAll',
             availabillity__crud__pb2.Empty.SerializeToString,
             availabillity__crud__pb2.AvailabilityDtos.FromString,
             options, channel_credentials,
@@ -156,7 +156,7 @@ class AccommodationCrud(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/GetAllSearch',
+        return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/GetAllSearch',
             availabillity__crud__pb2.SearchDetails.SerializeToString,
             availabillity__crud__pb2.AvailabilityDtos.FromString,
             options, channel_credentials,
@@ -173,7 +173,7 @@ class AccommodationCrud(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/GetById',
+        return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/GetById',
             availabillity__crud__pb2.AvailabilityId.SerializeToString,
             availabillity__crud__pb2.AvailabilityDto.FromString,
             options, channel_credentials,
@@ -190,7 +190,7 @@ class AccommodationCrud(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/Create',
+        return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/Create',
             availabillity__crud__pb2.AvailabilityDto.SerializeToString,
             availabillity__crud__pb2.Result.FromString,
             options, channel_credentials,
@@ -207,7 +207,7 @@ class AccommodationCrud(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/Delete',
+        return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/Delete',
             availabillity__crud__pb2.AvailabilityId.SerializeToString,
             availabillity__crud__pb2.Result.FromString,
             options, channel_credentials,
@@ -224,7 +224,7 @@ class AccommodationCrud(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/Update',
+        return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/Update',
             availabillity__crud__pb2.AvailabilityDto.SerializeToString,
             availabillity__crud__pb2.Result.FromString,
             options, channel_credentials,

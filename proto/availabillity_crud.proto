@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-service AccommodationCrud {
+service AvailabilityCrud {
   rpc GetAll (Empty) returns (AvailabilityDtos);
   rpc GetAllSearch(SearchDetails) returns (AvailabilityDtos);
   rpc GetById (AvailabilityId) returns (AvailabilityDto);
