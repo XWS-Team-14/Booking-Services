@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth
-from app.api.v1.endpoints import accommodation
+from . import auth
+from . import accommodation
 from app.config import get_yaml_config
 
 config = get_yaml_config().get("app")

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.config import get_yaml_config
-from app.api.static.endpoints import images
+from . import images
 
 config = get_yaml_config().get("app")
 router = APIRouter(prefix=f"/{config.get('static_prefix')}")
