@@ -3,3 +3,4 @@ app:
   title: "Booking Services App"
   version: "1.0"
   api_prefix: "v1"
+
