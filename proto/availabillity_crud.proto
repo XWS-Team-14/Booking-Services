@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+service AccommodationCrud {
+  rpc GetAll (Empty) returns (AvailabilityDtos);
+  rpc GetAllSearch(SearchDetails) returns (AvailabilityDtos);
+  rpc GetById (AvailabilityId) returns (AvailabilityDto);
+  rpc Create (AvailabilityDto) returns (Result);
+  rpc Delete (AvailabilityId) returns (Result);
+  rpc Update (AvailabilityDto) returns (Result);
+}
+
+message Empty {
+}
+message Result{
+    string status = 1;
+}
+message SearchDetails{
+    Interval interval = 1;
+    string num_of_guests = 2;
+}
+message AvailabilityId {
+  string id = 1;
+}
+message SpecialPricing{
+    string title = 1;
+    double pricing_markup = 2;
+}
+message Interval{
+    string date_start = 1;
+    string date_end = 2;
+}
+message AvailabilityDto{
+    string availability_id = 1;
+    string accomodation_id = 2;
+    Interval interval = 3;
+    string pricing_type = 4; 
+    double base_price = 5;
+    repeated SpecialPricing special_pricing = 6;
+    repeated Interval occupied_intervals = 7;
+}
+message AvailabilityDtos{
+    repeated AvailabilityDto items = 1;
+}

@@ -16,3 +16,8 @@ class Availability(Document):
     special_pricing:List[SpecialPricing]
     occupied_intervals :List[Interval] 
     
+    class Settings:
+        indexes = [
+            "availability_id"
+        ]
+    
