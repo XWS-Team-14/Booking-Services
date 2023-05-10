@@ -91,7 +91,6 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         
         if not AvailabilityHelper.validateDates(AvailabilityHelper.convertDateInterval(request.interval)):
             logger.exception('Dates are not valid');
-            ## when dates are invalid responce is different
             return availability_crud_pb2.AvailabilityDtos()
         list = await Availability.find(
         ).to_list()
@@ -113,8 +112,13 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         except (ValueError, DocumentNotFound):
             logger.exception('Fetch failed, document with given id not found');
             return availability_crud_pb2.Result(status ="Failed, not found");
-        await item.set({Availability.occupied_intervals:item.occupied_intervals.append(Interval(date_start = request.interval.date_start, date_end = request.interval.date_end))})
-        logger.success('Succesfully updated intervals');
-        return availability_crud_pb2.Result(status ="Success");
+        if not item : 
+            logger.info('fetched nothing');
+            return availability_crud_pb2.Result(status ="Failed, not found");
+        else : 
+            logger.success('Succesfully fetched');
+            await item.set({Availability.occupied_intervals:item.occupied_intervals.append(Interval(date_start = request.interval.date_start, date_end = request.interval.date_end))})
+            logger.success('Succesfully updated intervals');
+            return availability_crud_pb2.Result(status ="Success");
         
         
