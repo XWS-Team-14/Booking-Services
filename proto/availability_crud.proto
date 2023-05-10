@@ -7,6 +7,7 @@ service AvailabilityCrud {
   rpc Create (AvailabilityDto) returns (Result);
   rpc Delete (AvailabilityId) returns (Result);
   rpc Update (AvailabilityDto) returns (Result);
+  rpc AddOccupiedInterval(UpdateIntervalDto) returns (Result);
 }
 
 message Empty {
@@ -17,6 +18,10 @@ message Result{
 message SearchDetails{
     Interval interval = 1;
     string num_of_guests = 2;
+}
+message UpdateIntervalDto{
+    string id = 1;
+    Interval interval = 2;
 }
 message AvailabilityId {
   string id = 1;

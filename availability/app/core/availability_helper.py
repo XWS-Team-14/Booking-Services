@@ -105,3 +105,7 @@ class AvailabilityHelper():
 
     def getSpecialPrice(availability ,title):
         return any(special_price for special_price in availability.special_pricing if special_price.title == title).pricing_markup
+    
+    def validateDates(interval):
+        return interval.date_start.date > datetime.now().date() and interval.date_start.date < interval.date_end.date
+         
