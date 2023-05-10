@@ -1,3 +1,4 @@
+from app.manage.init_holidays import init_holidays
 from loguru import logger
 from app.core.availability_servicer import AvailabilityServicer
 from app.db.mongodb import start_async_mongodb
@@ -17,8 +18,8 @@ async def serve(port):
     await start_async_mongodb()
     logger.info('Starting GRPC server')
     await server.start()
+    #await init_holidays();
     logger.success(f'GRPC server has started on port {port}, waiting for termination')
-
     async def server_graceful_shutdown(*_):
         logger.info("Starting graceful shutdown...")
         # Shuts down the server with 5 seconds of grace period. During the

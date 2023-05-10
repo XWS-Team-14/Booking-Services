@@ -98,6 +98,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         ## you need to fetch acomodation service to check min/max guest numbers
         retVal = availability_crud_pb2.ExpandedAvailabilityDtos()
         holidays = await Holiday.find_all().to_list()
+        logger.info(holidays);
         for item in realList:
             retVal.items.append(AvailabilityHelper.convertToExpandedDto(item));
             retVal.items[-1].total_price = AvailabilityHelper.calculatePrice(request.interval, request.num_of_guests, item,holidays);

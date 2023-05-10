@@ -1,14 +1,15 @@
 from datetime import datetime
 import uuid
 from beanie import Document
+from pydantic import Field
 
 
 class Holiday(Document):
-    holiday_id: uuid.UUID
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
     date: datetime
     title: str
 
     class Settings:
         indexes = [
-            "holiday_id"
+            "id"
         ]
