@@ -22,18 +22,16 @@ class AvailabilityHelper():
     def convertDto(request):
         special_pricing_list = list()
         ocuppied_intervals_list = list()
-        try :
-            if request.HasField('special_pricing'):
-                for item in request.special_pricing:
-                    special_pricing_list.append(SpecialPricing(titile = item.title, pricing_markup = item.pricing_markup))
-        except ValueError:
-            pass
-        try :
-            if request.HasField('occupied_intervals'):
-                for item in request.occupied_intervals:
-                    ocuppied_intervals_list.append(Interval(date_start = AvailabilityHelper.convertDate(item.date_start), date_end = AvailabilityHelper.convertDate(item.date_end)))
-        except ValueError:
-            pass          
+        
+        if request.special_pricing:
+            for item in request.special_pricing:
+                special_pricing_list.append(SpecialPricing(title = item.title, pricing_markup = item.pricing_markup))
+       
+        if request.occupied_intervals:
+            logger.info("has occupied");
+            for item in request.occupied_intervals:
+                ocuppied_intervals_list.append(Interval(date_start = AvailabilityHelper.convertDate(item.date_start), date_end = AvailabilityHelper.convertDate(item.date_end)))       
+        
         return Availability(
             id = request.availability_id,
             accomodation_id = request.accomodation_id,

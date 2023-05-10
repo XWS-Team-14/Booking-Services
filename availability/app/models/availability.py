@@ -5,6 +5,7 @@ from app.models.pricing_type import PricingTypeEnum
 from app.models.special_pricing import SpecialPricing
 from beanie import Document
 from pydantic import Field
+from typing import Optional
 
 
 class Availability(Document):
@@ -13,8 +14,8 @@ class Availability(Document):
     available_interval: Interval
     pricing_type: PricingTypeEnum
     base_price: float
-    special_pricing:List[SpecialPricing]
-    occupied_intervals :List[Interval] 
+    special_pricing:Optional[List[SpecialPricing]]
+    occupied_intervals :Optional[List[Interval]]
     
     class Settings:
         indexes = [

@@ -28,13 +28,16 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             logger.exception('Dates are not valid');
             return availability_crud_pb2.Result(status ="Invalid date");
         try:
-            item = await Availability.get(availability.id);
-            if not item.occupied_intervals:
-                logger.exception('Update failed, availability has reservations');
+            item = await Availability.get(str(availability.id));
+            if not item: 
+                logger.info('Update failed, document with given id not found');
+                return availability_crud_pb2.Result(status ="Failed, not found");  
+            if item.occupied_intervals:
+                logger.info('Update failed, availability has reservations');
                 return availability_crud_pb2.Result(status ="Failed, has reservations");
             await availability.replace()
         except (ValueError, DocumentNotFound):
-            logger.exception('Update failed, document with given id not found');
+            logger.info('Update failed, document with given id not found');
             return availability_crud_pb2.Result(status ="Failed, not found");
         logger.success('Availability succesfully updated');
         return availability_crud_pb2.Result(status ="Success");
@@ -43,11 +46,14 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         logger.success('Request for deletion of Availability accepted');
         try:
             item = await Availability.get(request.id);
-            if not item.occupied_intervals:
-                logger.exception('Update failed, availability has reservations');
+            if not item: 
+                logger.info('Delete failed, document with given id not found');
+                return availability_crud_pb2.Result(status ="Failed, not found");  
+            if item.occupied_intervals:
+                logger.info('Delete failed, availability has reservations');
                 return availability_crud_pb2.Result(status ="Failed, has reservations");
         except (ValueError, DocumentNotFound):
-            logger.exception('Delete failed, document with given id not found');
+            logger.info('Delete failed, document with given id not found');
             return availability_crud_pb2.Result(status ="Failed, not found");
         await item.delete();
         logger.success('Availability succesfully deleted');
