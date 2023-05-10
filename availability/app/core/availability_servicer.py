@@ -5,6 +5,7 @@ from app.models.interval import Interval
 
 from proto import availability_crud_pb2_grpc, availability_crud_pb2
 from loguru import logger
+from beanie import PydanticObjectId 
 
 from beanie.exceptions import DocumentNotFound
 
@@ -15,6 +16,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         if not AvailabilityHelper.validateDates(availability.available_interval):
             logger.exception('Dates are not valid');
             return availability_crud_pb2.Result(status ="Invalid date");
+        availability.id = uuid.uuid4()
         await availability.insert()
         logger.success('Availability succesfully saved');
         return availability_crud_pb2.Result(status ="Success");
@@ -26,7 +28,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             logger.exception('Dates are not valid');
             return availability_crud_pb2.Result(status ="Invalid date");
         try:
-            item = await Availability.get(availability.availability_id);
+            item = await Availability.get(availability.id);
             if not item.occupied_intervals:
                 logger.exception('Update failed, availability has reservations');
                 return availability_crud_pb2.Result(status ="Failed, has reservations");
@@ -47,16 +49,17 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         except (ValueError, DocumentNotFound):
             logger.exception('Delete failed, document with given id not found');
             return availability_crud_pb2.Result(status ="Failed, not found");
-        item.delete();
+        await item.delete();
         logger.success('Availability succesfully deleted');
         return availability_crud_pb2.Result(status ="Success");
         
     async def GetAll(self, request, context):
         logger.success('Request for fetch all of Availability accepted');
-        aas = await Availability.find_all()
-        retVal = availability_crud_pb2.AvailabilityDtos();
+        aas = await Availability.find_all().to_list()
+        retVal = availability_crud_pb2.AvailabilityDtos()
+        logger.info('fetched data converting')
         for aa in aas :
-            retVal.append(AvailabilityHelper.convertToDto(aa));
+            retVal.items.append(AvailabilityHelper.convertToDto(aa));
         logger.success('Succesfully fetched');
         return retVal;
     
@@ -65,21 +68,28 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         try:
             item = await Availability.get(request.id);
         except (ValueError, DocumentNotFound):
-            logger.exception('Fetch failed, document with given id not found');
-            return availability_crud_pb2.Result(status ="Failed, not found");
-        logger.success('Succesfully fetched');
-        return AvailabilityHelper.convertToDto(item);
+            logger.info('Fetch failed, document with given id not found');
+            return availability_crud_pb2.AvailabilityDto();
+        if not item : 
+            logger.info('fetched nothing');
+            return availability_crud_pb2.AvailabilityDto();
+        else : 
+            logger.success('Succesfully fetched');
+            return AvailabilityHelper.convertToDto(item);
     
     async def GetAllSearch(self, request, context):
         logger.success('Request for search fetch Availability accepted');
-        if not AvailabilityHelper.validateDates(request.interval):
+        if not AvailabilityHelper.validateDates(AvailabilityHelper.convertDateInterval(request.interval)):
             logger.exception('Dates are not valid');
-            return availability_crud_pb2.Result(status ="Invalid date");
+            ## when dates are invalid responce is different
+            return availability_crud_pb2.Result();
         list = await Availability.find(
-            Availability.available_interval.date_start.date < request.interval.date_start.date,
-            Availability.available_interval.date_end.date > request.interval.date_end.date,
-        )
+            Availability.available_interval.date_start.date <= AvailabilityHelper.convertDate(request.interval.date_start).date,
+            Availability.available_interval.date_end.date >= AvailabilityHelper.convertDate(request.interval.date_end).date,
+        ).to_list()
+        logger.success('Succesfully fetched list1');
         realList = [x for x in list if not AvailabilityHelper.isAvailable(request.interval,x)]
+        logger.success('Succesfully fetched list2');
         for item in realList:
             item.base_price = AvailabilityHelper.calculatePrice(request.interval, request.num_of_guests, item);
         ## you need to fetch acomodation service to check min/max guest numbers

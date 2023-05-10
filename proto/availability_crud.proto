@@ -17,7 +17,7 @@ message Result{
 }
 message SearchDetails{
     Interval interval = 1;
-    string num_of_guests = 2;
+    int32 num_of_guests = 2;
 }
 message UpdateIntervalDto{
     string id = 1;

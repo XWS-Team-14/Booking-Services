@@ -4,10 +4,11 @@ from app.models.interval import Interval
 from app.models.pricing_type import PricingTypeEnum
 from app.models.special_pricing import SpecialPricing
 from beanie import Document
+from pydantic import Field
 
 
 class Availability(Document):
-    availability_id: uuid.UUID
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
     accomodation_id: uuid.UUID
     available_interval: Interval
     pricing_type: PricingTypeEnum
@@ -17,6 +18,6 @@ class Availability(Document):
     
     class Settings:
         indexes = [
-            "availability_id"
+            "id"
         ]
     
