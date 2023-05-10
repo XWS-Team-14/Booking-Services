@@ -2,7 +2,7 @@ syntax = "proto3";
 
 service AvailabilityCrud {
   rpc GetAll (Empty) returns (AvailabilityDtos);
-  rpc GetAllSearch(SearchDetails) returns (AvailabilityDtos);
+  rpc GetAllSearch(SearchDetails) returns (ExpandedAvailabilityDtos);
   rpc GetById (AvailabilityId) returns (AvailabilityDto);
   rpc Create (AvailabilityDto) returns (Result);
   rpc Delete (AvailabilityId) returns (Result);
@@ -43,6 +43,19 @@ message AvailabilityDto{
     repeated SpecialPricing special_pricing = 6;
     repeated Interval occupied_intervals = 7;
 }
+message ExpandedAvailabilityDto{
+    string availability_id = 1;
+    string accomodation_id = 2;
+    Interval interval = 3;
+    string pricing_type = 4; 
+    double base_price = 5;
+    double total_price = 6;
+    repeated SpecialPricing special_pricing = 7;
+    repeated Interval occupied_intervals = 8;
+}
 message AvailabilityDtos{
     repeated AvailabilityDto items = 1;
+}
+message ExpandedAvailabilityDtos{
+    repeated ExpandedAvailabilityDto items = 1;
 }

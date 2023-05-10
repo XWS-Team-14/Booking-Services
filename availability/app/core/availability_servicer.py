@@ -91,16 +91,16 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         
         if not AvailabilityHelper.validateDates(AvailabilityHelper.convertDateInterval(request.interval)):
             logger.exception('Dates are not valid');
-            return availability_crud_pb2.AvailabilityDtos()
+            return availability_crud_pb2.ExpandedAvailabilityDtos()
         list = await Availability.find(
         ).to_list()
         realList = [x for x in list if AvailabilityHelper.isAvailable(request.interval,x)]
         ## you need to fetch acomodation service to check min/max guest numbers
-        retVal = availability_crud_pb2.AvailabilityDtos()
+        retVal = availability_crud_pb2.ExpandedAvailabilityDtos()
         holidays = await Holiday.find_all().to_list()
         for item in realList:
-            item.base_price = AvailabilityHelper.calculatePrice(request.interval, request.num_of_guests, item,holidays);
-            retVal.items.append(AvailabilityHelper.convertToDto(item));
+            retVal.items.append(AvailabilityHelper.convertToExpandedDto(item));
+            retVal.items[-1].total_price = AvailabilityHelper.calculatePrice(request.interval, request.num_of_guests, item,holidays);
         logger.success('Succesfully fetched');
             
         return retVal;

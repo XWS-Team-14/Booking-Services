@@ -68,6 +68,32 @@ class AvailabilityHelper():
             retVal.occupied_intervals.extend(ocuppied_intervals_list) 
         return retVal
     
+    def convertToExpandedDto(availability):
+        retVal = availability_crud_pb2.ExpandedAvailabilityDto()
+        retVal.availability_id = str(availability.id)
+        retVal.accomodation_id = str(availability.accomodation_id)
+        retVal.interval.date_end = AvailabilityHelper.convertDateTime(availability.available_interval.date_end)
+        retVal.interval.date_start  = AvailabilityHelper.convertDateTime(availability.available_interval.date_start)
+        retVal.pricing_type = availability.pricing_type.name
+        retVal.base_price = availability.base_price
+        special_pricing_list = list()
+        ocuppied_intervals_list = list()
+        if availability.special_pricing: 
+            for item in availability.special_pricing:
+                pricing = availability_crud_pb2.SpecialPricing()
+                pricing.title = item.title
+                pricing.pricing_markup = item.pricing_markup
+                special_pricing_list.append(pricing)
+            retVal.special_pricing.extend(special_pricing_list)
+        if availability.occupied_intervals:
+            for item in availability.occupied_intervals:
+                interval = availability_crud_pb2.Interval()
+                interval.date_start = AvailabilityHelper.convertDateTime(item.date_start)
+                interval.date_end = AvailabilityHelper.convertDateTime(item.date_end)
+                ocuppied_intervals_list.append(interval)
+            retVal.occupied_intervals.extend(ocuppied_intervals_list) 
+        return retVal
+    
     def isAvailable(requested_interval, availability):
         for interval in availability.occupied_intervals :
             if AvailabilityHelper.dateIntersection(interval,AvailabilityHelper.convertDateInterval(requested_interval)) : return False;

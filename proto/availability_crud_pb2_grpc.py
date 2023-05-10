@@ -22,7 +22,7 @@ class AvailabilityCrudStub(object):
         self.GetAllSearch = channel.unary_unary(
                 '/AvailabilityCrud/GetAllSearch',
                 request_serializer=availability__crud__pb2.SearchDetails.SerializeToString,
-                response_deserializer=availability__crud__pb2.AvailabilityDtos.FromString,
+                response_deserializer=availability__crud__pb2.ExpandedAvailabilityDtos.FromString,
                 )
         self.GetById = channel.unary_unary(
                 '/AvailabilityCrud/GetById',
@@ -107,7 +107,7 @@ def add_AvailabilityCrudServicer_to_server(servicer, server):
             'GetAllSearch': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllSearch,
                     request_deserializer=availability__crud__pb2.SearchDetails.FromString,
-                    response_serializer=availability__crud__pb2.AvailabilityDtos.SerializeToString,
+                    response_serializer=availability__crud__pb2.ExpandedAvailabilityDtos.SerializeToString,
             ),
             'GetById': grpc.unary_unary_rpc_method_handler(
                     servicer.GetById,
@@ -174,7 +174,7 @@ class AvailabilityCrud(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/GetAllSearch',
             availability__crud__pb2.SearchDetails.SerializeToString,
-            availability__crud__pb2.AvailabilityDtos.FromString,
+            availability__crud__pb2.ExpandedAvailabilityDtos.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
