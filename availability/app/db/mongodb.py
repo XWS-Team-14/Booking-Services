@@ -1,8 +1,8 @@
 import sys
 import urllib.parse
 from typing import Optional
-from availability.app.models.availability import Availability
-from availability.app.models.holiday import Holiday
+from app.models.availability import Availability
+from app.models.holiday import Holiday
 
 from beanie import init_beanie
 from loguru import logger

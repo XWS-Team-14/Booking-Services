@@ -1,6 +1,6 @@
 import uuid
-from availability.app.core.availability_helper import AvailabilityHelper
-from availability.app.models.availability import Availability
+from app.core import availability_helper
+from app.models.availability import Availability
 
 from proto import availability_crud_pb2_grpc, availability_crud_pb2
 from loguru import logger
@@ -10,7 +10,7 @@ from beanie.exceptions import DocumentNotFound
 class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
     async def Create(self, request, context):
         logger.success('Request for creation of Availability accepted');
-        availability = AvailabilityHelper.convertDto(request);
+        availability = availability_helper.convertDto(request);
         await availability.insert()
         logger.success('Availability succesfully saved');
         return availability_crud_pb2.Result(status ="Success");

@@ -1,9 +1,8 @@
 import uuid
-import datetime
 from typing import List
-from availability.app.models.interval import Interval
-from availability.app.models.pricing_type import PricingTypeEnum
-from availability.app.models.special_pricing import SpecialPricing
+from app.models.interval import Interval
+from app.models.pricing_type import PricingTypeEnum
+from app.models.special_pricing import SpecialPricing
 from beanie import Document
 
 

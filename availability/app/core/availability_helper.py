@@ -1,11 +1,10 @@
-import datetime
-from availability.app.models.availability import Availability
-from availability.app.models.holiday import Holiday
-from availability.app.models.interval import Interval
-from availability.app.models.pricing_type import PricingTypeEnum
-from availability.app.models.special_pricing import SpecialPricing
+from datetime import datetime
+from app.models.availability import Availability
+from app.models.holiday import Holiday
+from app.models.interval import Interval
+from app.models.pricing_type import PricingTypeEnum
+from app.models.special_pricing import SpecialPricing
 from proto import availability_crud_pb2
-
 
 class AvailabilityHelper():
     def convertDate(date):
