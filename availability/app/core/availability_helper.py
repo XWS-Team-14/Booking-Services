@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from app.models.availability import Availability
 from app.models.holiday import Holiday
 from app.models.interval import Interval
@@ -70,14 +70,14 @@ class AvailabilityHelper():
     
     def isAvailable(requested_interval, availability):
         for interval in availability.occupied_intervals :
-            if AvailabilityHelper.dateIntersection(AvailabilityHelper.convertDateInterval(interval),AvailabilityHelper.convertDateInterval(requested_interval)) : return False;
+            if AvailabilityHelper.dateIntersection(interval,AvailabilityHelper.convertDateInterval(requested_interval)) : return False;
         return True
         
     def dateIntersection(intervalA, intervalB):
         #(StartA <= EndB) and (EndA >= StartB)
-        if intervalA.start_date.date < intervalB.end_date.date and intervalA.end_date.date > intervalB.start_date.date : return True
+        if intervalA.date_start.date() <= intervalB.date_end.date() and intervalA.date_end.date() >= intervalB.date_start.date() : return True
         return False
-    async def calculatePrice(requested_interval, num_of_guests, availability):
+    def calculatePrice(requested_interval, num_of_guests, availability,holidays):
         guest_mul = 1;
         price = 0;
         requested_interval_date = AvailabilityHelper.convertDateInterval(requested_interval)
@@ -85,18 +85,17 @@ class AvailabilityHelper():
             guest_mul = num_of_guests;
         if not availability.special_pricing:
             #list of special price modifiers is empty
-            return (requested_interval_date.end_date.date - requested_interval_date.start_date.date).days*availability.base_price*guest_mul;
+            return ((requested_interval_date.date_end.date() - requested_interval_date.date_start.date()).days+1)*availability.base_price*guest_mul;
         else:
-            holidays = await Holiday.find_all()
             holiday_mul = AvailabilityHelper.getSpecialPrice(availability,'Holiday')
             weekend_mul = AvailabilityHelper.getSpecialPrice(availability,'Weekend')
-            for day_num in range(int(requested_interval_date.end_date.date - requested_interval_date.start_date.date).days):
-                curr_date = requested_interval_date.start_date.date + datetime.timedelta(day_num)
+            for day_num in range((requested_interval_date.date_end.date() - requested_interval_date.date_start.date()).days+1):
+                curr_date = requested_interval_date.date_start.date() + timedelta(day_num)
                 if AvailabilityHelper.isHoliday(curr_date,holidays) :
-                    price = price + availability.base_price*guest_mul * holiday_mul;
+                    price = price + (availability.base_price*guest_mul*holiday_mul);
                     continue
                 if AvailabilityHelper.isWeekend(curr_date) :
-                    price = price + availability.base_price*guest_mul * weekend_mul;
+                    price = price + (availability.base_price*guest_mul*weekend_mul);
                     continue
                 price = price + availability.base_price*guest_mul;
         return price;
@@ -111,7 +110,10 @@ class AvailabilityHelper():
         return False
 
     def getSpecialPrice(availability ,title):
-        return any(special_price for special_price in availability.special_pricing if special_price.title == title).pricing_markup
+        for special_price in availability.special_pricing :
+            if special_price.title == title:
+                return special_price.pricing_markup
+        return 1;
     
     def validateDates(interval):
         
