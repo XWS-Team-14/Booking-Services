@@ -1,9 +1,7 @@
-
-from pydantic import UUID4, BaseModel
+from pydantic import BaseModel
 
 
 class Location(BaseModel):
-    id: UUID4
     country: str
     city: str
     address: str
