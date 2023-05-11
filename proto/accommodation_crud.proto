@@ -2,19 +2,19 @@ syntax = "proto3";
 
 service AccommodationCrud {
   rpc GetAll (Empty) returns (Accommodations);
-  rpc GetById (AccommodationId) returns (Accommodation);
+  rpc GetById (DtoId) returns (Accommodation);
   rpc Create (Accommodation) returns (Empty);
-  rpc Delete (AccommodationId) returns (Empty);
+  rpc Delete (DtoId) returns (Empty);
   rpc Update (Accommodation) returns (Empty);
   rpc GetByLocation (Location) returns (Accommodations);
-  rpc DeleteByUser (AccommodationId) returns (Empty);
+  rpc DeleteByUser (DtoId) returns (Empty);
+  rpc GetByUser (DtoId) returns (Accommodations);
 }
 
 message Empty {
 }
 
 message Location {
-  string id = 1;
   string country = 2;
   string city = 3;
   string address = 4;
@@ -35,6 +35,6 @@ message Accommodations {
   repeated Accommodation items = 1;
 }
 
-message AccommodationId {
+message DtoId {
   string id = 1;
 }

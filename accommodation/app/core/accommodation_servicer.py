@@ -20,7 +20,7 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
     async def DeleteByUser(self, request, context):
         logger.info("Delete request started")
         try:
-            obj_to_delete = await Accommodation.find_one(
+            obj_to_delete = await Accommodation.find(
                 Accommodation.user_id == uuid.UUID(request.id)
             )
         except Exception as e:
@@ -86,7 +86,6 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
                     if obj.location.city == location.city:
                         updated_list.append(obj)
                 objs = updated_list.copy()
-                updated_list = []
             if location.country != "":
                 for obj in objs:
                     if obj.location.country == location.country:
@@ -107,12 +106,25 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             transformed_objs.items.append(self.convert_to_dto(obj))
         return transformed_objs
 
+    async def GetByUser(self, request, context):
+        logger.info("GetByUser request started")
+        try:
+            objs = await Accommodation.find(
+                Accommodation.user_id == uuid.UUID(request.id)
+            )
+        except Exception as e:
+            logger.error(f"Trying to delete object that does not exist {e}")
+            return accommodation_crud_pb2.Empty()
+        transformed_objs = accommodation_crud_pb2.Accommodations()
+        for obj in objs:
+            transformed_objs.items.append(self.convert_to_dto(obj))
+        return transformed_objs
+
     def convert_to_dto(
         self,
         obj_to_return: Accommodation,
     ) -> accommodation_crud_pb2.Accommodation:
         location = accommodation_crud_pb2.Location(
-            id=str(obj_to_return.location.id),
             country=obj_to_return.location.country,
             city=obj_to_return.location.city,
             address=obj_to_return.location.address,
@@ -141,7 +153,6 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
         obj_to_return: accommodation_crud_pb2.Accommodation,
     ) -> Accommodation:
         location = Location(
-            id=obj_to_return.location.id,
             country=obj_to_return.location.country,
             city=obj_to_return.location.city,
             address=obj_to_return.location.address,
@@ -170,7 +181,6 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
         obj_to_return: accommodation_crud_pb2.Location,
     ) -> Location:
         return Location(
-            id=obj_to_return.id,
             country=obj_to_return.country,
             city=obj_to_return.city,
             address=obj_to_return.address,
