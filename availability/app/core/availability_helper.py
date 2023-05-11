@@ -28,7 +28,6 @@ class AvailabilityHelper():
                 special_pricing_list.append(SpecialPricing(title = item.title, pricing_markup = item.pricing_markup))
        
         if request.occupied_intervals:
-            logger.info("has occupied");
             for item in request.occupied_intervals:
                 ocuppied_intervals_list.append(Interval(date_start = AvailabilityHelper.convertDate(item.date_start), date_end = AvailabilityHelper.convertDate(item.date_end)))       
         
@@ -120,17 +119,17 @@ class AvailabilityHelper():
                 curr_date = requested_interval_date.date_start.date() + timedelta(day_num)
                 logger.info("curr=date" + str(curr_date))
                 if AvailabilityHelper.isHoliday(curr_date,holidays) :
-                    logger.info("hollidayy")
+                    #logger.info("hollidayy")
                     price = price + (availability.base_price*guest_mul*holiday_mul);
                     logger.info(price)
                     continue
                 if AvailabilityHelper.isWeekend(curr_date) :
-                    logger.info("weeekend")
+                    #logger.info("weeekend")
                     price = price + (availability.base_price*guest_mul*weekend_mul);
-                    logger.info(price)
+                    #logger.info(price)
                     continue
                 price = price + availability.base_price*guest_mul;
-                logger.info(price)
+                #logger.info(price)
         return price;
                 
     def isWeekend(date):
