@@ -6,6 +6,8 @@ service AccommodationCrud {
   rpc Create (Accommodation) returns (Empty);
   rpc Delete (AccommodationId) returns (Empty);
   rpc Update (Accommodation) returns (Empty);
+  rpc GetByLocation (Location) returns (Accommodations);
+  rpc DeleteByUser (AccommodationId) returns (Empty);
 }
 
 message Empty {
@@ -20,10 +22,11 @@ message Location {
 
 message Accommodation {
   string id = 1;
-  string name = 2;
-  Location location = 3;
-  repeated string features = 4;
-  repeated string image_urls = 5;
+  string user_id = 2;
+  string name = 3;
+  Location location = 4;
+  repeated string features = 5;
+  repeated string image_urls = 6;
   int32 min_guests = 7;
   int32 max_guests = 8;
 }
