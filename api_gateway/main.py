@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import router
 
 app = FastAPI(
@@ -14,7 +15,17 @@ app = FastAPI(
         "url": "https://www.gnu.org/licenses/gpl-3.0.en.html",
     },
 )
+origins = [
+    "http://localhost:3000",
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Add the router responsible for all /api/ endpoint requests
 app.include_router(router)
 # Include redirection router in the main app
