@@ -4,8 +4,9 @@ from loguru import logger
 
 from app import schemas
 
-router = APIRouter()
-
+router = APIRouter(
+    tags=["Auth"],
+)
 
 @cbv(router)
 class Accommodation:

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/app/api/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/endpoints/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/endpoints/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/accommodation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/middlewares/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/middleware/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schema/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/accommodation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schema/accommodation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2PZSxLMfyJiX2hTGY8r33Ojvidj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\api_gateway\app\api\v1" />
+      <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\api_gateway\app\api" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="" />
+      <created>1683663358935</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1683663358935</updated>
+    </task>
+    <servers />
+  </component>
+</project>
