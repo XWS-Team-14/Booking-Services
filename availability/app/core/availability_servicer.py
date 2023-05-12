@@ -96,7 +96,6 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             LTE(Availability.available_interval.date_start, AvailabilityHelper.convertDate(request.interval.date_start)),
             GTE(Availability.available_interval.date_end, AvailabilityHelper.convertDate(request.interval.date_end))
         ).to_list()
-        logger.info(list)
         realList = [x for x in list if AvailabilityHelper.isAvailable(request.interval,x)]
         retVal = availability_crud_pb2.ExpandedAvailabilityDtos()
         holidays = await Holiday.find_all().to_list()

@@ -103,7 +103,7 @@ class AvailabilityHelper():
         if intervalA.date_start.date() <= intervalB.date_end.date() and intervalA.date_end.date() >= intervalB.date_start.date() : return True
         return False
     def calculatePrice(requested_interval, num_of_guests, availability,holidays):
-        logger.info("price for - " + str(availability.base_price));
+        #logger.info("price for - " + str(availability.base_price));
         guest_mul = 1;
         price = 0;
         requested_interval_date = AvailabilityHelper.convertDateInterval(requested_interval)
@@ -117,7 +117,7 @@ class AvailabilityHelper():
             weekend_mul = AvailabilityHelper.getSpecialPrice(availability,'Weekend')
             for day_num in range((requested_interval_date.date_end.date() - requested_interval_date.date_start.date()).days+1):
                 curr_date = requested_interval_date.date_start.date() + timedelta(day_num)
-                logger.info("curr=date" + str(curr_date))
+                #logger.info("curr=date" + str(curr_date))
                 if AvailabilityHelper.isHoliday(curr_date,holidays) :
                     #logger.info("hollidayy")
                     price = price + (availability.base_price*guest_mul*holiday_mul);
