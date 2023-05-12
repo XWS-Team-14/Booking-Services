@@ -1,6 +1,6 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from app import api
+from app.api.v1 import router
 
 app = FastAPI(
     debug=True,
@@ -16,5 +16,5 @@ app = FastAPI(
 )
 
 # Add the router responsible for all /api/ endpoint requests
-app.include_router(api.router)
+app.include_router(router)
 # Include redirection router in the main app
