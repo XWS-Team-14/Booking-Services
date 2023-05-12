@@ -19,8 +19,7 @@ router = APIRouter(
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get all availabilities",
 )
-async def getAll():
-    
+async def getAll(): 
     logger.info("Gateway processing getAll Availability request");
     availability_server = (
         get_yaml_config().get("availability_server").get("ip")
@@ -35,7 +34,30 @@ async def getAll():
     return Response(
         status_code=200, media_type="application/json", content=json
     )
-    
+@router.get(
+    "/id/{item_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get one availability by id",
+)
+async def getById(item_id):
+    logger.info("Gateway processing getById Availability request");
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(availability_server) as channel:   
+        stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
+        data = await stub.GetById(availability_crud_pb2.AvailabilityId(id=item_id));
+        if data.availability_id == "" :
+            return Response(
+                status_code=200, media_type="application/json", content="Invalid id"
+            )
+        json = json_format.MessageToJson(data,preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )    
+
 @router.post(
     "/create",
     status_code=status.HTTP_204_NO_CONTENT,
