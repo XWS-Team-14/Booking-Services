@@ -1,14 +1,17 @@
 import httpx
 import asyncio
 import grpc
+import json
 from uuid import uuid4
 from fastapi import APIRouter, Form, UploadFile
 from fastapi.responses import HTMLResponse, Response
 from app.config import get_yaml_config
 from typing import Annotated, List
+from types import SimpleNamespace
 
 from proto import accommodation_crud_pb2_grpc
 from proto import accommodation_crud_pb2
+from google.protobuf.json_format import MessageToJson
 
 router = APIRouter()
 
@@ -66,11 +69,12 @@ async def save_accommodation(
             city=city,
             address=address,
         )
-        features_list = list()
-        image_urls_list = list()
+        features_list = []
+        image_urls_list = []
 
         for item in features:
-            features_list.append(item)
+            for i in item.split(","):
+                features_list.append(i)
         for item in image_uris:
             image_urls_list.append(item)
 
@@ -90,3 +94,31 @@ async def save_accommodation(
     return Response(
         status_code=200, media_type="text/html", content="Accommodation saved!"
     )
+
+
+@router.get("/all/{user_id}")
+async def GetByUserId(user_id: str):
+    accommodation_server = (
+        get_yaml_config().get("accommodation_server").get("ip")
+        + ":"
+        + get_yaml_config().get("accommodation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+        stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
+        dto = accommodation_crud_pb2.DtoId(
+            id=user_id,
+        )
+        response = await stub.GetByUser(dto)
+
+    res = json.loads(
+        MessageToJson(response), object_hook=lambda d: SimpleNamespace(**d)
+    )
+    # fix paths for image_urls
+    updated_url = "http://localhost:8000/api/static/images/"
+    for item in res.items:
+        updated_urls = []
+        for img_url in item.imageUrls:
+            updated_urls.append(updated_url + img_url)
+        item.imageUrls = updated_urls
+
+    return res

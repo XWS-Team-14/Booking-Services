@@ -10,8 +10,8 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
         logger.info("Delete request started")
         try:
             obj_to_delete = await Accommodation.find_one(id == request.id)
-        except Exception:
-            logger.error("Trying to delete object that does not exist")
+        except Exception as e:
+            logger.error(f"Error {e}")
             return accommodation_crud_pb2.Empty()
         await obj_to_delete.delete()
         logger.success(f"Deleted an object with id = {request.id}")
@@ -24,7 +24,7 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
                 Accommodation.user_id == uuid.UUID(request.id)
             )
         except Exception as e:
-            logger.error(f"Trying to delete object that does not exist {e}")
+            logger.error(f"Error {e}")
             return accommodation_crud_pb2.Empty()
         await obj_to_delete.delete()
         logger.success(f"Deleted an object with id = {request.id}")
@@ -111,9 +111,9 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
         try:
             objs = await Accommodation.find(
                 Accommodation.user_id == uuid.UUID(request.id)
-            )
+            ).to_list()
         except Exception as e:
-            logger.error(f"Trying to delete object that does not exist {e}")
+            logger.error(f"Error {e}")
             return accommodation_crud_pb2.Empty()
         transformed_objs = accommodation_crud_pb2.Accommodations()
         for obj in objs:
