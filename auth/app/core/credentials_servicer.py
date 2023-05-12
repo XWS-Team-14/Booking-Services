@@ -1,3 +1,5 @@
+import uuid
+
 from jwt import InvalidTokenError, ExpiredSignatureError
 from loguru import logger
 from passlib.hash import bcrypt
@@ -20,11 +22,12 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             Input: ID, email, password, role.
             Output: Empty, or error. """
         try:
+            logger.info('Request received')
             existing_credential = await Credential.find_one(Credential.email == request.email)
             if existing_credential is not None:
                 raise EmailAlreadyTakenException(email=request.email)
             credential = Credential(
-                id=request.id,
+                id=uuid.UUID(request.id),
                 email=request.email,
                 password=bcrypt.hash(request.password),
                 role=Role(request.role))
@@ -39,18 +42,19 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             Input: Email, password.
             Output: JWT access token, JWT refresh token, or error. """
         try:
+            logger.info('Request received')
             credential = await Credential.find_one(Credential.email == request.email)
             if credential is None or not bcrypt.verify(request.password, credential.password):
                 logger.error("Unsuccessful login: {}", request.email)
                 raise UserNotFoundException()
             access_token = jwt.encode({
-                "id": credential.id,
+                "id": str(credential.id),
                 "email": credential.email,
                 "role": credential.role.value,
                 "exp": datetime.utcnow() + timedelta(minutes=30)
             }, JWT_ACCESS_SECRET)
             refresh_token = jwt.encode({
-                "id": credential.id,
+                "id": str(credential.id),
                 "email": credential.email,
                 "role": credential.role.value,
                 "exp": datetime.utcnow() + timedelta(days=7)

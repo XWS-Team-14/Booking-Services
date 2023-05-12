@@ -4,3 +4,10 @@ app:
   version: "1.0"
   api_prefix: "v1"
 
+auth_server:
+  ip: "auth"
+  port: "50052"
+
+user_server:
+  ip: "user_control"
+  port: "50056"

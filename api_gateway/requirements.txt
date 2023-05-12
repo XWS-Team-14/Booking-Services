@@ -8,3 +8,5 @@ pydantic==1.10.7
 uvicorn==0.21.1
 pydantic[email]
 orjson
+httpx==0.24.0
+

@@ -1,13 +1,13 @@
 syntax = "proto3";
 
 service UserService {
-  rpc Register(User) returns (Empty);
+  rpc Register(User) returns (EmptyMessage);
   rpc GetById(UserId) returns (UserResponse);
-  rpc Update(User) returns (Empty);
-  rpc Delete(UserId) returns (Empty);
+  rpc Update(User) returns (EmptyMessage);
+  rpc Delete(UserId) returns (EmptyMessage);
 }
 
-message Empty {
+message EmptyMessage {
   optional string error_message = 1;
   optional int32 error_code = 2;
 }

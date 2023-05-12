@@ -1,3 +1,5 @@
+import uuid
+
 from app.exceptions.user_not_found import UserNotFoundException
 from app.models.gender import Gender
 from app.models.user import User
@@ -10,14 +12,14 @@ class UserServicer(user_pb2_grpc.UserServiceServicer):
             Input: ID, first name, last name, home address, gender.
             Output: Empty, or error. """
         user = User(
-            id=request.id,
+            id=uuid.UUID(request.id),
             first_name=request.first_name,
             last_name=request.last_name,
             home_address=request.home_address,
             gender=Gender(request.gender)
         )
         await user.insert()
-        return user_pb2.Empty()
+        return user_pb2.EmptyMessage()
 
     async def GetById(self, request, context):
         """ Gets user by their ID.
@@ -47,9 +49,9 @@ class UserServicer(user_pb2_grpc.UserServiceServicer):
                 home_address=request.home_address,
                 gender=Gender(request.gender))
             await new_user.replace()
-            return user_pb2.Empty()
+            return user_pb2.EmptyMessage()
         except UserNotFoundException as error:
-            return user_pb2.Empty(error_message=error.message, error_code=error.code)
+            return user_pb2.EmptyMessage(error_message=error.message, error_code=error.code)
 
     async def Delete(self, request, context):
         """ Deletes user's information.
@@ -60,6 +62,6 @@ class UserServicer(user_pb2_grpc.UserServiceServicer):
             if user is None:
                 raise UserNotFoundException(user_id=request.id)
             await user.delete()
-            return user_pb2.Empty()
+            return user_pb2.EmptyMessage()
         except UserNotFoundException as error:
-            return user_pb2.Empty(error_message=error.message, error_code=error.code)
+            return user_pb2.EmptyMessage(error_message=error.message, error_code=error.code)

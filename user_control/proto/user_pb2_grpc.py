@@ -17,7 +17,7 @@ class UserServiceStub(object):
         self.Register = channel.unary_unary(
                 '/UserService/Register',
                 request_serializer=user__pb2.User.SerializeToString,
-                response_deserializer=user__pb2.Empty.FromString,
+                response_deserializer=user__pb2.EmptyMessage.FromString,
                 )
         self.GetById = channel.unary_unary(
                 '/UserService/GetById',
@@ -27,12 +27,12 @@ class UserServiceStub(object):
         self.Update = channel.unary_unary(
                 '/UserService/Update',
                 request_serializer=user__pb2.User.SerializeToString,
-                response_deserializer=user__pb2.Empty.FromString,
+                response_deserializer=user__pb2.EmptyMessage.FromString,
                 )
         self.Delete = channel.unary_unary(
                 '/UserService/Delete',
                 request_serializer=user__pb2.UserId.SerializeToString,
-                response_deserializer=user__pb2.Empty.FromString,
+                response_deserializer=user__pb2.EmptyMessage.FromString,
                 )
 
 
@@ -69,7 +69,7 @@ def add_UserServiceServicer_to_server(servicer, server):
             'Register': grpc.unary_unary_rpc_method_handler(
                     servicer.Register,
                     request_deserializer=user__pb2.User.FromString,
-                    response_serializer=user__pb2.Empty.SerializeToString,
+                    response_serializer=user__pb2.EmptyMessage.SerializeToString,
             ),
             'GetById': grpc.unary_unary_rpc_method_handler(
                     servicer.GetById,
@@ -79,12 +79,12 @@ def add_UserServiceServicer_to_server(servicer, server):
             'Update': grpc.unary_unary_rpc_method_handler(
                     servicer.Update,
                     request_deserializer=user__pb2.User.FromString,
-                    response_serializer=user__pb2.Empty.SerializeToString,
+                    response_serializer=user__pb2.EmptyMessage.SerializeToString,
             ),
             'Delete': grpc.unary_unary_rpc_method_handler(
                     servicer.Delete,
                     request_deserializer=user__pb2.UserId.FromString,
-                    response_serializer=user__pb2.Empty.SerializeToString,
+                    response_serializer=user__pb2.EmptyMessage.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -109,7 +109,7 @@ class UserService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/UserService/Register',
             user__pb2.User.SerializeToString,
-            user__pb2.Empty.FromString,
+            user__pb2.EmptyMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -143,7 +143,7 @@ class UserService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/UserService/Update',
             user__pb2.User.SerializeToString,
-            user__pb2.Empty.FromString,
+            user__pb2.EmptyMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -160,6 +160,6 @@ class UserService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/UserService/Delete',
             user__pb2.UserId.SerializeToString,
-            user__pb2.Empty.FromString,
+            user__pb2.EmptyMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

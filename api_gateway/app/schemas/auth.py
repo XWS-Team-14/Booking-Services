@@ -12,6 +12,7 @@ class Register(BaseModel):
     first_name: str
     last_name: str
     gender: str
+    role: str
     home_address: str
     email: EmailStr
     password: str

@@ -3,7 +3,7 @@ class UserNotFoundException(Exception):
         self.code = 404
         if email:
             self.message = f"User with the email {email} was not found."
-        elif id:
+        elif credential_id:
             self.message = f"User with the id {credential_id} was not found."
         else:
             self.message = "User with the given credentials was not found."
