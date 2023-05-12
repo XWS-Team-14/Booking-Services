@@ -33,8 +33,10 @@ class Auth:
         user_id = uuid.uuid4()
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
-            await stub.Register(credential_pb2.Credential(
+            grpc_response = await stub.Register(credential_pb2.Credential(
                 id=str(user_id), email=payload.email, password=payload.password, role=payload.role, active=True))
+            if grpc_response.error_message:
+                return Response(status_code=grpc_response.error_code, media_type="text/html", content=grpc_response.error_message)
 
         async with grpc.aio.insecure_channel(user_server) as channel:
             stub = user_pb2_grpc.UserServiceStub(channel)

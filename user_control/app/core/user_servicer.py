@@ -26,20 +26,21 @@ class UserServicer(user_pb2_grpc.UserServiceServicer):
             Input: ID.
             Output: User information (ID, first name, last name, home address, gender), or error. """
         try:
-            user = await User.find_one(User.id == request.id)
+            user = await User.find_one(User.id == uuid.UUID(request.id))
             if user is None:
                 raise UserNotFoundException(user_id=request.id)
-            return user_pb2.UserResponse(id=user.id, first_name=user.first_name, last_name=user.last_name, home_address=user.home_address, gender=user.gender.value)
+            return user_pb2.UserResponse(id=user.id, first_name=user.first_name, last_name=user.last_name,
+                                         home_address=user.home_address, gender=user.gender.value)
         except UserNotFoundException as error:
-            return user_pb2.UserResponse(id=user.id, error_message=error.message,
-                                                     error_code=error.code)
+            return user_pb2.UserResponse(id=request.id, error_message=error.message,
+                                         error_code=error.code)
 
     async def Update(self, request, context):
         """ Updates user's information.
             Input: ID, first name, last name, home address, gender.
             Output: Empty, or error. """
         try:
-            user = await User.find_one(User.id == request.id)
+            user = await User.find_one(User.id == uuid.UUID(request.id))
             if user is None:
                 raise UserNotFoundException(user_id=request.id)
             new_user = User(
@@ -58,7 +59,7 @@ class UserServicer(user_pb2_grpc.UserServiceServicer):
             Input: ID.
             Output: Empty, or error. """
         try:
-            user = await User.find_one(User.id == request.id)
+            user = await User.find_one(User.id == uuid.UUID(request.id))
             if user is None:
                 raise UserNotFoundException(user_id=request.id)
             await user.delete()
