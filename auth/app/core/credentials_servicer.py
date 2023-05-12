@@ -69,7 +69,7 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             Input: ID.
             Output: Credentials, or error. """
         try:
-            credential = await Credential.find_one(Credential.id == request.id)
+            credential = await Credential.find_one(Credential.id == uuid.UUID(request.id))
             if credential is None:
                 raise UserNotFoundException(credential_id=request.id)
             return credential_pb2.CredentialResponse(id=credential.id, email=credential.email, role=credential.role,
@@ -109,12 +109,10 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
 
     async def UpdateEmail(self, request, context):
         """ Updates email.
-            Input: JWT access token, old email, new email.
+            Input: ID, old email, new email.
             Output: Empty, or error. """
         try:
-            payload = jwt.decode(request.access_token, JWT_ACCESS_SECRET)
-            credential_id = payload.get("id")
-            credential = await Credential.find_one(Credential.id == credential_id)
+            credential = await Credential.find_one(Credential.id == uuid.UUID(request.id))
             if credential is None or credential.email != request.old_email:
                 raise UserNotFoundException(email=request.old_email)
             await credential.set({Credential.email: request.new_email})
@@ -125,14 +123,12 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
 
     async def UpdatePassword(self, request, context):
         """ Updates password.
-            Input: JWT access token, old password, new password.
+            Input: ID, old password, new password.
             Output: Empty, or error. """
         try:
-            payload = jwt.decode(request.access_token, JWT_ACCESS_SECRET)
-            credential_id = payload.get("id")
-            credential = await Credential.find_one(Credential.id == credential_id)
+            credential = await Credential.find_one(Credential.id == uuid.UUID(request.id))
             if credential is None or not bcrypt.verify(request.old_password, credential.password):
-                logger.error("Unsuccessful password change for user {}.", credential_id)
+                logger.error(f"Unsuccessful password change for user {request.id}.")
                 raise UserNotFoundException()
             await credential.set({Credential.password: bcrypt.hash(request.new_password)})
             logger.success("Password updated.")
@@ -142,33 +138,29 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
 
     async def Deactivate(self, request, context):
         """ Deactivates credentials.
-            Input: JWT access token.
+            Input: ID.
             Output: Empty, or error. """
         try:
-            payload = jwt.decode(request.access_token, JWT_ACCESS_SECRET)
-            credential_id = payload.get("id")
-            credential = await Credential.find_one(Credential.id == credential_id)
+            credential = await Credential.find_one(Credential.id == uuid.UUID(request.id))
             if credential is None:
-                raise UserNotFoundException(credential_id=credential_id)
+                raise UserNotFoundException(credential_id=request.id)
             credential.active = False
             await credential.replace()
-            logger.success("Account with the id {} has been deactivated.", credential_id)
+            logger.success("Account with the id {} has been deactivated.", request.id)
             return credential_pb2.Empty()
         except UserNotFoundException as error:
             return credential_pb2.Empty(error_message=error.message, error_code=error.code)
 
     async def Delete(self, request, context):
         """ Deletes credentials.
-            Input: JWT access token.
+            Input: ID.
             Output: Empty, or error. """
         try:
-            payload = jwt.decode(request.access_token, JWT_ACCESS_SECRET)
-            credential_id = payload.get("id")
-            credential = await Credential.find_one(Credential.id == credential_id)
+            credential = await Credential.find_one(Credential.id == uuid.UUID(request.id))
             if credential is None:
-                raise UserNotFoundException(credential_id=credential_id)
+                raise UserNotFoundException(credential_id=request.id)
             await credential.delete()
-            logger.success("Account with the id {} has been deleted.", credential_id)
+            logger.success("Account with the id {} has been deleted.", request.id)
         except UserNotFoundException as error:
             return credential_pb2.Empty(error_message=error.message, error_code=error.code)
         except Exception:

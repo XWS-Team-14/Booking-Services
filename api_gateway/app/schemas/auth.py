@@ -21,4 +21,8 @@ class Register(BaseModel):
 class PasswordUpdate(BaseModel):
     old_password: str
     new_password: str
-    new_password_check: str
+
+
+class EmailUpdate(BaseModel):
+    old_email: str
+    new_email: str

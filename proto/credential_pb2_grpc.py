@@ -56,7 +56,7 @@ class CredentialServiceStub(object):
                 )
         self.Delete = channel.unary_unary(
                 '/CredentialService/Delete',
-                request_serializer=credential__pb2.Token.SerializeToString,
+                request_serializer=credential__pb2.CredentialId.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
                 )
         self.ValidateToken = channel.unary_unary(
@@ -196,7 +196,7 @@ def add_CredentialServiceServicer_to_server(servicer, server):
             ),
             'Delete': grpc.unary_unary_rpc_method_handler(
                     servicer.Delete,
-                    request_deserializer=credential__pb2.Token.FromString,
+                    request_deserializer=credential__pb2.CredentialId.FromString,
                     response_serializer=credential__pb2.Empty.SerializeToString,
             ),
             'ValidateToken': grpc.unary_unary_rpc_method_handler(
@@ -372,7 +372,7 @@ class CredentialService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/CredentialService/Delete',
-            credential__pb2.Token.SerializeToString,
+            credential__pb2.CredentialId.SerializeToString,
             credential__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
