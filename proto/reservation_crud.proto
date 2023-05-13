@@ -1,25 +1,25 @@
 syntax = "proto3";
 
 service ReservationCrud {
-  rpc GetAll (Empty) returns (ReservationDtos);
+  rpc GetAll (NoParameter) returns (ReservationDtos);
   rpc GetById (ReservationId) returns (ReservationDto);
-  rpc Create (ReservationDto) returns (Result);
-  rpc Delete (ReservationId) returns (Result);
-  rpc Update (ReservationDto) returns (Result);
+  rpc Create (ReservationDto) returns (ReservationResult);
+  rpc Delete (ReservationId) returns (ReservationResult);
+  rpc Update (ReservationDto) returns (ReservationResult);
   rpc GetByHost(HostId) returns (ReservationDtos);
   rpc GetByGuest(GuestId) returns (ReservationDtos);
   rpc GetReservationsForAcceptance(ReservationDto) returns (ReservationDtos);
-  rpc AcceptReservation (ReservationDto) returns (Result);
+  rpc AcceptReservation (ReservationDto) returns (ReservationResult);
   rpc GetPendingReservationsByHost(HostId) returns (ReservationDtos);
   rpc GetActiveByGuest(GuestId) returns (ReservationDtos);
   rpc GetActiveByHost(HostId) returns (ReservationDtos);
 }
 
-message Empty {
+message NoParameter {
 }
 
 
-message Result{
+message ReservationResult{
     string status = 1;
 }
 message ReservationDto {

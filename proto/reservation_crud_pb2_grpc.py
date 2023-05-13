@@ -16,7 +16,7 @@ class ReservationCrudStub(object):
         """
         self.GetAll = channel.unary_unary(
                 '/ReservationCrud/GetAll',
-                request_serializer=reservation__crud__pb2.Empty.SerializeToString,
+                request_serializer=reservation__crud__pb2.NoParameter.SerializeToString,
                 response_deserializer=reservation__crud__pb2.ReservationDtos.FromString,
                 )
         self.GetById = channel.unary_unary(
@@ -27,17 +27,17 @@ class ReservationCrudStub(object):
         self.Create = channel.unary_unary(
                 '/ReservationCrud/Create',
                 request_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
-                response_deserializer=reservation__crud__pb2.Result.FromString,
+                response_deserializer=reservation__crud__pb2.ReservationResult.FromString,
                 )
         self.Delete = channel.unary_unary(
                 '/ReservationCrud/Delete',
                 request_serializer=reservation__crud__pb2.ReservationId.SerializeToString,
-                response_deserializer=reservation__crud__pb2.Result.FromString,
+                response_deserializer=reservation__crud__pb2.ReservationResult.FromString,
                 )
         self.Update = channel.unary_unary(
                 '/ReservationCrud/Update',
                 request_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
-                response_deserializer=reservation__crud__pb2.Result.FromString,
+                response_deserializer=reservation__crud__pb2.ReservationResult.FromString,
                 )
         self.GetByHost = channel.unary_unary(
                 '/ReservationCrud/GetByHost',
@@ -57,7 +57,7 @@ class ReservationCrudStub(object):
         self.AcceptReservation = channel.unary_unary(
                 '/ReservationCrud/AcceptReservation',
                 request_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
-                response_deserializer=reservation__crud__pb2.Result.FromString,
+                response_deserializer=reservation__crud__pb2.ReservationResult.FromString,
                 )
         self.GetPendingReservationsByHost = channel.unary_unary(
                 '/ReservationCrud/GetPendingReservationsByHost',
@@ -156,7 +156,7 @@ def add_ReservationCrudServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetAll': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAll,
-                    request_deserializer=reservation__crud__pb2.Empty.FromString,
+                    request_deserializer=reservation__crud__pb2.NoParameter.FromString,
                     response_serializer=reservation__crud__pb2.ReservationDtos.SerializeToString,
             ),
             'GetById': grpc.unary_unary_rpc_method_handler(
@@ -167,17 +167,17 @@ def add_ReservationCrudServicer_to_server(servicer, server):
             'Create': grpc.unary_unary_rpc_method_handler(
                     servicer.Create,
                     request_deserializer=reservation__crud__pb2.ReservationDto.FromString,
-                    response_serializer=reservation__crud__pb2.Result.SerializeToString,
+                    response_serializer=reservation__crud__pb2.ReservationResult.SerializeToString,
             ),
             'Delete': grpc.unary_unary_rpc_method_handler(
                     servicer.Delete,
                     request_deserializer=reservation__crud__pb2.ReservationId.FromString,
-                    response_serializer=reservation__crud__pb2.Result.SerializeToString,
+                    response_serializer=reservation__crud__pb2.ReservationResult.SerializeToString,
             ),
             'Update': grpc.unary_unary_rpc_method_handler(
                     servicer.Update,
                     request_deserializer=reservation__crud__pb2.ReservationDto.FromString,
-                    response_serializer=reservation__crud__pb2.Result.SerializeToString,
+                    response_serializer=reservation__crud__pb2.ReservationResult.SerializeToString,
             ),
             'GetByHost': grpc.unary_unary_rpc_method_handler(
                     servicer.GetByHost,
@@ -197,7 +197,7 @@ def add_ReservationCrudServicer_to_server(servicer, server):
             'AcceptReservation': grpc.unary_unary_rpc_method_handler(
                     servicer.AcceptReservation,
                     request_deserializer=reservation__crud__pb2.ReservationDto.FromString,
-                    response_serializer=reservation__crud__pb2.Result.SerializeToString,
+                    response_serializer=reservation__crud__pb2.ReservationResult.SerializeToString,
             ),
             'GetPendingReservationsByHost': grpc.unary_unary_rpc_method_handler(
                     servicer.GetPendingReservationsByHost,
@@ -236,7 +236,7 @@ class ReservationCrud(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/GetAll',
-            reservation__crud__pb2.Empty.SerializeToString,
+            reservation__crud__pb2.NoParameter.SerializeToString,
             reservation__crud__pb2.ReservationDtos.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -271,7 +271,7 @@ class ReservationCrud(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/Create',
             reservation__crud__pb2.ReservationDto.SerializeToString,
-            reservation__crud__pb2.Result.FromString,
+            reservation__crud__pb2.ReservationResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -288,7 +288,7 @@ class ReservationCrud(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/Delete',
             reservation__crud__pb2.ReservationId.SerializeToString,
-            reservation__crud__pb2.Result.FromString,
+            reservation__crud__pb2.ReservationResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -305,7 +305,7 @@ class ReservationCrud(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/Update',
             reservation__crud__pb2.ReservationDto.SerializeToString,
-            reservation__crud__pb2.Result.FromString,
+            reservation__crud__pb2.ReservationResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -373,7 +373,7 @@ class ReservationCrud(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/AcceptReservation',
             reservation__crud__pb2.ReservationDto.SerializeToString,
-            reservation__crud__pb2.Result.FromString,
+            reservation__crud__pb2.ReservationResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

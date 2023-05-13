@@ -44,8 +44,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-    #ports:
-    #- 27017:27017
+    ports:
+    - 27017:27017
   
   # Services, expose ports when you want to test your grpc service manually
   # Running ports are not that important, but it can be easier to differentiate between services
@@ -129,3 +129,10 @@ services:
     ports:
       - 8000:8000
   
+  static_resources_server:
+    build: ./static_resources_server
+    image: static_resources_server
+    container_name: static_resources_server
+    command: "uvicorn main:app --host 0.0.0.0 --port 8001"
+    ports:
+      - 8001:8001

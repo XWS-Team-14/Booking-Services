@@ -15,30 +15,45 @@ class AccommodationCrudStub(object):
             channel: A grpc.Channel.
         """
         self.GetAll = channel.unary_unary(
-                '/AccommodationCrud/GetAll',
-                request_serializer=accommodation__crud__pb2.Empty.SerializeToString,
-                response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
-                )
+            "/AccommodationCrud/GetAll",
+            request_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+            response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
+        )
         self.GetById = channel.unary_unary(
-                '/AccommodationCrud/GetById',
-                request_serializer=accommodation__crud__pb2.AccommodationId.SerializeToString,
-                response_deserializer=accommodation__crud__pb2.Accommodation.FromString,
-                )
+            "/AccommodationCrud/GetById",
+            request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
+            response_deserializer=accommodation__crud__pb2.Accommodation.FromString,
+        )
         self.Create = channel.unary_unary(
-                '/AccommodationCrud/Create',
-                request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
-                response_deserializer=accommodation__crud__pb2.Empty.FromString,
-                )
+            "/AccommodationCrud/Create",
+            request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
+            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+        )
         self.Delete = channel.unary_unary(
-                '/AccommodationCrud/Delete',
-                request_serializer=accommodation__crud__pb2.AccommodationId.SerializeToString,
-                response_deserializer=accommodation__crud__pb2.Empty.FromString,
-                )
+            "/AccommodationCrud/Delete",
+            request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
+            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+        )
         self.Update = channel.unary_unary(
-                '/AccommodationCrud/Update',
-                request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
-                response_deserializer=accommodation__crud__pb2.Empty.FromString,
-                )
+            "/AccommodationCrud/Update",
+            request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
+            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+        )
+        self.GetByLocation = channel.unary_unary(
+            "/AccommodationCrud/GetByLocation",
+            request_serializer=accommodation__crud__pb2.Location.SerializeToString,
+            response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
+        )
+        self.DeleteByUser = channel.unary_unary(
+            "/AccommodationCrud/DeleteByUser",
+            request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
+            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+        )
+        self.GetByUser = channel.unary_unary(
+            "/AccommodationCrud/GetByUser",
+            request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
+            response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
+        )
 
 
 class AccommodationCrudServicer(object):
@@ -47,152 +62,333 @@ class AccommodationCrudServicer(object):
     def GetAll(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def GetById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def Create(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def Delete(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def Update(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def GetByLocation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def DeleteByUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def GetByUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_AccommodationCrudServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetAll': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetAll,
-                    request_deserializer=accommodation__crud__pb2.Empty.FromString,
-                    response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
-            ),
-            'GetById': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetById,
-                    request_deserializer=accommodation__crud__pb2.AccommodationId.FromString,
-                    response_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
-            ),
-            'Create': grpc.unary_unary_rpc_method_handler(
-                    servicer.Create,
-                    request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
-                    response_serializer=accommodation__crud__pb2.Empty.SerializeToString,
-            ),
-            'Delete': grpc.unary_unary_rpc_method_handler(
-                    servicer.Delete,
-                    request_deserializer=accommodation__crud__pb2.AccommodationId.FromString,
-                    response_serializer=accommodation__crud__pb2.Empty.SerializeToString,
-            ),
-            'Update': grpc.unary_unary_rpc_method_handler(
-                    servicer.Update,
-                    request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
-                    response_serializer=accommodation__crud__pb2.Empty.SerializeToString,
-            ),
+        "GetAll": grpc.unary_unary_rpc_method_handler(
+            servicer.GetAll,
+            request_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+            response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
+        ),
+        "GetById": grpc.unary_unary_rpc_method_handler(
+            servicer.GetById,
+            request_deserializer=accommodation__crud__pb2.DtoId.FromString,
+            response_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
+        ),
+        "Create": grpc.unary_unary_rpc_method_handler(
+            servicer.Create,
+            request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
+            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+        ),
+        "Delete": grpc.unary_unary_rpc_method_handler(
+            servicer.Delete,
+            request_deserializer=accommodation__crud__pb2.DtoId.FromString,
+            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+        ),
+        "Update": grpc.unary_unary_rpc_method_handler(
+            servicer.Update,
+            request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
+            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+        ),
+        "GetByLocation": grpc.unary_unary_rpc_method_handler(
+            servicer.GetByLocation,
+            request_deserializer=accommodation__crud__pb2.Location.FromString,
+            response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
+        ),
+        "DeleteByUser": grpc.unary_unary_rpc_method_handler(
+            servicer.DeleteByUser,
+            request_deserializer=accommodation__crud__pb2.DtoId.FromString,
+            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+        ),
+        "GetByUser": grpc.unary_unary_rpc_method_handler(
+            servicer.GetByUser,
+            request_deserializer=accommodation__crud__pb2.DtoId.FromString,
+            response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'AccommodationCrud', rpc_method_handlers)
+        "AccommodationCrud", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class AccommodationCrud(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetAll(request,
+    def GetAll(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/GetAll',
-            accommodation__crud__pb2.Empty.SerializeToString,
+            "/AccommodationCrud/GetAll",
+            accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
             accommodation__crud__pb2.Accommodations.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def GetById(request,
+    def GetById(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/GetById',
-            accommodation__crud__pb2.AccommodationId.SerializeToString,
+            "/AccommodationCrud/GetById",
+            accommodation__crud__pb2.DtoId.SerializeToString,
             accommodation__crud__pb2.Accommodation.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def Create(request,
+    def Create(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/Create',
+            "/AccommodationCrud/Create",
             accommodation__crud__pb2.Accommodation.SerializeToString,
-            accommodation__crud__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            accommodation__crud__pb2.EmptyAccommodation.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def Delete(request,
+    def Delete(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/Delete',
-            accommodation__crud__pb2.AccommodationId.SerializeToString,
-            accommodation__crud__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            "/AccommodationCrud/Delete",
+            accommodation__crud__pb2.DtoId.SerializeToString,
+            accommodation__crud__pb2.EmptyAccommodation.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def Update(request,
+    def Update(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AccommodationCrud/Update',
+            "/AccommodationCrud/Update",
             accommodation__crud__pb2.Accommodation.SerializeToString,
-            accommodation__crud__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            accommodation__crud__pb2.EmptyAccommodation.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def GetByLocation(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/AccommodationCrud/GetByLocation",
+            accommodation__crud__pb2.Location.SerializeToString,
+            accommodation__crud__pb2.Accommodations.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def DeleteByUser(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/AccommodationCrud/DeleteByUser",
+            accommodation__crud__pb2.DtoId.SerializeToString,
+            accommodation__crud__pb2.EmptyAccommodation.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def GetByUser(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/AccommodationCrud/GetByUser",
+            accommodation__crud__pb2.DtoId.SerializeToString,
+            accommodation__crud__pb2.Accommodations.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )

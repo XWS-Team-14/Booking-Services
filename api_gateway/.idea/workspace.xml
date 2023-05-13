@@ -5,14 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/api/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/endpoints/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/endpoints/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/accommodation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/middlewares/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/middleware/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/schemas/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schema/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/schemas/accommodation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schema/accommodation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../availability/.idea/availability.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../reservation/.idea/reservation.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/api_gateway.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/api_gateway.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/availability.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/availability.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utils/jwt.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/jwt.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,14 +38,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "C:/Users/Sanja/Documents/XWS/Microservices/Booking-Services/accommodation"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\api_gateway\app" />
       <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\api_gateway\app\api\v1" />
       <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\api_gateway\app\api" />
     </key>

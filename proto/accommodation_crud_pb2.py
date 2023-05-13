@@ -6,30 +6,30 @@ from google.protobuf.internal import builder as _builder
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database
+
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-
-
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x18\x61\x63\x63ommodation_crud.proto\"\x07\n\x05\x45mpty\"F\n\x08Location\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07\x63ountry\x18\x02 \x01(\t\x12\x0c\n\x04\x63ity\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\"\xa7\x01\n\rAccommodation\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x1b\n\x08location\x18\x03 \x01(\x0b\x32\t.Location\x12\x10\n\x08\x66\x65\x61tures\x18\x04 \x03(\t\x12\x11\n\timage_url\x18\x05 \x01(\t\x12\x12\n\nimage_data\x18\x06 \x01(\x0c\x12\x12\n\nmin_guests\x18\x07 \x01(\x05\x12\x12\n\nmax_guests\x18\x08 \x01(\x05\"/\n\x0e\x41\x63\x63ommodations\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.Accommodation\"\x1d\n\x0f\x41\x63\x63ommodationId\x12\n\n\x02id\x18\x01 \x01(\t2\xcb\x01\n\x11\x41\x63\x63ommodationCrud\x12!\n\x06GetAll\x12\x06.Empty\x1a\x0f.Accommodations\x12+\n\x07GetById\x12\x10.AccommodationId\x1a\x0e.Accommodation\x12 \n\x06\x43reate\x12\x0e.Accommodation\x1a\x06.Empty\x12\"\n\x06\x44\x65lete\x12\x10.AccommodationId\x1a\x06.Empty\x12 \n\x06Update\x12\x0e.Accommodation\x1a\x06.Emptyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
+    b'\n\x18\x61\x63\x63ommodation_crud.proto"\x14\n\x12\x45mptyAccommodation":\n\x08Location\x12\x0f\n\x07\x63ountry\x18\x02 \x01(\t\x12\x0c\n\x04\x63ity\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t"\xa5\x01\n\rAccommodation\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x1b\n\x08location\x18\x04 \x01(\x0b\x32\t.Location\x12\x10\n\x08\x66\x65\x61tures\x18\x05 \x03(\t\x12\x12\n\nimage_urls\x18\x06 \x03(\t\x12\x12\n\nmin_guests\x18\x07 \x01(\x05\x12\x12\n\nmax_guests\x18\x08 \x01(\x05"/\n\x0e\x41\x63\x63ommodations\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.Accommodation"\x13\n\x05\x44toId\x12\n\n\x02id\x18\x01 \x01(\t2\xeb\x02\n\x11\x41\x63\x63ommodationCrud\x12.\n\x06GetAll\x12\x13.EmptyAccommodation\x1a\x0f.Accommodations\x12!\n\x07GetById\x12\x06.DtoId\x1a\x0e.Accommodation\x12-\n\x06\x43reate\x12\x0e.Accommodation\x1a\x13.EmptyAccommodation\x12%\n\x06\x44\x65lete\x12\x06.DtoId\x1a\x13.EmptyAccommodation\x12-\n\x06Update\x12\x0e.Accommodation\x1a\x13.EmptyAccommodation\x12+\n\rGetByLocation\x12\t.Location\x1a\x0f.Accommodations\x12+\n\x0c\x44\x65leteByUser\x12\x06.DtoId\x1a\x13.EmptyAccommodation\x12$\n\tGetByUser\x12\x06.DtoId\x1a\x0f.Accommodationsb\x06proto3'
+)
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'accommodation_crud_pb2', globals())
-if _descriptor._USE_C_DESCRIPTORS == False:
-
-  DESCRIPTOR._options = None
-  _EMPTY._serialized_start=28
-  _EMPTY._serialized_end=35
-  _LOCATION._serialized_start=37
-  _LOCATION._serialized_end=107
-  _ACCOMMODATION._serialized_start=110
-  _ACCOMMODATION._serialized_end=277
-  _ACCOMMODATIONS._serialized_start=279
-  _ACCOMMODATIONS._serialized_end=326
-  _ACCOMMODATIONID._serialized_start=328
-  _ACCOMMODATIONID._serialized_end=357
-  _ACCOMMODATIONCRUD._serialized_start=360
-  _ACCOMMODATIONCRUD._serialized_end=563
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "accommodation_crud_pb2", globals())
+if _descriptor._USE_C_DESCRIPTORS is False:
+    DESCRIPTOR._options = None
+    _EMPTYACCOMMODATION._serialized_start = 28
+    _EMPTYACCOMMODATION._serialized_end = 48
+    _LOCATION._serialized_start = 50
+    _LOCATION._serialized_end = 108
+    _ACCOMMODATION._serialized_start = 111
+    _ACCOMMODATION._serialized_end = 276
+    _ACCOMMODATIONS._serialized_start = 278
+    _ACCOMMODATIONS._serialized_end = 325
+    _DTOID._serialized_start = 327
+    _DTOID._serialized_end = 346
+    _ACCOMMODATIONCRUD._serialized_start = 349
+    _ACCOMMODATIONCRUD._serialized_end = 712
 # @@protoc_insertion_point(module_scope)

@@ -17,29 +17,29 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         reservation = ReservationHelper.convertDto(request);
         if not ReservationHelper.validateDates(reservation.beginning_date, reservation.ending_date):
             logger.exception('Dates are not valid');
-            return reservation_crud_pb2.Result(status="Invalid date");
+            return reservation_crud_pb2.ReservationResult(status="Invalid date");
         reservation.id = uuid.uuid4()
         await reservation.insert()
         logger.success('reservation succesfully saved');
-        return reservation_crud_pb2.Result(status="Success");
+        return reservation_crud_pb2.ReservationResult(status="Success");
 
     async def Update(self, request, context):
         logger.success('Request for update of reservation accepted');
         reservation = ReservationHelper.convertDto(request);
         if not ReservationHelper.validateDates(reservation.beginning_date, reservation.ending_date):
             logger.exception('Dates are not valid');
-            return reservation_crud_pb2.Result(status="Invalid date");
+            return reservation_crud_pb2.ReservationResult(status="Invalid date");
         try:
             item = await reservation.get(reservation.id);
             if not item:
                 logger.info('Update failed, document with given id not found');
-                return reservation_crud_pb2.Result(status="Failed, not found");
+                return reservation_crud_pb2.ReservationResult(status="Failed, not found");
             await reservation.replace()
         except (ValueError, DocumentNotFound):
             logger.info('Update failed, document with given id not found');
-            return reservation_crud_pb2.Result(status="Failed, not found");
+            return reservation_crud_pb2.ReservationResult(status="Failed, not found");
         logger.success('Reservation succesfully updated');
-        return reservation_crud_pb2.Result(status="Success");
+        return reservation_crud_pb2.ReservationResult(status="Success");
 
     async def Delete(self, request, context):
         logger.success('Request for deletion of Reservation accepted');
@@ -47,13 +47,13 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
             item = await Reservation.get(request.id);
             if not item:
                 logger.info('Delete failed, document with given id not found');
-                return reservation_crud_pb2.Result(status="Failed, not found");
+                return reservation_crud_pb2.ReservationResult(status="Failed, not found");
         except (ValueError, DocumentNotFound):
             logger.info('Delete failed, document with given id not found');
-            return reservation_crud_pb2.Result(status="Failed, not found");
+            return reservation_crud_pb2.ReservationResult(status="Failed, not found");
         await item.delete();
         logger.success('reservation succesfully deleted');
-        return reservation_crud_pb2.Result(status="Success");
+        return reservation_crud_pb2.ReservationResult(status="Success");
 
     async def GetAll(self, request, context):
         logger.success('Request for fetch all of reservation accepted');
@@ -136,7 +136,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def AcceptReservation(self,request,context):
         reservations = await self.GetReservationsForAcceptance(request,context)
         if not reservations:
-            return reservation_crud_pb2.Result(status="There are no requests that match those characteristics");
+            return reservation_crud_pb2.ReservationResult(status="There are no requests that match those characteristics");
         for reservation in reservations:
             if str(reservation.id) == request.reservation_id:
                 reservation.status = ReservationStatus.ACCEPTED
@@ -146,7 +146,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
                 reservation.status = ReservationStatus.REJECTED
                 reservation_dto = ReservationHelper.convertToDto(reservation)
                 await self.Update(reservation_dto,context)
-        return reservation_crud_pb2.Result(status = "success");
+        return reservation_crud_pb2.ReservationResult(status = "success");
 
     async def GetById(self, request, context):
         logger.success('Request for fetch reservation accepted');

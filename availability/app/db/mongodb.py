@@ -1,6 +1,8 @@
 import sys
 import urllib.parse
 from typing import Optional
+from app.models.availability import Availability
+from app.models.holiday import Holiday
 
 from beanie import init_beanie
 from loguru import logger
@@ -9,7 +11,6 @@ from motor.core import AgnosticCollection
 from motor.core import AgnosticDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.config import get_yaml_config
-from app.models.test import Question
 
 async_mongodb_client = None
 
@@ -73,7 +74,8 @@ async def start_async_mongodb() -> None:
         await init_beanie(
             database=async_mongodb_database,
             document_models=[
-                Question
+                Holiday,
+                Availability
             ],
         )
         logger.success("Started mongodb connection")
