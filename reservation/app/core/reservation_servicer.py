@@ -81,7 +81,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         retVal = reservation_crud_pb2.ReservationDtos()
         for reservation in reservations:
             reservation_dto = ReservationHelper.convertToDto(reservation)
-            if reservation_dto.guest_id == request.guest_id:
+            if reservation_dto.guest.guest_id == request.guest.guest_id:
                 retVal.items.append(reservation_dto)
         return retVal
 

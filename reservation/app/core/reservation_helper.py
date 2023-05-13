@@ -1,6 +1,7 @@
 from datetime import datetime, date
 
 from proto import reservation_crud_pb2
+from ..models.guest import Guest
 from ..models.reservation import Reservation
 from ..models.reservation_status import ReservationStatus
 
@@ -25,11 +26,12 @@ class ReservationHelper():
             status = ReservationStatus.ACCEPTED
         elif request.status == 1:
             status = ReservationStatus.REJECTED
+        guest = Guest(guest_id = request.guest.guest_id, canceledReservations = request.guest.canceledReservations)
         return Reservation(
             id=request.reservation_id,
             accommodation_id=request.accommodation_id,
             host_id=request.host_id,
-            guest_id=request.guest_id,
+            guest=guest,
             number_of_guests=request.number_of_guests,
             beginning_date=beginning,
             ending_date=ending,
@@ -42,7 +44,8 @@ class ReservationHelper():
         retVal.reservation_id = str(reservation.id)
         retVal.accommodation_id = str(reservation.accommodation_id)
         retVal.host_id = str(reservation.host_id)
-        retVal.guest_id = str(reservation.guest_id)
+        retVal.guest.guest_id = str(reservation.guest.guest_id)
+        retVal.guest.canceledReservations = reservation.guest.canceledReservations
         retVal.number_of_guests = reservation.number_of_guests
         retVal.beginning_date = ReservationHelper.convertDateTime(reservation.beginning_date)
         retVal.ending_date = ReservationHelper.convertDateTime(reservation.ending_date)

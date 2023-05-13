@@ -7,4 +7,4 @@ from .reservation import router as reservation_router
 router = APIRouter(prefix="/api")
 router.include_router(auth_router, prefix="/auth")
 router.include_router(accommodation_router, prefix="/accommodation")
-router.include_router(reservation_router, prefix="/router")
+router.include_router(reservation_router, prefix="/reservation")

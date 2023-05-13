@@ -25,7 +25,7 @@ message ReservationDto {
     string reservation_id = 1;
     string accommodation_id = 2;
     string host_id = 3;
-    string guest_id = 4;
+    Guest guest = 4;
     int32 number_of_guests = 5 ;
     string beginning_date = 6;
     string ending_date = 7;
@@ -43,6 +43,10 @@ message ReservationId {
 message HostId {
   string id = 1;
 }
-message GuestId {
-  string id = 1;
+message Guest {
+  string guest_id = 1;
+  int32 canceledReservations = 2;
+}
+message GuestId{
+  string guest_id = 1;
 }

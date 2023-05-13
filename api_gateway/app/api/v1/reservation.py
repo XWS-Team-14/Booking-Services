@@ -122,7 +122,8 @@ async def create(item: ReservationDto):
         reservation.reservation_id = str(item.reservation_id)
         reservation.accommodation_id = str(item.accommodation_id)
         reservation.host_id = str(item.host_id)
-        reservation.guest_id = str(item.guest_id)
+        reservation.guest.guest_id = str(item.guest.guest_id)
+        reservation.guest.canceledReservations = item.guest.canceledReservations
         reservation.number_of_guests = item.number_of_guests
         reservation.beginning_date = str(item.beginning_date)
         reservation.ending_date = str(item.ending_date)
@@ -161,7 +162,8 @@ async def update(item: ReservationDto):
         reservation.reservation_id = str(item.reservation_id)
         reservation.accommodation_id = str(item.accommodation_id)
         reservation.host_id = str(item.host_id)
-        reservation.guest_id = str(item.guest_id)
+        reservation.guest.guest_id = str(item.guest.guest_id)
+        reservation.guest.canceledReservations = item.guest.canceledReservations
         reservation.number_of_guests = item.number_of_guests
         reservation.beginning_date = str(item.beginning_date)
         reservation.ending_date = str(item.ending_date)
@@ -194,7 +196,8 @@ async def AcceptReservation(item: ReservationDto):
         reservation.reservation_id = str(item.reservation_id)
         reservation.accommodation_id = str(item.accommodation_id)
         reservation.host_id = str(item.host_id)
-        reservation.guest_id = str(item.guest_id)
+        reservation.guest.guest_id = str(item.guest.guest_id)
+        reservation.guest.canceledReservations = item.guest.canceledReservations
         reservation.number_of_guests = item.number_of_guests
         reservation.beginning_date = str(item.beginning_date)
         reservation.ending_date = str(item.ending_date)

@@ -3,6 +3,7 @@ from datetime import datetime
 
 from beanie import Document
 
+from .guest import Guest
 from .reservation_status import ReservationStatus
 
 
@@ -11,7 +12,7 @@ class Reservation(Document):
     accommodation_id: uuid.UUID
     host_id: uuid.UUID
     # guest who made the reservation
-    guest_id: uuid.UUID
+    guest: Guest
     number_of_guests: int
     beginning_date: datetime
     ending_date: datetime
@@ -20,5 +21,5 @@ class Reservation(Document):
 
     class Settings:
         indexes = [
-            "reservation_id"
+            "id"
         ]
