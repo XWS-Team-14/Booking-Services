@@ -21,3 +21,6 @@ class AvailabilityDto(BaseModel):
     special_pricing:List[SpecialPricing]
     occupied_intervals :List[DateInterval]
     
+class SearchDetails(BaseModel):
+    interval: DateInterval
+    num_of_guests: int
