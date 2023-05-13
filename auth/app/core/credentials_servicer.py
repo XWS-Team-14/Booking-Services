@@ -161,6 +161,7 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
                 raise UserNotFoundException(credential_id=request.id)
             await credential.delete()
             logger.success("Account with the id {} has been deleted.", request.id)
+            return credential_pb2.Empty()
         except UserNotFoundException as error:
             return credential_pb2.Empty(error_message=error.message, error_code=error.code)
         except Exception:

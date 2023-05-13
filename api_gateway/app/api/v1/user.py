@@ -4,7 +4,7 @@ import grpc
 from fastapi import APIRouter, status, Cookie, Response
 from fastapi_utils.cbv import cbv
 from loguru import logger
-from proto import user_pb2_grpc, user_pb2
+from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2
 from starlette.responses import Response
 
 from app import schemas
@@ -49,12 +49,19 @@ class User:
         user_id = get_id_from_access_token(access_token)
         logger.info(f"Tested delete user {user_id}")
         user_server = get_server("user_server")
+        auth_server = get_server("auth_server")
+        async with grpc.aio.insecure_channel(auth_server) as channel:
+            stub_auth = credential_pb2_grpc.CredentialServiceStub(channel)
+            grpc_auth_response = await stub_auth.Delete(credential_pb2.CredentialId(id=user_id))
+            if grpc_auth_response.error_message:
+                return Response(status_code=grpc_auth_response.error_code, media_type="text/html",
+                                content=grpc_auth_response.error_message)
         async with grpc.aio.insecure_channel(user_server) as channel:
-            stub = user_pb2_grpc.UserServiceStub(channel)
-            grpc_response = await stub.Delete(user_pb2.UserId(id=str(user_id)))
-            if grpc_response.error_message:
-                return Response(status_code=grpc_response.error_code, media_type="text/html",
-                                content=grpc_response.error_message)
+            stub_user = user_pb2_grpc.UserServiceStub(channel)
+            grpc_user_response = await stub_user.Delete(user_pb2.UserId(id=str(user_id)))
+            if grpc_user_response.error_message:
+                return Response(status_code=grpc_user_response.error_code, media_type="text/html",
+                                content=grpc_user_response.error_message)
         return Response(
             status_code=200, media_type="text/html", content="User deleted."
         )
