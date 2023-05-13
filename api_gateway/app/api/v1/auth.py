@@ -10,6 +10,7 @@ from starlette.responses import Response
 from typing import Annotated
 from app.utils.jwt import get_id_from_token
 
+from fastapi.responses import JSONResponse
 from app import schemas
 from app.config import get_yaml_config
 from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2
@@ -66,7 +67,7 @@ class Auth:
             access_token = grpc_response.access_token
             refresh_token = grpc_response.refresh_token
         response = Response(
-            status_code=200, media_type="text/html", content=f"Access: {access_token}\n Refresh: {refresh_token}"
+            status_code=200, media_type="text/html", content=f"{access_token}"
         )
         response.set_cookie(key="access_token", value=access_token, httponly=True)
         response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)

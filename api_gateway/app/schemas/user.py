@@ -6,4 +6,9 @@ class UserDetailsUpdate(BaseModel):
     last_name: str
     gender: str
     home_address: str
-    email: EmailStr
+
+class User(BaseModel):
+    first_name: str
+    last_name: str
+    gender: str
+    home_address: str

@@ -29,7 +29,7 @@ class UserServicer(user_pb2_grpc.UserServiceServicer):
             user = await User.find_one(User.id == uuid.UUID(request.id))
             if user is None:
                 raise UserNotFoundException(user_id=request.id)
-            return user_pb2.UserResponse(id=user.id, first_name=user.first_name, last_name=user.last_name,
+            return user_pb2.UserResponse(id=str(user.id), first_name=user.first_name, last_name=user.last_name,
                                          home_address=user.home_address, gender=user.gender.value)
         except UserNotFoundException as error:
             return user_pb2.UserResponse(id=request.id, error_message=error.message,
