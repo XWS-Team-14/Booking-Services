@@ -12,3 +12,7 @@ static_server:
 accommodation_server:
   ip: "accommodation"
   port: "50051"
+
+availability_server:
+  ip: "availability"
+  port: "50053"
