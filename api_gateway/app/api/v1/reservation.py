@@ -100,6 +100,45 @@ async def getPendingByHost(host_id):
         status_code=200, media_type="application/json", content=json
     )
 
+@router.get(
+    "/host/active/{host_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get pending reservations by host id",
+)
+async def getActiveByHost(host_id):
+    logger.info("Gateway processing getActiveByHostId Reservation request");
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(reservation_server) as channel:
+        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+        data = await stub.GetActiveByHost(reservation_crud_pb2.HostId(id = host_id))
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
+
+@router.get(
+    "/guest/active/{guest_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get pending reservations by guest id",
+)
+async def getActiveByGuest(guest_id):
+    logger.info("Gateway processing getActiveByGuestId Reservation request");
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(reservation_server) as channel:
+        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+        data = await stub.GetActiveByGuest(reservation_crud_pb2.GuestId(guest_id = guest_id))
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
 
 
 @router.post(

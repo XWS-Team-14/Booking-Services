@@ -75,14 +75,37 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
                 retVal.items.append(reservation_dto)
         return retVal
 
+    async def GetActiveByHost(self,request,context):
+        logger.success('Request for fetching active reservations by host accepted');
+        reservations = await Reservation.find_all().to_list()
+        retVal = reservation_crud_pb2.ReservationDtos()
+        for reservation in reservations:
+            if str(reservation.host_id) == request.id:
+                if reservation.beginning_date >= datetime.now():
+                    reservation_dto = ReservationHelper.convertToDto(reservation)
+                    retVal.items.append(reservation_dto)
+        return retVal
+
     async def GetByGuest(self, request, context):
-        logger.success('Request for fetching reservations by host accepted');
+        logger.success('Request for fetching reservations by guest accepted');
         reservations = await Reservation.find_all().to_list()
         retVal = reservation_crud_pb2.ReservationDtos()
         for reservation in reservations:
             reservation_dto = ReservationHelper.convertToDto(reservation)
-            if reservation_dto.guest.guest_id == request.guest.guest_id:
+            if reservation_dto.guest.guest_id == request.guest_id:
                 retVal.items.append(reservation_dto)
+        return retVal
+
+    async def GetActiveByGuest(self,request, context):
+        logger.success('Request for fetching reservations by guest accepted');
+        reservations = await Reservation.find_all().to_list()
+        retVal = reservation_crud_pb2.ReservationDtos()
+        for reservation in reservations:
+
+            if str(reservation.guest.guest_id) == request.guest_id:
+                if reservation.beginning_date >= datetime.now():
+                    reservation_dto = ReservationHelper.convertToDto(reservation)
+                    retVal.items.append(reservation_dto)
         return retVal
 
     async def GetReservationsForAcceptance(self,request,context):

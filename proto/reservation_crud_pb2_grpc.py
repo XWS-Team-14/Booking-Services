@@ -64,6 +64,16 @@ class ReservationCrudStub(object):
                 request_serializer=reservation__crud__pb2.HostId.SerializeToString,
                 response_deserializer=reservation__crud__pb2.ReservationDtos.FromString,
                 )
+        self.GetActiveByGuest = channel.unary_unary(
+                '/ReservationCrud/GetActiveByGuest',
+                request_serializer=reservation__crud__pb2.GuestId.SerializeToString,
+                response_deserializer=reservation__crud__pb2.ReservationDtos.FromString,
+                )
+        self.GetActiveByHost = channel.unary_unary(
+                '/ReservationCrud/GetActiveByHost',
+                request_serializer=reservation__crud__pb2.HostId.SerializeToString,
+                response_deserializer=reservation__crud__pb2.ReservationDtos.FromString,
+                )
 
 
 class ReservationCrudServicer(object):
@@ -129,6 +139,18 @@ class ReservationCrudServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetActiveByGuest(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetActiveByHost(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ReservationCrudServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -179,6 +201,16 @@ def add_ReservationCrudServicer_to_server(servicer, server):
             ),
             'GetPendingReservationsByHost': grpc.unary_unary_rpc_method_handler(
                     servicer.GetPendingReservationsByHost,
+                    request_deserializer=reservation__crud__pb2.HostId.FromString,
+                    response_serializer=reservation__crud__pb2.ReservationDtos.SerializeToString,
+            ),
+            'GetActiveByGuest': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetActiveByGuest,
+                    request_deserializer=reservation__crud__pb2.GuestId.FromString,
+                    response_serializer=reservation__crud__pb2.ReservationDtos.SerializeToString,
+            ),
+            'GetActiveByHost': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetActiveByHost,
                     request_deserializer=reservation__crud__pb2.HostId.FromString,
                     response_serializer=reservation__crud__pb2.ReservationDtos.SerializeToString,
             ),
@@ -357,6 +389,40 @@ class ReservationCrud(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/GetPendingReservationsByHost',
+            reservation__crud__pb2.HostId.SerializeToString,
+            reservation__crud__pb2.ReservationDtos.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetActiveByGuest(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ReservationCrud/GetActiveByGuest',
+            reservation__crud__pb2.GuestId.SerializeToString,
+            reservation__crud__pb2.ReservationDtos.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetActiveByHost(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ReservationCrud/GetActiveByHost',
             reservation__crud__pb2.HostId.SerializeToString,
             reservation__crud__pb2.ReservationDtos.FromString,
             options, channel_credentials,

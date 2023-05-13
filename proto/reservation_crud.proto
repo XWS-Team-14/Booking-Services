@@ -11,7 +11,8 @@ service ReservationCrud {
   rpc GetReservationsForAcceptance(ReservationDto) returns (ReservationDtos);
   rpc AcceptReservation (ReservationDto) returns (Result);
   rpc GetPendingReservationsByHost(HostId) returns (ReservationDtos);
-
+  rpc GetActiveByGuest(GuestId) returns (ReservationDtos);
+  rpc GetActiveByHost(HostId) returns (ReservationDtos);
 }
 
 message Empty {
