@@ -9,24 +9,22 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
     async def Delete(self, request, context):
         logger.info("Delete request started")
         try:
-            obj_to_delete = await Accommodation.find_one(id == request.id)
+            await Accommodation.find_one(id == request.id).delete()
         except Exception as e:
             logger.error(f"Error {e}")
             return accommodation_crud_pb2.Empty()
-        await obj_to_delete.delete()
         logger.success(f"Deleted an object with id = {request.id}")
         return accommodation_crud_pb2.Empty()
 
     async def DeleteByUser(self, request, context):
         logger.info("Delete request started")
         try:
-            obj_to_delete = await Accommodation.find(
+            await Accommodation.find(
                 Accommodation.user_id == uuid.UUID(request.id)
-            )
+            ).delete()
         except Exception as e:
             logger.error(f"Error {e}")
             return accommodation_crud_pb2.Empty()
-        await obj_to_delete.delete()
         logger.success(f"Deleted an object with id = {request.id}")
         return accommodation_crud_pb2.Empty()
 

@@ -12,6 +12,7 @@ from types import SimpleNamespace
 from proto import accommodation_crud_pb2_grpc
 from proto import accommodation_crud_pb2
 from google.protobuf.json_format import MessageToJson
+from loguru import logger
 
 router = APIRouter()
 
@@ -115,10 +116,12 @@ async def GetByUserId(user_id: str):
     )
     # fix paths for image_urls
     updated_url = "http://localhost:8000/api/static/images/"
-    for item in res.items:
-        updated_urls = []
-        for img_url in item.imageUrls:
-            updated_urls.append(updated_url + img_url)
-        item.imageUrls = updated_urls
-
+    try:
+        for item in res.items:
+            updated_urls = []
+            for img_url in item.imageUrls:
+                updated_urls.append(updated_url + img_url)
+            item.imageUrls = updated_urls
+    except Exception as e:
+        logger.error(f"Error {e}")
     return res
