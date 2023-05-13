@@ -1,11 +1,12 @@
 import jwt
 
-from app.constants import JWT_ACCESS_SECRET
+from app.constants import JWT_ACCESS_SECRET, JWT_REFRESH_SECRET
 
 
-def decode_access_token(access_token: str):
-    return jwt.decode(access_token, JWT_ACCESS_SECRET, algorithms=["HS256"])
+def decode_token(token: str, token_type: str = "access"):
+    secret = JWT_REFRESH_SECRET if token_type == "refresh" else JWT_ACCESS_SECRET
+    return jwt.decode(token, secret, algorithms=["HS256"])
 
 
-def get_id_from_access_token(access_token: str):
-    return decode_access_token(access_token).get("id")
+def get_id_from_token(token: str, token_type: str = "access"):
+    return decode_token(token, token_type).get("id")

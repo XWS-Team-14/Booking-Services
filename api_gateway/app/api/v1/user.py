@@ -9,7 +9,7 @@ from starlette.responses import Response
 
 from app import schemas
 from app.utils import get_server
-from app.utils.jwt import get_id_from_access_token
+from app.utils.jwt import get_id_from_token
 
 router = APIRouter(
     tags=["User management"],
@@ -25,7 +25,7 @@ class User:
     )
     async def update_user_details(self, payload: schemas.UserDetailsUpdate,
                                   access_token: Annotated[str | None, Cookie()] = None) -> Response:
-        user_id = get_id_from_access_token(access_token)
+        user_id = get_id_from_token(access_token)
         logger.info(f"Tested update user details {user_id}")
         user_server = get_server("user_server")
         async with grpc.aio.insecure_channel(user_server) as channel:
@@ -46,7 +46,7 @@ class User:
         description="Delete user",
     )
     async def delete(self, access_token: Annotated[str | None, Cookie()] = None) -> Response:
-        user_id = get_id_from_access_token(access_token)
+        user_id = get_id_from_token(access_token)
         logger.info(f"Tested delete user {user_id}")
         user_server = get_server("user_server")
         auth_server = get_server("auth_server")

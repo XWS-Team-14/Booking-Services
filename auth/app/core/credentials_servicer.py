@@ -49,13 +49,11 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
                 raise UserNotFoundException()
             access_token = jwt.encode({
                 "id": str(credential.id),
-                "email": credential.email,
                 "role": credential.role.value,
-                "exp": datetime.utcnow() + timedelta(minutes=30)
+                "exp": datetime.utcnow() + timedelta(minutes=1)
             }, JWT_ACCESS_SECRET)
             refresh_token = jwt.encode({
                 "id": str(credential.id),
-                "email": credential.email,
                 "role": credential.role.value,
                 "exp": datetime.utcnow() + timedelta(days=7)
             }, JWT_REFRESH_SECRET)
@@ -186,7 +184,7 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             Input: Refresh token.
             Output: Access token, refresh token, or error. """
         try:
-            payload = jwt.decode(request.refresh_token, JWT_ACCESS_SECRET)
+            payload = jwt.decode(request.refresh_token, JWT_REFRESH_SECRET, algorithms=["HS256"])
             credential = Credential.find_one(Credential.id == payload.get("id"))
             if credential is None:
                 raise UserNotFoundException(credential_id=payload.get("id"))

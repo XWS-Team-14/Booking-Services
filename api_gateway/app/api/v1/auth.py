@@ -7,7 +7,7 @@ from loguru import logger
 import grpc
 from starlette.responses import Response
 from typing import Annotated
-from app.utils.jwt import get_id_from_access_token
+from app.utils.jwt import get_id_from_token
 
 from app import schemas
 from app.config import get_yaml_config
@@ -68,7 +68,31 @@ class Auth:
         response = Response(
             status_code=200, media_type="text/html", content=f"User logged in."
         )
-        print(access_token)
+        response.set_cookie(key="access_token", value=access_token, httponly=True)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+        return response
+
+    @router.post(
+        "/token/refresh",
+        status_code=status.HTTP_200_OK,
+        description="Refresh access token",
+    )
+    async def refresh_token(self, refresh_token: Annotated[str | None, Cookie()] = None) -> Response:
+        user_id = get_id_from_token(refresh_token, "refresh")
+        logger.info(f"Tested refresh token for user {user_id}")
+        auth_server = get_server("auth_server")
+        async with grpc.aio.insecure_channel(auth_server) as channel:
+            stub = credential_pb2_grpc.CredentialServiceStub(channel)
+            grpc_response = await stub.RefreshToken(credential_pb2.TokenRefresh(
+                refresh_token=refresh_token))
+            if grpc_response.error_message:
+                return Response(status_code=grpc_response.error_code, media_type="text/html",
+                                content=grpc_response.error_message)
+            access_token = grpc_response.access_token
+            refresh_token = grpc_response.refresh_token
+        response = Response(
+            status_code=200, media_type="text/html", content=f"User logged in."
+        )
         response.set_cookie(key="access_token", value=access_token, httponly=True)
         response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
         return response
@@ -85,7 +109,7 @@ class Auth:
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.UpdatePassword(credential_pb2.PasswordUpdate(
-                id=get_id_from_access_token(access_token), old_password=payload.old_password,
+                id=get_id_from_token(access_token), old_password=payload.old_password,
                 new_password=payload.new_password))
             if grpc_response.error_message:
                 return Response(status_code=grpc_response.error_code, media_type="text/html",
@@ -105,7 +129,7 @@ class Auth:
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.UpdateEmail(credential_pb2.EmailUpdate(
-                id=get_id_from_access_token(access_token), old_email=payload.old_email,
+                id=get_id_from_token(access_token), old_email=payload.old_email,
                 new_email=payload.new_email))
             if grpc_response.error_message:
                 return Response(status_code=grpc_response.error_code, media_type="text/html",
