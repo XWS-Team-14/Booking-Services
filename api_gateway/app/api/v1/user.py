@@ -7,12 +7,12 @@ from fastapi.responses import JSONResponse
 from fastapi_utils.cbv import cbv
 from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
-from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2
+from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2, accommodation_crud_pb2_grpc, accommodation_crud_pb2
 from starlette.responses import Response
 
 from app import schemas
 from app.utils import get_server
-from app.utils.jwt import get_id_from_token
+from app.utils.jwt import get_id_from_token, get_role_from_token
 
 router = APIRouter(
     tags=["User management"],
@@ -83,6 +83,7 @@ class User:
     async def delete(self, access_token: Annotated[str | None, Cookie()] = None) -> Response:
         try:
             user_id = get_id_from_token(access_token)
+            user_role = get_role_from_token(access_token)
         except ExpiredSignatureError:
             return Response(status_code=401, media_type="text/html", content="Token expired.")
         except InvalidTokenError:
@@ -90,7 +91,8 @@ class User:
         logger.info(f"Tested delete user {user_id}")
         user_server = get_server("user_server")
         auth_server = get_server("auth_server")
-        # TODO: Add accommodation and reservation checks.
+        accommodation_server = get_server("accommodation_server")
+        # TODO: Add reservation checks.
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub_auth = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_auth_response = await stub_auth.Delete(credential_pb2.CredentialId(id=user_id))
@@ -103,10 +105,14 @@ class User:
             if grpc_user_response.error_message:
                 return Response(status_code=grpc_user_response.error_code, media_type="text/html",
                                 content=grpc_user_response.error_message)
+        if user_role == "host":
+            async with grpc.aio.insecure_channel(accommodation_server) as channel:
+                stub_accommodation = accommodation_crud_pb2_grpc.CredentialServiceStub(channel)
+                grpc_accommodation_response = await stub_accommodation.Delete(accommodation_crud_pb2.DtoId(id=user_id))
         response = Response(
             status_code=200, media_type="text/html", content="User deleted."
         )
         response.delete_cookie("access_token")
         response.delete_cookie("refresh_token")
 
-        return response;
+        return response

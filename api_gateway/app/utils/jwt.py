@@ -10,3 +10,7 @@ def decode_token(token: str, token_type: str = "access"):
 
 def get_id_from_token(token: str, token_type: str = "access"):
     return decode_token(token, token_type).get("id")
+
+
+def get_role_from_token(token: str, token_type: str = "access"):
+    return decode_token(token, token_type).get("role")

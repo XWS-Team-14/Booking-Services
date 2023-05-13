@@ -8,6 +8,9 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="user_control" />
     <orderEntry type="module" module-name="auth" />
+    <orderEntry type="module" module-name="availability" />
+    <orderEntry type="module" module-name="reservation" />
+    <orderEntry type="module" module-name="accommodation" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
