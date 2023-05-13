@@ -1,4 +1,5 @@
 import uuid
+from datetime import date, datetime
 
 from beanie.exceptions import DocumentNotFound
 
@@ -70,7 +71,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         retVal = reservation_crud_pb2.ReservationDtos()
         for reservation in reservations:
             reservation_dto = ReservationHelper.convertToDto(reservation)
-            if reservation_dto.host_id.equals(request.host_id):
+            if reservation_dto.host_id == request.id:
                 retVal.items.append(reservation_dto)
         return retVal
 
@@ -80,32 +81,49 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         retVal = reservation_crud_pb2.ReservationDtos()
         for reservation in reservations:
             reservation_dto = ReservationHelper.convertToDto(reservation)
-            if reservation_dto.guest_id.equals(request.guest_id):
+            if reservation_dto.guest_id == request.guest_id:
                 retVal.items.append(reservation_dto)
         return retVal
+
     async def GetReservationsForAcceptance(self,request,context):
         reservations = await Reservation.find_all().to_list()
-        retVal = reservation_crud_pb2.ReservationDtos()
+        acceptedReservation = ReservationHelper.convertDto(request)
+        retVal = []
         for reservation in reservations:
-            reservation_dto = ReservationHelper.convertToDto(reservation)
-            if reservation_dto.host_id.equals(request.host_id):
-                if reservation_dto.beginning_date >= request.beginning_date and reservation_dto.ending_date <= request.ending_date:
-                    if reservation_dto.accommodation_id.equals(request.accommodation_id):
-                        retVal.items.append(reservation_dto)
+            if reservation.accommodation_id == acceptedReservation.accommodation_id:
+                if (reservation.beginning_date >= acceptedReservation.beginning_date and reservation.beginning_date <= acceptedReservation.ending_date)\
+                        or (reservation.beginning_date <= acceptedReservation.beginning_date and reservation.ending_date >= acceptedReservation.ending_date)\
+                        or (reservation.ending_date >= acceptedReservation.beginning_date and reservation.ending_date <= acceptedReservation.ending_date):
+                    if(reservation.status == ReservationStatus.PENDING):
+
+                        retVal.append(reservation)
         return retVal
+
+    async def GetPendingReservationsByHost(self,request,context):
+        reservations = await self.GetByHost(request,context)
+        pendingReservations = reservation_crud_pb2.ReservationDtos()
+        for reservation_dto in reservations.items:
+            reservation = ReservationHelper.convertDto(reservation_dto)
+            if reservation.status == ReservationStatus.PENDING and reservation.beginning_date > datetime.now():
+                pendingReservations.items.append(ReservationHelper.convertToDto(reservation))
+        return pendingReservations
 
 
 
     async def AcceptReservation(self,request,context):
-        reservations = self.GetReservationsForAcceptance(self,request,context)
+        reservations = await self.GetReservationsForAcceptance(request,context)
+        if not reservations:
+            return reservation_crud_pb2.Result(status="There are no requests that match those characteristics");
         for reservation in reservations:
-            reservation_dto = ReservationHelper.convertToDto(reservation)
-            if reservation_dto.id.equals(request.id):
-                self.Update(self,reservation_dto,context)
+            if str(reservation.id) == request.reservation_id:
+                reservation.status = ReservationStatus.ACCEPTED
+                reservation_dto = ReservationHelper.convertToDto(reservation)
+                await self.Update(reservation_dto,context)
             else:
-                reservation_dto.status = ReservationStatus.REJECTED
-                self.Update(self,reservation_dto,context)
-        return reservation_crud_pb2.Result(status="Success");
+                reservation.status = ReservationStatus.REJECTED
+                reservation_dto = ReservationHelper.convertToDto(reservation)
+                await self.Update(reservation_dto,context)
+        return reservation_crud_pb2.Result(status = "success");
 
     async def GetById(self, request, context):
         logger.success('Request for fetch reservation accepted');

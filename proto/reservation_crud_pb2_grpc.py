@@ -59,6 +59,11 @@ class ReservationCrudStub(object):
                 request_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
                 response_deserializer=reservation__crud__pb2.Result.FromString,
                 )
+        self.GetPendingReservationsByHost = channel.unary_unary(
+                '/ReservationCrud/GetPendingReservationsByHost',
+                request_serializer=reservation__crud__pb2.HostId.SerializeToString,
+                response_deserializer=reservation__crud__pb2.ReservationDtos.FromString,
+                )
 
 
 class ReservationCrudServicer(object):
@@ -118,6 +123,12 @@ class ReservationCrudServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetPendingReservationsByHost(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ReservationCrudServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -165,6 +176,11 @@ def add_ReservationCrudServicer_to_server(servicer, server):
                     servicer.AcceptReservation,
                     request_deserializer=reservation__crud__pb2.ReservationDto.FromString,
                     response_serializer=reservation__crud__pb2.Result.SerializeToString,
+            ),
+            'GetPendingReservationsByHost': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPendingReservationsByHost,
+                    request_deserializer=reservation__crud__pb2.HostId.FromString,
+                    response_serializer=reservation__crud__pb2.ReservationDtos.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -326,5 +342,22 @@ class ReservationCrud(object):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/AcceptReservation',
             reservation__crud__pb2.ReservationDto.SerializeToString,
             reservation__crud__pb2.Result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetPendingReservationsByHost(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ReservationCrud/GetPendingReservationsByHost',
+            reservation__crud__pb2.HostId.SerializeToString,
+            reservation__crud__pb2.ReservationDtos.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

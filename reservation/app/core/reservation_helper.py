@@ -50,5 +50,6 @@ class ReservationHelper():
         retVal.status = reservation.status.value
         return retVal
 
+
     def validateDates(start, end):
         return date.today() < start.date() < end.date()

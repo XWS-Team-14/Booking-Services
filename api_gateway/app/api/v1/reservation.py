@@ -2,7 +2,7 @@ from ...schemas.reservation import ReservationDto
 from ...config import get_yaml_config
 from fastapi import APIRouter, status
 from fastapi.responses import Response
-#from fastapi_utils.cbv import cbv
+# from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
 import json
 from loguru import logger
@@ -60,6 +60,47 @@ async def getById(item_id):
         status_code=200, media_type="application/json", content=json
     )
 
+@router.get(
+    "/host/{host_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get all reservations by host id",
+)
+async def getByHost(host_id):
+    logger.info("Gateway processing getPendingByHostId Reservation request");
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(reservation_server) as channel:
+        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+        data = await stub.GetByHost(reservation_crud_pb2.HostId( id = host_id))
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
+
+@router.get(
+    "/host/pending/{host_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get pending reservations by host id",
+)
+async def getPendingByHost(host_id):
+    logger.info("Gateway processing getPendingByHostId Reservation request");
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(reservation_server) as channel:
+        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+        data = await stub.GetPendingReservationsByHost(reservation_crud_pb2.HostId(id = host_id))
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
+
+
 
 @router.post(
     "/create",
@@ -88,7 +129,6 @@ async def create(item: ReservationDto):
         reservation.total_price = item.total_price
         reservation.status = item.status
 
-
         response = await stub.Create(reservation);
 
         if response.status == "Invalid date":
@@ -114,7 +154,6 @@ async def update(item: ReservationDto):
             + get_yaml_config().get("reservation_server").get("port")
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
-        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
 
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
 
@@ -134,6 +173,40 @@ async def update(item: ReservationDto):
         status_code=200, media_type="application/json", content=response.status
     )
 
+
+@router.put(
+    "/accept",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Accept a reservation",
+)
+async def AcceptReservation(item: ReservationDto):
+    logger.info("Gateway processing accept reservation request");
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(reservation_server) as channel:
+
+        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+
+        reservation = reservation_crud_pb2.ReservationDto()
+        reservation.reservation_id = str(item.reservation_id)
+        reservation.accommodation_id = str(item.accommodation_id)
+        reservation.host_id = str(item.host_id)
+        reservation.guest_id = str(item.guest_id)
+        reservation.number_of_guests = item.number_of_guests
+        reservation.beginning_date = str(item.beginning_date)
+        reservation.ending_date = str(item.ending_date)
+        reservation.total_price = item.total_price
+        reservation.status = item.status
+
+        response = await stub.AcceptReservation(reservation);
+        #after completing this step, adequate changes should be made in availability servicer
+
+    return Response(
+        status_code=200, media_type="application/json", content=response.status
+    )
 
 @router.delete(
     "/delete/{item_id}",
