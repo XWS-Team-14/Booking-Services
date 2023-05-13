@@ -1,0 +1,42 @@
+syntax = "proto3";
+package search;
+service AccommodationCrud {
+  rpc Search (SearchParams) returns (SearchResults);
+}
+
+message Location {
+  string country = 1;
+  string city = 2;
+  string address = 3;
+}
+
+message SearchParams {
+  Location location = 1;
+  int32 guests = 2;
+  SearchDetails details = 3;  
+}
+
+message SearchResults {
+  string reservation_id = 1;
+  string accommodation_id = 2;
+  string host_id = 3;
+  string name = 4;
+  Location location = 5;
+  repeated string features = 6;
+  repeated string image_urls = 7;
+  int32 min_guests = 8;
+  int32 max_guests = 9;
+  double base_price = 10;
+  double total_price = 11;
+}
+
+message SearchDetails{
+Interval interval = 1;
+int32 num_of_guests = 2;
+}
+
+
+message Interval{
+string date_start = 1;
+string date_end = 2;
+}
