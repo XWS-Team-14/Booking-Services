@@ -1,11 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.responses import ORJSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from app.api import router
+from app import api
 
 app = FastAPI(
     debug=True,
-    title="Booking Server",
+    title="Resources API",
     version="1.00",
     description="Fastapi tester",
     # Set current documentation specs to v1
@@ -15,17 +14,7 @@ app = FastAPI(
         "url": "https://www.gnu.org/licenses/gpl-3.0.en.html",
     },
 )
-origins = [
-    "http://localhost:3000",
-]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 # Add the router responsible for all /api/ endpoint requests
-app.include_router(router)
+app.include_router(api.router)
 # Include redirection router in the main app

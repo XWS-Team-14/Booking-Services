@@ -1,18 +1,20 @@
 syntax = "proto3";
 
 service AccommodationCrud {
-  rpc GetAll (Empty) returns (Accommodations);
-  rpc GetById (AccommodationId) returns (Accommodation);
-  rpc Create (Accommodation) returns (Empty);
-  rpc Delete (AccommodationId) returns (Empty);
-  rpc Update (Accommodation) returns (Empty);
+  rpc GetAll (EmptyAccommodation) returns (Accommodations);
+  rpc GetById (DtoId) returns (Accommodation);
+  rpc Create (Accommodation) returns (EmptyAccommodation);
+  rpc Delete (DtoId) returns (EmptyAccommodation);
+  rpc Update (Accommodation) returns (EmptyAccommodation);
+  rpc GetByLocation (Location) returns (Accommodations);
+  rpc DeleteByUser (DtoId) returns (EmptyAccommodation);
+  rpc GetByUser (DtoId) returns (Accommodations);
 }
 
-message Empty {
+message EmptyAccommodation {
 }
 
 message Location {
-  string id = 1;
   string country = 2;
   string city = 3;
   string address = 4;
@@ -20,11 +22,11 @@ message Location {
 
 message Accommodation {
   string id = 1;
-  string name = 2;
-  Location location = 3;
-  repeated string features = 4;
-  string image_url = 5;
-  bytes image_data = 6;
+  string user_id = 2;
+  string name = 3;
+  Location location = 4;
+  repeated string features = 5;
+  repeated string image_urls = 6;
   int32 min_guests = 7;
   int32 max_guests = 8;
 }
@@ -33,6 +35,6 @@ message Accommodations {
   repeated Accommodation items = 1;
 }
 
-message AccommodationId {
+message DtoId {
   string id = 1;
 }
