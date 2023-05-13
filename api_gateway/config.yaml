@@ -4,3 +4,6 @@ app:
   version: "1.0"
   api_prefix: "v1"
 
+availability_server:
+  ip: "availability"
+  port: "50053"
