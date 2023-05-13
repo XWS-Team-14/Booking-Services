@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 from app.api import router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     debug=True,
