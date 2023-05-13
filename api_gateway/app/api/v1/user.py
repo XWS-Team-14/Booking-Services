@@ -103,6 +103,10 @@ class User:
             if grpc_user_response.error_message:
                 return Response(status_code=grpc_user_response.error_code, media_type="text/html",
                                 content=grpc_user_response.error_message)
-        return Response(
+        response = Response(
             status_code=200, media_type="text/html", content="User deleted."
         )
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+
+        return response;
