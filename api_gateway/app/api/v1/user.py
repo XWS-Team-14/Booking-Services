@@ -3,6 +3,7 @@ from typing import Annotated
 import grpc
 from fastapi import APIRouter, status, Cookie, Response
 from fastapi_utils.cbv import cbv
+from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
 from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2
 from starlette.responses import Response
@@ -25,7 +26,12 @@ class User:
     )
     async def update_user_details(self, payload: schemas.UserDetailsUpdate,
                                   access_token: Annotated[str | None, Cookie()] = None) -> Response:
-        user_id = get_id_from_token(access_token)
+        try:
+            user_id = get_id_from_token(access_token)
+        except ExpiredSignatureError:
+            return Response(status_code=401, media_type="text/html", content="Token expired.")
+        except InvalidTokenError:
+            return Response(status_code=401, media_type="text/html", content="Invalid token.")
         logger.info(f"Tested update user details {user_id}")
         user_server = get_server("user_server")
         async with grpc.aio.insecure_channel(user_server) as channel:
@@ -46,7 +52,12 @@ class User:
         description="Delete user",
     )
     async def delete(self, access_token: Annotated[str | None, Cookie()] = None) -> Response:
-        user_id = get_id_from_token(access_token)
+        try:
+            user_id = get_id_from_token(access_token)
+        except ExpiredSignatureError:
+            return Response(status_code=401, media_type="text/html", content="Token expired.")
+        except InvalidTokenError:
+            return Response(status_code=401, media_type="text/html", content="Invalid token.")
         logger.info(f"Tested delete user {user_id}")
         user_server = get_server("user_server")
         auth_server = get_server("auth_server")

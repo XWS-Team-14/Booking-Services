@@ -3,6 +3,7 @@ import uuid
 from fastapi import APIRouter, status, Cookie
 from fastapi.responses import HTMLResponse, Response
 from fastapi_utils.cbv import cbv
+from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
 import grpc
 from starlette.responses import Response
@@ -106,10 +107,16 @@ class Auth:
                               access_token: Annotated[str | None, Cookie()] = None) -> Response:
         logger.info(f"Tested password update {access_token}")
         auth_server = get_server("auth_server")
+        try:
+            user_id = get_id_from_token(access_token)
+        except ExpiredSignatureError:
+            return Response(status_code=401, media_type="text/html", content="Token expired.")
+        except InvalidTokenError:
+            return Response(status_code=401, media_type="text/html", content="Invalid token.")
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.UpdatePassword(credential_pb2.PasswordUpdate(
-                id=get_id_from_token(access_token), old_password=payload.old_password,
+                id=user_id, old_password=payload.old_password,
                 new_password=payload.new_password))
             if grpc_response.error_message:
                 return Response(status_code=grpc_response.error_code, media_type="text/html",
@@ -126,15 +133,19 @@ class Auth:
                            access_token: Annotated[str | None, Cookie()] = None) -> Response:
         logger.info(f"Tested email update {access_token}")
         auth_server = get_server("auth_server")
+        try:
+            user_id = get_id_from_token(access_token)
+        except ExpiredSignatureError:
+            return Response(status_code=401, media_type="text/html", content="Token expired.")
+        except InvalidTokenError:
+            return Response(status_code=401, media_type="text/html", content="Invalid token.")
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.UpdateEmail(credential_pb2.EmailUpdate(
-                id=get_id_from_token(access_token), old_email=payload.old_email,
+                id=user_id, old_email=payload.old_email,
                 new_email=payload.new_email))
             if grpc_response.error_message:
                 return Response(status_code=grpc_response.error_code, media_type="text/html",
                                 content=grpc_response.error_message)
         return Response(
             status_code=200, media_type="text/html", content=f"Email changed.")
-
-

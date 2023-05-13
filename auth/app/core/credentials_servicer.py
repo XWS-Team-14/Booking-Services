@@ -46,7 +46,7 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             credential = await Credential.find_one(Credential.email == request.email)
             if credential is None or not bcrypt.verify(request.password, credential.password):
                 logger.error("Unsuccessful login: {}", request.email)
-                raise UserNotFoundException()
+                raise UnauthorizedException()
             access_token = jwt.encode({
                 "id": str(credential.id),
                 "role": credential.role.value,
@@ -59,7 +59,7 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             }, JWT_REFRESH_SECRET)
             logger.success("User {} logged in.", request.email)
             return credential_pb2.Token(access_token=access_token, refresh_token=refresh_token)
-        except UserNotFoundException as error:
+        except UnauthorizedException as error:
             return credential_pb2.Token(access_token="", error_message=error.message, error_code=error.code)
 
     async def GetById(self, request, context):
@@ -134,8 +134,6 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
         except UserNotFoundException as error:
             return credential_pb2.Empty(error_message=error.message, error_code=error.code)
 
-
-
     async def Delete(self, request, context):
         """ Deletes credentials.
             Input: ID.
@@ -151,7 +149,6 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             return credential_pb2.Empty(error_message=error.message, error_code=error.code)
         except Exception:
             return credential_pb2.Empty(error_message="An error has occurred.", error_code=500)
-
 
     async def RefreshToken(self, request, context):
         """ Issues new access and refresh tokens.
