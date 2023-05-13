@@ -50,7 +50,7 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             access_token = jwt.encode({
                 "id": str(credential.id),
                 "role": credential.role.value,
-                "exp": datetime.utcnow() + timedelta(minutes=1)
+                "exp": datetime.utcnow() + timedelta(minutes=30)
             }, JWT_ACCESS_SECRET)
             refresh_token = jwt.encode({
                 "id": str(credential.id),
