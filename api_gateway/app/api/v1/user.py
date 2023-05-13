@@ -50,6 +50,7 @@ class User:
         logger.info(f"Tested delete user {user_id}")
         user_server = get_server("user_server")
         auth_server = get_server("auth_server")
+        #TODO: Add accommodation and reservation checks.
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub_auth = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_auth_response = await stub_auth.Delete(credential_pb2.CredentialId(id=user_id))
