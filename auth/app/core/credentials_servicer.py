@@ -87,7 +87,7 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
             return credential_pb2.CredentialResponse(id=credential.id, email=credential.email, role=credential.role,
                                                      active=credential.active)
         except UserNotFoundException as error:
-            return credential_pb2.CredentialResponse(id="", email="", error_message=error.message,
+            return credential_pb2.CredentialResponse(id="", email=request.email, error_message=error.message,
                                                      error_code=error.code)
 
     async def GetActive(self, request, context):

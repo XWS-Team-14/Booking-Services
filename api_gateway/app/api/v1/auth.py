@@ -59,15 +59,14 @@ class Auth:
         auth_server = get_server("auth_server")
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
-            grpc_response = await stub.Login(credential_pb2.Credential(
-                email=payload.email, password=payload.password))
+            grpc_response = await stub.Login(credential_pb2.Credential(email=payload.email, password=payload.password))
             if grpc_response.error_message:
                 return Response(status_code=grpc_response.error_code, media_type="text/html",
                                 content=grpc_response.error_message)
             access_token = grpc_response.access_token
             refresh_token = grpc_response.refresh_token
         response = Response(
-            status_code=200, media_type="text/html", content=f"User logged in."
+            status_code=200, media_type="text/html", content=f"Access: {access_token}\n Refresh: {refresh_token}"
         )
         response.set_cookie(key="access_token", value=access_token, httponly=True)
         response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
@@ -92,7 +91,7 @@ class Auth:
             access_token = grpc_response.access_token
             refresh_token = grpc_response.refresh_token
         response = Response(
-            status_code=200, media_type="text/html", content=f"User logged in."
+            status_code=200, media_type="text/html", content=f"Access: {access_token}\n Refresh: {refresh_token}"
         )
         response.set_cookie(key="access_token", value=access_token, httponly=True)
         response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
