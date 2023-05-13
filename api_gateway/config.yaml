@@ -4,3 +4,6 @@ app:
   version: "1.0"
   api_prefix: "v1"
 
+reservation_server:
+  ip: "reservation"
+  port: "50054"

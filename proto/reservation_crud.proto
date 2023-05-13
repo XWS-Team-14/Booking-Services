@@ -1,18 +1,25 @@
 syntax = "proto3";
 
 service ReservationCrud {
-  rpc GetAll (Empty) returns (ReservationsDto);
+  rpc GetAll (Empty) returns (ReservationDtos);
   rpc GetById (ReservationId) returns (ReservationDto);
-  rpc Create (ReservationDto) returns (Empty);
-  rpc Delete (ReservationDto) returns (Empty);
-  rpc Update (ReservationDto) returns (Empty);
+  rpc Create (ReservationDto) returns (Result);
+  rpc Delete (ReservationId) returns (Result);
+  rpc Update (ReservationDto) returns (Result);
+  rpc GetByHost(HostId) returns (ReservationDtos);
+  rpc GetByGuest(GuestId) returns (ReservationDtos);
+  rpc GetReservationsForAcceptance(ReservationDto) returns (ReservationDtos);
+  rpc AcceptReservation (ReservationDto) returns (Result);
+
 }
 
 message Empty {
 }
 
 
-
+message Result{
+    string status = 1;
+}
 message ReservationDto {
     string reservation_id = 1;
     string accommodation_id = 2;
@@ -25,10 +32,16 @@ message ReservationDto {
     int32 status = 9;
 }
 
-message ReservationsDto {
+message ReservationDtos {
   repeated ReservationDto items = 1;
 }
 
 message ReservationId {
+  string id = 1;
+}
+message HostId {
+  string id = 1;
+}
+message GuestId {
   string id = 1;
 }

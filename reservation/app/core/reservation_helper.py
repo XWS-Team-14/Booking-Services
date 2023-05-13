@@ -9,7 +9,8 @@ class ReservationHelper():
     def convertDate(date):
         # assuming iso YYYY-MM-DD date format3
         date_data = date.split('-')
-        return datetime(int(date_data[0]), int(date_data[1]), int(date_data[2]), hour=0, minute=0, second=0,
+        date_day = date_data[2].split(' ')
+        return datetime(int(date_data[0]), int(date_data[1]), int(date_day[0]), hour=0, minute=0, second=0,
                         microsecond=0, tzinfo=None)
 
     def convertDateTime(datetime):
@@ -20,13 +21,13 @@ class ReservationHelper():
         beginning = ReservationHelper.convertDate(request.beginning_date);
         ending = ReservationHelper.convertDate(request.ending_date);
         status = ReservationStatus.PENDING;
-        if request.status.equals("ACCEPTED"):
+        if request.status == 3:
             status = ReservationStatus.ACCEPTED
-        elif request.status.equals("REJECTED"):
+        elif request.status == 1:
             status = ReservationStatus.REJECTED
         return Reservation(
-            id=request.availability_id,
-            accomodation_id=request.accomodation_id,
+            id=request.reservation_id,
+            accommodation_id=request.accommodation_id,
             host_id=request.host_id,
             guest_id=request.guest_id,
             number_of_guests=request.number_of_guests,
@@ -43,9 +44,10 @@ class ReservationHelper():
         retVal.host_id = str(reservation.host_id)
         retVal.guest_id = str(reservation.guest_id)
         retVal.number_of_guests = reservation.number_of_guests
-        retVal.beginning_date = ReservationHelper.convertDateTime(reservation.beginning)
-        retVal.ending_date = ReservationHelper.convertDateTime(reservation.ending)
+        retVal.beginning_date = ReservationHelper.convertDateTime(reservation.beginning_date)
+        retVal.ending_date = ReservationHelper.convertDateTime(reservation.ending_date)
         retVal.total_price = reservation.total_price
+        retVal.status = reservation.status.value
         return retVal
 
     def validateDates(start, end):

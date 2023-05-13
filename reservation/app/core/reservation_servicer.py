@@ -12,24 +12,24 @@ from ..models.reservation_status import ReservationStatus
 
 class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def Create(self, request, context):
-        logger.success('Request for creation of Availability accepted');
+        logger.success('Request for creation of reservation accepted');
         reservation = ReservationHelper.convertDto(request);
         if not ReservationHelper.validateDates(reservation.beginning_date, reservation.ending_date):
             logger.exception('Dates are not valid');
             return reservation_crud_pb2.Result(status="Invalid date");
         reservation.id = uuid.uuid4()
         await reservation.insert()
-        logger.success('Availability succesfully saved');
+        logger.success('reservation succesfully saved');
         return reservation_crud_pb2.Result(status="Success");
 
     async def Update(self, request, context):
-        logger.success('Request for update of Availability accepted');
+        logger.success('Request for update of reservation accepted');
         reservation = ReservationHelper.convertDto(request);
         if not ReservationHelper.validateDates(reservation.beginning_date, reservation.ending_date):
             logger.exception('Dates are not valid');
             return reservation_crud_pb2.Result(status="Invalid date");
         try:
-            item = await reservation.get(str(reservation.id));
+            item = await reservation.get(reservation.id);
             if not item:
                 logger.info('Update failed, document with given id not found');
                 return reservation_crud_pb2.Result(status="Failed, not found");
@@ -51,11 +51,11 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
             logger.info('Delete failed, document with given id not found');
             return reservation_crud_pb2.Result(status="Failed, not found");
         await item.delete();
-        logger.success('Availability succesfully deleted');
+        logger.success('reservation succesfully deleted');
         return reservation_crud_pb2.Result(status="Success");
 
     async def GetAll(self, request, context):
-        logger.success('Request for fetch all of Availability accepted');
+        logger.success('Request for fetch all of reservation accepted');
         reservations = await Reservation.find_all().to_list()
         retVal = reservation_crud_pb2.ReservationDtos()
         logger.info('fetched data converting')
@@ -108,7 +108,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         return reservation_crud_pb2.Result(status="Success");
 
     async def GetById(self, request, context):
-        logger.success('Request for fetch Availability accepted');
+        logger.success('Request for fetch reservation accepted');
         try:
             item = await Reservation.get(request.id);
         except (ValueError, DocumentNotFound):

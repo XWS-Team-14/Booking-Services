@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class ReservationStatus(Enum):
-    REJECTED = 0
-    PENDING = 1
-    ACCEPTED = 2
+    REJECTED = 1
+    PENDING = 2
+    ACCEPTED = 3
