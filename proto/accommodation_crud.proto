@@ -1,17 +1,17 @@
 syntax = "proto3";
 
 service AccommodationCrud {
-  rpc GetAll (Empty) returns (Accommodations);
+  rpc GetAll (EmptyAccommodation) returns (Accommodations);
   rpc GetById (DtoId) returns (Accommodation);
-  rpc Create (Accommodation) returns (Empty);
-  rpc Delete (DtoId) returns (Empty);
-  rpc Update (Accommodation) returns (Empty);
+  rpc Create (Accommodation) returns (EmptyAccommodation);
+  rpc Delete (DtoId) returns (EmptyAccommodation);
+  rpc Update (Accommodation) returns (EmptyAccommodation);
   rpc GetByLocation (Location) returns (Accommodations);
-  rpc DeleteByUser (DtoId) returns (Empty);
+  rpc DeleteByUser (DtoId) returns (EmptyAccommodation);
   rpc GetByUser (DtoId) returns (Accommodations);
 }
 
-message Empty {
+message EmptyAccommodation {
 }
 
 message Location {

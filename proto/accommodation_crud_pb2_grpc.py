@@ -16,7 +16,7 @@ class AccommodationCrudStub(object):
         """
         self.GetAll = channel.unary_unary(
             "/AccommodationCrud/GetAll",
-            request_serializer=accommodation__crud__pb2.Empty.SerializeToString,
+            request_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
             response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
         )
         self.GetById = channel.unary_unary(
@@ -27,17 +27,17 @@ class AccommodationCrudStub(object):
         self.Create = channel.unary_unary(
             "/AccommodationCrud/Create",
             request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.Empty.FromString,
+            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
         )
         self.Delete = channel.unary_unary(
             "/AccommodationCrud/Delete",
             request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.Empty.FromString,
+            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
         )
         self.Update = channel.unary_unary(
             "/AccommodationCrud/Update",
             request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.Empty.FromString,
+            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
         )
         self.GetByLocation = channel.unary_unary(
             "/AccommodationCrud/GetByLocation",
@@ -47,7 +47,7 @@ class AccommodationCrudStub(object):
         self.DeleteByUser = channel.unary_unary(
             "/AccommodationCrud/DeleteByUser",
             request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.Empty.FromString,
+            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
         )
         self.GetByUser = channel.unary_unary(
             "/AccommodationCrud/GetByUser",
@@ -112,7 +112,7 @@ def add_AccommodationCrudServicer_to_server(servicer, server):
     rpc_method_handlers = {
         "GetAll": grpc.unary_unary_rpc_method_handler(
             servicer.GetAll,
-            request_deserializer=accommodation__crud__pb2.Empty.FromString,
+            request_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
             response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
         ),
         "GetById": grpc.unary_unary_rpc_method_handler(
@@ -123,17 +123,17 @@ def add_AccommodationCrudServicer_to_server(servicer, server):
         "Create": grpc.unary_unary_rpc_method_handler(
             servicer.Create,
             request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
-            response_serializer=accommodation__crud__pb2.Empty.SerializeToString,
+            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
         ),
         "Delete": grpc.unary_unary_rpc_method_handler(
             servicer.Delete,
             request_deserializer=accommodation__crud__pb2.DtoId.FromString,
-            response_serializer=accommodation__crud__pb2.Empty.SerializeToString,
+            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
         ),
         "Update": grpc.unary_unary_rpc_method_handler(
             servicer.Update,
             request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
-            response_serializer=accommodation__crud__pb2.Empty.SerializeToString,
+            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
         ),
         "GetByLocation": grpc.unary_unary_rpc_method_handler(
             servicer.GetByLocation,
@@ -143,7 +143,7 @@ def add_AccommodationCrudServicer_to_server(servicer, server):
         "DeleteByUser": grpc.unary_unary_rpc_method_handler(
             servicer.DeleteByUser,
             request_deserializer=accommodation__crud__pb2.DtoId.FromString,
-            response_serializer=accommodation__crud__pb2.Empty.SerializeToString,
+            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
         ),
         "GetByUser": grpc.unary_unary_rpc_method_handler(
             servicer.GetByUser,
@@ -178,7 +178,7 @@ class AccommodationCrud(object):
             request,
             target,
             "/AccommodationCrud/GetAll",
-            accommodation__crud__pb2.Empty.SerializeToString,
+            accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
             accommodation__crud__pb2.Accommodations.FromString,
             options,
             channel_credentials,
@@ -237,7 +237,7 @@ class AccommodationCrud(object):
             target,
             "/AccommodationCrud/Create",
             accommodation__crud__pb2.Accommodation.SerializeToString,
-            accommodation__crud__pb2.Empty.FromString,
+            accommodation__crud__pb2.EmptyAccommodation.FromString,
             options,
             channel_credentials,
             insecure,
@@ -266,7 +266,7 @@ class AccommodationCrud(object):
             target,
             "/AccommodationCrud/Delete",
             accommodation__crud__pb2.DtoId.SerializeToString,
-            accommodation__crud__pb2.Empty.FromString,
+            accommodation__crud__pb2.EmptyAccommodation.FromString,
             options,
             channel_credentials,
             insecure,
@@ -295,7 +295,7 @@ class AccommodationCrud(object):
             target,
             "/AccommodationCrud/Update",
             accommodation__crud__pb2.Accommodation.SerializeToString,
-            accommodation__crud__pb2.Empty.FromString,
+            accommodation__crud__pb2.EmptyAccommodation.FromString,
             options,
             channel_credentials,
             insecure,
@@ -353,7 +353,7 @@ class AccommodationCrud(object):
             target,
             "/AccommodationCrud/DeleteByUser",
             accommodation__crud__pb2.DtoId.SerializeToString,
-            accommodation__crud__pb2.Empty.FromString,
+            accommodation__crud__pb2.EmptyAccommodation.FromString,
             options,
             channel_credentials,
             insecure,

@@ -12,9 +12,9 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             await Accommodation.find_one(id == request.id).delete()
         except Exception as e:
             logger.error(f"Error {e}")
-            return accommodation_crud_pb2.Empty()
+            return accommodation_crud_pb2.EmptyAccommodation()
         logger.success(f"Deleted an object with id = {request.id}")
-        return accommodation_crud_pb2.Empty()
+        return accommodation_crud_pb2.EmptyAccommodation()
 
     async def DeleteByUser(self, request, context):
         logger.info("Delete request started")
@@ -24,9 +24,9 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             ).delete()
         except Exception as e:
             logger.error(f"Error {e}")
-            return accommodation_crud_pb2.Empty()
+            return accommodation_crud_pb2.EmptyAccommodation()
         logger.success(f"Deleted an object with id = {request.id}")
-        return accommodation_crud_pb2.Empty()
+        return accommodation_crud_pb2.EmptyAccommodation()
 
     async def Create(self, request, context):
         logger.info("Create request started")
@@ -35,9 +35,9 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             await obj.insert()
         except Exception as e:
             logger.error(f"Error creating object {e}")
-            return accommodation_crud_pb2.Empty()
+            return accommodation_crud_pb2.EmptyAccommodation()
         logger.success(f"Created object with id = {request.id}")
-        return accommodation_crud_pb2.Empty()
+        return accommodation_crud_pb2.EmptyAccommodation()
 
     async def Update(self, request, context):
         logger.info("Update request started")
@@ -47,9 +47,9 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             new_obj.replace()
         except Exception:
             logger.error("Trying to update object that does not exist")
-            return accommodation_crud_pb2.Empty()
+            return accommodation_crud_pb2.EmptyAccommodation()
         logger.success(f"Updated an object with id = {request.id}")
-        return accommodation_crud_pb2.Empty()
+        return accommodation_crud_pb2.EmptyAccommodation()
 
     async def GetAll(self, request, context):
         logger.info("GetAll request started")
@@ -112,7 +112,7 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             ).to_list()
         except Exception as e:
             logger.error(f"Error {e}")
-            return accommodation_crud_pb2.Empty()
+            return accommodation_crud_pb2.EmptyAccommodation()
         transformed_objs = accommodation_crud_pb2.Accommodations()
         for obj in objs:
             transformed_objs.items.append(self.convert_to_dto(obj))
