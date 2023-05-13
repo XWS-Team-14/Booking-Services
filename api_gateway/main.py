@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from app.api.v1 import router
+from app.api import router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(

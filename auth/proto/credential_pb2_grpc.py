@@ -15,62 +15,62 @@ class CredentialServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Register = channel.unary_unary(
-                '/CredentialService/Register',
+                '/auth.CredentialService/Register',
                 request_serializer=credential__pb2.Credential.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
                 )
         self.Login = channel.unary_unary(
-                '/CredentialService/Login',
+                '/auth.CredentialService/Login',
                 request_serializer=credential__pb2.Credential.SerializeToString,
                 response_deserializer=credential__pb2.Token.FromString,
                 )
         self.GetById = channel.unary_unary(
-                '/CredentialService/GetById',
+                '/auth.CredentialService/GetById',
                 request_serializer=credential__pb2.CredentialId.SerializeToString,
                 response_deserializer=credential__pb2.CredentialResponse.FromString,
                 )
         self.GetByEmail = channel.unary_unary(
-                '/CredentialService/GetByEmail',
+                '/auth.CredentialService/GetByEmail',
                 request_serializer=credential__pb2.CredentialEmail.SerializeToString,
                 response_deserializer=credential__pb2.CredentialResponse.FromString,
                 )
         self.GetActive = channel.unary_unary(
-                '/CredentialService/GetActive',
+                '/auth.CredentialService/GetActive',
                 request_serializer=credential__pb2.Token.SerializeToString,
                 response_deserializer=credential__pb2.ActiveResponse.FromString,
                 )
         self.UpdateEmail = channel.unary_unary(
-                '/CredentialService/UpdateEmail',
+                '/auth.CredentialService/UpdateEmail',
                 request_serializer=credential__pb2.EmailUpdate.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
                 )
         self.UpdatePassword = channel.unary_unary(
-                '/CredentialService/UpdatePassword',
+                '/auth.CredentialService/UpdatePassword',
                 request_serializer=credential__pb2.PasswordUpdate.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
                 )
         self.Deactivate = channel.unary_unary(
-                '/CredentialService/Deactivate',
+                '/auth.CredentialService/Deactivate',
                 request_serializer=credential__pb2.Token.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
                 )
         self.Delete = channel.unary_unary(
-                '/CredentialService/Delete',
+                '/auth.CredentialService/Delete',
                 request_serializer=credential__pb2.CredentialId.SerializeToString,
                 response_deserializer=credential__pb2.Empty.FromString,
                 )
         self.ValidateToken = channel.unary_unary(
-                '/CredentialService/ValidateToken',
+                '/auth.CredentialService/ValidateToken',
                 request_serializer=credential__pb2.Token.SerializeToString,
                 response_deserializer=credential__pb2.ValidateResponse.FromString,
                 )
         self.RefreshToken = channel.unary_unary(
-                '/CredentialService/RefreshToken',
+                '/auth.CredentialService/RefreshToken',
                 request_serializer=credential__pb2.TokenRefresh.SerializeToString,
                 response_deserializer=credential__pb2.Token.FromString,
                 )
         self.CheckAuthority = channel.unary_unary(
-                '/CredentialService/CheckAuthority',
+                '/auth.CredentialService/CheckAuthority',
                 request_serializer=credential__pb2.Token.SerializeToString,
                 response_deserializer=credential__pb2.ValidateResponse.FromString,
                 )
@@ -216,7 +216,7 @@ def add_CredentialServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'CredentialService', rpc_method_handlers)
+            'auth.CredentialService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -235,7 +235,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/Register',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/Register',
             credential__pb2.Credential.SerializeToString,
             credential__pb2.Empty.FromString,
             options, channel_credentials,
@@ -252,7 +252,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/Login',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/Login',
             credential__pb2.Credential.SerializeToString,
             credential__pb2.Token.FromString,
             options, channel_credentials,
@@ -269,7 +269,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/GetById',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/GetById',
             credential__pb2.CredentialId.SerializeToString,
             credential__pb2.CredentialResponse.FromString,
             options, channel_credentials,
@@ -286,7 +286,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/GetByEmail',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/GetByEmail',
             credential__pb2.CredentialEmail.SerializeToString,
             credential__pb2.CredentialResponse.FromString,
             options, channel_credentials,
@@ -303,7 +303,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/GetActive',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/GetActive',
             credential__pb2.Token.SerializeToString,
             credential__pb2.ActiveResponse.FromString,
             options, channel_credentials,
@@ -320,7 +320,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/UpdateEmail',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/UpdateEmail',
             credential__pb2.EmailUpdate.SerializeToString,
             credential__pb2.Empty.FromString,
             options, channel_credentials,
@@ -337,7 +337,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/UpdatePassword',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/UpdatePassword',
             credential__pb2.PasswordUpdate.SerializeToString,
             credential__pb2.Empty.FromString,
             options, channel_credentials,
@@ -354,7 +354,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/Deactivate',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/Deactivate',
             credential__pb2.Token.SerializeToString,
             credential__pb2.Empty.FromString,
             options, channel_credentials,
@@ -371,7 +371,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/Delete',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/Delete',
             credential__pb2.CredentialId.SerializeToString,
             credential__pb2.Empty.FromString,
             options, channel_credentials,
@@ -388,7 +388,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/ValidateToken',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/ValidateToken',
             credential__pb2.Token.SerializeToString,
             credential__pb2.ValidateResponse.FromString,
             options, channel_credentials,
@@ -405,7 +405,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/RefreshToken',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/RefreshToken',
             credential__pb2.TokenRefresh.SerializeToString,
             credential__pb2.Token.FromString,
             options, channel_credentials,
@@ -422,7 +422,7 @@ class CredentialService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/CredentialService/CheckAuthority',
+        return grpc.experimental.unary_unary(request, target, '/auth.CredentialService/CheckAuthority',
             credential__pb2.Token.SerializeToString,
             credential__pb2.ValidateResponse.FromString,
             options, channel_credentials,
