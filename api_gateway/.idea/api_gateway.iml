@@ -6,6 +6,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="user_control" />
+    <orderEntry type="module" module-name="auth" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />

@@ -73,6 +73,27 @@ class Auth:
         return response
 
     @router.post(
+        "/logout",
+        status_code=status.HTTP_200_OK,
+        description="Log out user",
+    )
+    async def logout(self, access_token: Annotated[str | None, Cookie()] = None) -> Response:
+        logger.info(f"Tested logout {access_token}")
+        auth_server = get_server("auth_server")
+        try:
+            user_id = get_id_from_token(access_token)
+        except ExpiredSignatureError:
+            return Response(status_code=401, media_type="text/html", content="Token expired.")
+        except InvalidTokenError:
+            return Response(status_code=401, media_type="text/html", content="Invalid token.")
+        response = Response(
+            status_code=200, media_type="text/html", content=f"Logged out"
+        )
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+        return response
+
+    @router.post(
         "/token/refresh",
         status_code=status.HTTP_200_OK,
         description="Refresh access token",
