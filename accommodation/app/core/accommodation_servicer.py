@@ -73,10 +73,11 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
         accommodation = self.convert_to_dto(obj_to_return)
         return accommodation
 
-    async def GetByLocation(self, request, context):
+    async def GetBySearch(self, request, context):
         logger.info("GetByLocation request started")
         try:
             location = self.convert_from_dto_location(request)
+            guests = int(request.guests)
             objs = await Accommodation.find_all().to_list()
             updated_list = []
             if location.city != "":
@@ -96,6 +97,11 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
                         updated_list.append(obj)
                 objs = updated_list.copy()
                 updated_list = []
+            if guests != 0:
+                for obj in objs:
+                    if obj.min_guests <= guests and obj.max_guests >= guests:
+                        updated_list.append(obj)
+                objs = updated_list.copy()
         except Exception as e:
             logger.error(f"Error getting accommodations {e}")
             return accommodation_crud_pb2.Accommodations()
@@ -179,7 +185,7 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
         obj_to_return: accommodation_crud_pb2.Location,
     ) -> Location:
         return Location(
-            country=obj_to_return.country,
-            city=obj_to_return.city,
-            address=obj_to_return.address,
+            country=obj_to_return.location.country,
+            city=obj_to_return.location.city,
+            address=obj_to_return.location.address,
         )
