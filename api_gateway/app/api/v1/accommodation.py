@@ -3,16 +3,17 @@ import asyncio
 import grpc
 import json
 from uuid import uuid4
-from fastapi import APIRouter, Form, UploadFile
+from fastapi import APIRouter, Form, UploadFile, Cookie
 from fastapi.responses import HTMLResponse, Response
 from app.config import get_yaml_config
 from typing import Annotated, List
 from types import SimpleNamespace
-
+from jwt import ExpiredSignatureError, InvalidTokenError
 from proto import accommodation_crud_pb2_grpc
 from proto import accommodation_crud_pb2
 from google.protobuf.json_format import MessageToJson
 from loguru import logger
+from app.utils.jwt import get_id_from_token, get_role_from_token
 
 router = APIRouter()
 
@@ -20,7 +21,7 @@ router = APIRouter()
 @router.post("/", response_class=HTMLResponse)
 async def save_accommodation(
     # Add additional data that needs to be here
-    user_id: Annotated[str, Form()],
+    access_token: Annotated[str | None, Cookie()],
     name: Annotated[str, Form()],
     country: Annotated[str, Form()],
     city: Annotated[str, Form()],
@@ -35,6 +36,21 @@ async def save_accommodation(
     It saves images with their unique ID and then sends gRPC request to
     accommodation service to save data about accommodation
     """
+
+    try:
+        user_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "host":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     image_uris = []
     async with httpx.AsyncClient() as client:
         tasks = []
@@ -97,13 +113,28 @@ async def save_accommodation(
     )
 
 
-@router.get("/all/{user_id}")
-async def GetByUserId(user_id: str):
+@router.get("/allByUser")
+async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
+    try:
+        user_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "host":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     accommodation_server = (
         get_yaml_config().get("accommodation_server").get("ip")
         + ":"
         + get_yaml_config().get("accommodation_server").get("port")
     )
+
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
         stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
         dto = accommodation_crud_pb2.DtoId(
