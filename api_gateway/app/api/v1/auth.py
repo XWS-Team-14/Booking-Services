@@ -136,3 +136,5 @@ class Auth:
                                 content=grpc_response.error_message)
         return Response(
             status_code=200, media_type="text/html", content=f"Email changed.")
+
+

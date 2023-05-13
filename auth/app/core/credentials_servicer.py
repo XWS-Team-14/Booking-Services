@@ -134,20 +134,7 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
         except UserNotFoundException as error:
             return credential_pb2.Empty(error_message=error.message, error_code=error.code)
 
-    async def Deactivate(self, request, context):
-        """ Deactivates credentials.
-            Input: ID.
-            Output: Empty, or error. """
-        try:
-            credential = await Credential.find_one(Credential.id == uuid.UUID(request.id))
-            if credential is None:
-                raise UserNotFoundException(credential_id=request.id)
-            credential.active = False
-            await credential.replace()
-            logger.success("Account with the id {} has been deactivated.", request.id)
-            return credential_pb2.Empty()
-        except UserNotFoundException as error:
-            return credential_pb2.Empty(error_message=error.message, error_code=error.code)
+
 
     async def Delete(self, request, context):
         """ Deletes credentials.
@@ -165,19 +152,6 @@ class CredentialServicer(credential_pb2_grpc.CredentialServiceServicer):
         except Exception:
             return credential_pb2.Empty(error_message="An error has occurred.", error_code=500)
 
-    async def ValidateToken(self, request, context):
-        """ Validates access token. Useful for authentication and authorization.
-            Input: JWT access token.
-            Output: Boolean value, or error. """
-        try:
-            jwt.decode(request.access_token, JWT_ACCESS_SECRET)
-            return credential_pb2.ValidateResponse(validated=True)
-        except ExpiredSignatureError:
-            return credential_pb2.ValidateResponse(validated=False, error_message="Access token has expired.",
-                                                   error_code=499)
-        except InvalidTokenError:
-            return credential_pb2.ValidateResponse(validated=False, error_message="Invalid access token.",
-                                                   error_code=498)
 
     async def RefreshToken(self, request, context):
         """ Issues new access and refresh tokens.
