@@ -11,3 +11,5 @@ httpx==0.24.0
 passlib[bcrypt]
 email-validator
 pyjwt
+python-multipart
+protobuf
