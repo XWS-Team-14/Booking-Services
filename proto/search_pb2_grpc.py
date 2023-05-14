@@ -5,7 +5,7 @@ import grpc
 from . import search_pb2 as search__pb2
 
 
-class AccommodationCrudStub(object):
+class SearchStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,13 +15,13 @@ class AccommodationCrudStub(object):
             channel: A grpc.Channel.
         """
         self.Search = channel.unary_unary(
-            "/search.AccommodationCrud/Search",
+            "/search.Search/Search",
             request_serializer=search__pb2.SearchParams.SerializeToString,
             response_deserializer=search__pb2.SearchResults.FromString,
         )
 
 
-class AccommodationCrudServicer(object):
+class SearchServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Search(self, request, context):
@@ -31,7 +31,7 @@ class AccommodationCrudServicer(object):
         raise NotImplementedError("Method not implemented!")
 
 
-def add_AccommodationCrudServicer_to_server(servicer, server):
+def add_SearchServicer_to_server(servicer, server):
     rpc_method_handlers = {
         "Search": grpc.unary_unary_rpc_method_handler(
             servicer.Search,
@@ -40,13 +40,13 @@ def add_AccommodationCrudServicer_to_server(servicer, server):
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "search.AccommodationCrud", rpc_method_handlers
+        "search.Search", rpc_method_handlers
     )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
 # This class is part of an EXPERIMENTAL API.
-class AccommodationCrud(object):
+class Search(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -65,7 +65,7 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/search.AccommodationCrud/Search",
+            "/search.Search/Search",
             search__pb2.SearchParams.SerializeToString,
             search__pb2.SearchResults.FromString,
             options,

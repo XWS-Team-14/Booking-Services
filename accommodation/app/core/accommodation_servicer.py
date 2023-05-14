@@ -74,7 +74,7 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
         return accommodation
 
     async def GetBySearch(self, request, context):
-        logger.info("GetByLocation request started")
+        logger.info("GetBySearch request started")
         try:
             location = self.convert_from_dto_location(request)
             guests = int(request.guests)

@@ -1,7 +1,6 @@
 from loguru import logger
-from app.core.accommodation_servicer import AccommodationServicer
-from app.db.mongodb import start_async_mongodb
-from proto import accommodation_crud_pb2_grpc
+from proto import search_pb2_grpc
+from app.core.search_servicer import SearchServicer
 import grpc
 
 _cleanup_coroutines = []
@@ -10,15 +9,12 @@ _cleanup_coroutines = []
 async def serve(port):
     server = grpc.aio.server()
     # Add services
-    accommodation_crud_pb2_grpc.add_AccommodationCrudServicer_to_server(AccommodationServicer(), server)
+    search_pb2_grpc.add_SearchServicer_to_server(SearchServicer(), server)
 
-    server.add_insecure_port('[::]:'+port)
-    # Search probably doesn't need a database
-    # logger.info('Connecting to the database')
-    # await start_async_mongodb()
-    logger.info('Starting GRPC server')
+    server.add_insecure_port("[::]:" + port)
+    logger.info("Starting GRPC server")
     await server.start()
-    logger.success(f'GRPC server has started on port {port}, waiting for termination')
+    logger.success(f"GRPC server has started on port {port}, waiting for termination")
 
     async def server_graceful_shutdown(*_):
         logger.info("Starting graceful shutdown...")

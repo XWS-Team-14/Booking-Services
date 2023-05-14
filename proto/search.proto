@@ -1,6 +1,6 @@
 syntax = "proto3";
 package search;
-service AccommodationCrud {
+service Search {
   rpc Search (SearchParams) returns (SearchResults);
 }
 
@@ -13,7 +13,7 @@ message Location {
 message SearchParams {
   Location location = 1;
   int32 guests = 2;
-  SearchDetails details = 3;  
+  Interval details = 3;  
 }
 
 message SearchResults {
@@ -30,13 +30,8 @@ message SearchResults {
   double total_price = 11;
 }
 
-message SearchDetails{
-Interval interval = 1;
-int32 num_of_guests = 2;
-}
-
 
 message Interval{
-string date_start = 1;
-string date_end = 2;
+  string date_start = 1;
+  string date_end = 2;
 }
