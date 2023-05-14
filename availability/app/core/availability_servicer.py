@@ -85,7 +85,17 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         else : 
             logger.success('Succesfully fetched');
             return AvailabilityHelper.convertToDto(item);
-    
+
+    async def GetByAccommodationId(self,request, context):
+        logger.success('Request for fetch  availability by accommodation Id accepted');
+        aas = await Availability.find_all().to_list()
+        logger.info('fetched data converting')
+        for aa in aas:
+            if str(aa.accomodation_id) == request.id:
+                return AvailabilityHelper.convertToDto(aa)
+        logger.info('fetched nothing');
+        return availability_crud_pb2.AvailabilityDto();
+
     async def GetAllSearch(self, request, context):
         logger.success('Request for search fetch Availability accepted');
         

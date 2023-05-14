@@ -9,10 +9,13 @@ class Guest(BaseModel):
     id: uuid.UUID
     canceledReservations : int
 
+class Accommodation (BaseModel):
+    id:uuid.UUID
+    automaticAccept: bool
 
 class ReservationDto(BaseModel):
     reservation_id: uuid.UUID
-    accommodation_id: uuid.UUID
+    accommodation: Accommodation
     host_id: uuid.UUID
     guest: Guest
     number_of_guests: int

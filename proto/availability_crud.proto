@@ -8,6 +8,7 @@ service AvailabilityCrud {
   rpc Delete (AvailabilityId) returns (Result);
   rpc Update (AvailabilityDto) returns (Result);
   rpc AddOccupiedInterval(UpdateIntervalDto) returns (Result);
+  rpc GetByAccommodationId(AvailabilityId) returns (AvailabilityDto);
 }
 
 message Empty {

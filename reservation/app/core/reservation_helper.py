@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime, date
 
 from proto import reservation_crud_pb2
+from ..models.accommodation import Accommodation
 from ..models.guest import Guest
 from ..models.reservation import Reservation
 from ..models.reservation_status import ReservationStatus
@@ -22,6 +23,9 @@ class ReservationHelper():
     def convertGuestDto(request):
         return Guest(id = request.id,
                      canceledReservations = request.canceledReservations)
+    def convertAccommodationDto(request):
+        return Accommodation(id = request.id,
+                     automaticAccept = request.automaticAccept)
 
     def convertDto(request):
         beginning = ReservationHelper.convertDate(request.beginning_date)
@@ -32,9 +36,10 @@ class ReservationHelper():
         elif request.status == 1:
             status = ReservationStatus.REJECTED
         guest = Guest(id = request.guest.id, canceledReservations = request.guest.canceledReservations)
+        accommodation = Accommodation(id = request.accommodation.id, automaticAccept = request.automaticAccept)
         return Reservation(
             id=request.reservation_id,
-            accommodation_id=request.accommodation_id,
+            accommodation=accommodation,
             host_id=request.host_id,
             guest=guest,
             number_of_guests=request.number_of_guests,
@@ -47,7 +52,8 @@ class ReservationHelper():
     def convertToDto(reservation):
         retVal = reservation_crud_pb2.ReservationDto()
         retVal.reservation_id = str(reservation.id)
-        retVal.accommodation_id = str(reservation.accommodation_id)
+        retVal.accommodation.id = str(reservation.accommodation.id)
+        retVal.accommodation.automaticAccept = reservation.accommodation.automaticAccept
         retVal.host_id = str(reservation.host_id)
         retVal.guest.id = str(reservation.guest.id)
         retVal.guest.canceledReservations = reservation.guest.canceledReservations
@@ -62,6 +68,12 @@ class ReservationHelper():
         retVal = reservation_crud_pb2.Guest()
         retVal.id = str(guest.id)
         retVal.canceledReservations = guest.canceledReservations
+        return retVal
+
+    def convertAccommodationToDto(guest):
+        retVal = reservation_crud_pb2.AccommodationResDto()
+        retVal.id = str(guest.id)
+        retVal.automaticAccept = guest.automaticAccept
         return retVal
 
     def validateDates(start, end):

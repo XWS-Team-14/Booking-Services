@@ -18,6 +18,11 @@ service ReservationCrud {
   rpc DeleteGuest (GuestId) returns (ReservationResult);
   rpc UpdateGuest (Guest) returns (ReservationResult);
   rpc GetAllGuests(NoParameter) returns (Guests);
+  rpc CreateAccommodation (AccommodationResDto) returns (ReservationResult);
+  rpc UpdateAccommodation (AccommodationResDto) returns (ReservationResult);
+  rpc DeleteAccommodation (AccommodationResId) returns (ReservationResult);
+  rpc GetAccommodationById(AccommodationResId) returns (AccommodationResDto);
+  rpc GetReservationsByAccommodation(AccommodationResId) returns (ReservationDtos);
 }
 
 message NoParameter {
@@ -29,7 +34,7 @@ message ReservationResult{
 }
 message ReservationDto {
     string reservation_id = 1;
-    string accommodation_id = 2;
+    AccommodationResDto accommodation = 2;
     string host_id = 3;
     Guest guest = 4;
     int32 number_of_guests = 5 ;
@@ -57,5 +62,12 @@ message Guests {
  repeated Guest items = 1;
 }
 message GuestId{
+  string id = 1;
+}
+message AccommodationResDto{
+  string id = 1;
+  bool automaticAccept = 2;
+}
+message AccommodationResId{
   string id = 1;
 }
