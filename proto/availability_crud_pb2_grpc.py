@@ -49,6 +49,11 @@ class AvailabilityCrudStub(object):
                 request_serializer=availability__crud__pb2.UpdateIntervalDto.SerializeToString,
                 response_deserializer=availability__crud__pb2.Result.FromString,
                 )
+        self.GetByAccommodationId = channel.unary_unary(
+                '/AvailabilityCrud/GetByAccommodationId',
+                request_serializer=availability__crud__pb2.AvailabilityId.SerializeToString,
+                response_deserializer=availability__crud__pb2.AvailabilityDto.FromString,
+                )
 
 
 class AvailabilityCrudServicer(object):
@@ -96,6 +101,12 @@ class AvailabilityCrudServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetByAccommodationId(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_AvailabilityCrudServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -133,6 +144,11 @@ def add_AvailabilityCrudServicer_to_server(servicer, server):
                     servicer.AddOccupiedInterval,
                     request_deserializer=availability__crud__pb2.UpdateIntervalDto.FromString,
                     response_serializer=availability__crud__pb2.Result.SerializeToString,
+            ),
+            'GetByAccommodationId': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetByAccommodationId,
+                    request_deserializer=availability__crud__pb2.AvailabilityId.FromString,
+                    response_serializer=availability__crud__pb2.AvailabilityDto.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -260,5 +276,22 @@ class AvailabilityCrud(object):
         return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/AddOccupiedInterval',
             availability__crud__pb2.UpdateIntervalDto.SerializeToString,
             availability__crud__pb2.Result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetByAccommodationId(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/GetByAccommodationId',
+            availability__crud__pb2.AvailabilityId.SerializeToString,
+            availability__crud__pb2.AvailabilityDto.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

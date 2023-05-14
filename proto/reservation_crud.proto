@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+service ReservationCrud {
+  rpc GetAll (NoParameter) returns (ReservationDtos);
+  rpc GetById (ReservationId) returns (ReservationDto);
+  rpc Create (ReservationDto) returns (ReservationResult);
+  rpc Delete (ReservationId) returns (ReservationResult);
+  rpc Update (ReservationDto) returns (ReservationResult);
+  rpc GetByHost(HostId) returns (ReservationDtos);
+  rpc GetByGuest(GuestId) returns (ReservationDtos);
+  rpc GetReservationsForAcceptance(ReservationDto) returns (ReservationDtos);
+  rpc AcceptReservation (ReservationDto) returns (ReservationResult);
+  rpc GetPendingReservationsByHost(HostId) returns (ReservationDtos);
+  rpc GetActiveByGuest(GuestId) returns (ReservationDtos);
+  rpc GetActiveByHost(HostId) returns (ReservationDtos);
+  rpc GetGuestById (GuestId) returns (Guest);
+  rpc CreateGuest (Guest) returns (ReservationResult);
+  rpc DeleteGuest (GuestId) returns (ReservationResult);
+  rpc UpdateGuest (Guest) returns (ReservationResult);
+  rpc GetAllGuests(NoParameter) returns (Guests);
+  rpc CreateAccommodation (AccommodationResDto) returns (ReservationResult);
+  rpc UpdateAccommodation (AccommodationResDto) returns (ReservationResult);
+  rpc DeleteAccommodation (AccommodationResId) returns (ReservationResult);
+  rpc GetAccommodationById(AccommodationResId) returns (AccommodationResDto);
+  rpc GetReservationsByAccommodation(AccommodationResId) returns (ReservationDtos);
+}
+
+message NoParameter {
+}
+
+
+message ReservationResult{
+    string status = 1;
+}
+message ReservationDto {
+    string reservation_id = 1;
+    AccommodationResDto accommodation = 2;
+    string host_id = 3;
+    Guest guest = 4;
+    int32 number_of_guests = 5 ;
+    string beginning_date = 6;
+    string ending_date = 7;
+    double total_price = 8;
+    int32 status = 9;
+}
+
+message ReservationDtos {
+  repeated ReservationDto items = 1;
+}
+
+message ReservationId {
+  string id = 1;
+}
+message HostId {
+  string id = 1;
+}
+message Guest {
+  string id = 1;
+  int32 canceledReservations = 2;
+}
+message Guests {
+ repeated Guest items = 1;
+}
+message GuestId{
+  string id = 1;
+}
+message AccommodationResDto{
+  string id = 1;
+  bool automaticAccept = 2;
+}
+message AccommodationResId{
+  string id = 1;
+}

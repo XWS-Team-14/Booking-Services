@@ -13,13 +13,11 @@ from app.utils.jwt import get_id_from_token
 from fastapi.responses import JSONResponse
 from app import schemas
 from app.config import get_yaml_config
-from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2
+from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2, reservation_crud_pb2, reservation_crud_pb2_grpc
 
 from app.utils import get_server
 
-router = APIRouter(
-    tags=["Auth"],
-)
+router = APIRouter()
 
 
 @cbv(router)
@@ -32,6 +30,7 @@ class Auth:
         logger.info(f"Tested register {payload.email}")
         auth_server = get_server("auth_server")
         user_server = get_server("user_server")
+        reservation_server = get_server("reservation_server")
         user_id = uuid.uuid4()
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
@@ -46,6 +45,11 @@ class Auth:
             await stub.Register(user_pb2.User(
                 id=str(user_id), first_name=payload.first_name, last_name=payload.last_name,
                 home_address=payload.home_address, gender=payload.gender))
+        if payload.role == "guest":
+            async with grpc.aio.insecure_channel(reservation_server) as channel:
+                stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+                await stub.CreateGuest(reservation_crud_pb2.Guest(
+                    id=str(user_id), canceledReservations = 0))
         return Response(
             status_code=200, media_type="text/html", content="User registered."
         )

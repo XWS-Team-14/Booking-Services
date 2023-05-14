@@ -1,8 +1,10 @@
 from loguru import logger
-from app.core.accommodation_servicer import AccommodationServicer
-from app.db.mongodb import start_async_mongodb
-from proto import accommodation_crud_pb2_grpc
+
+from proto import reservation_crud_pb2_grpc
 import grpc
+
+from ..core.reservation_servicer import ReservationServicer
+from ..db.mongodb import start_async_mongodb
 
 _cleanup_coroutines = []
 
@@ -10,7 +12,7 @@ _cleanup_coroutines = []
 async def serve(port):
     server = grpc.aio.server()
     # Add services
-    accommodation_crud_pb2_grpc.add_AccommodationCrudServicer_to_server(AccommodationServicer(), server)
+    reservation_crud_pb2_grpc.add_ReservationCrudServicer_to_server(ReservationServicer(), server)
 
     server.add_insecure_port('[::]:'+port)
     logger.info('Connecting to the database')

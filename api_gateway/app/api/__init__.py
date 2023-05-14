@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from app.api import v1
-from app.api import static
+from ..api import v1
+from . import static
 
 # include version of the api here
 router = APIRouter(prefix="/api")

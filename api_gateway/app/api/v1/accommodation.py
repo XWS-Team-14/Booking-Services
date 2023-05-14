@@ -5,15 +5,19 @@ import json
 from uuid import uuid4
 from fastapi import APIRouter, Form, UploadFile, Cookie
 from fastapi.responses import HTMLResponse, Response
-from app.config import get_yaml_config
+from google.protobuf import json_format
+
+from ...config import get_yaml_config
 from typing import Annotated, List
 from types import SimpleNamespace
 from jwt import ExpiredSignatureError, InvalidTokenError
-from proto import accommodation_crud_pb2_grpc
+
+from ...utils.get_server import get_server
+from proto import accommodation_crud_pb2_grpc, reservation_crud_pb2_grpc, reservation_crud_pb2
 from proto import accommodation_crud_pb2
 from google.protobuf.json_format import MessageToJson
 from loguru import logger
-from app.utils.jwt import get_id_from_token, get_role_from_token
+from ...utils.jwt import get_id_from_token, get_role_from_token
 
 router = APIRouter()
 
@@ -30,6 +34,7 @@ async def save_accommodation(
     min_guests: Annotated[int, Form()],
     max_guests: Annotated[int, Form()],
     features: Annotated[List[str], Form()],
+    automatic_accept: Annotated[str, Form()],
     files: List[UploadFile],
 ):
     """Post method used to save acoommodation
@@ -51,7 +56,7 @@ async def save_accommodation(
         )
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
-
+    reservation_server = get_server("reservation_server")
     image_uris = []
     async with httpx.AsyncClient() as client:
         tasks = []
@@ -109,7 +114,10 @@ async def save_accommodation(
         )
 
         await stub.Create(accommodation)
-
+    async with grpc.aio.insecure_channel(reservation_server) as channel:
+        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+        await stub.CreateAccommodation(reservation_crud_pb2.AccommodationResDto(
+            id=accommodation.id, automaticAccept = bool(automatic_accept)))
     return Response(
         status_code=200, media_type="text/html", content="Accommodation saved!"
     )
@@ -158,3 +166,21 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
     except Exception as e:
         logger.error(f"Error {e}")
     return res
+@router.get(
+    "/all"
+)
+async def getAll():
+    logger.info("Gateway processing getAll reservations")
+    accommodation_server = (
+            get_yaml_config().get("accommodation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("accommodation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+        stub = accommodation_crud_pb2_grpc.AcommodationCrudStub(channel)
+        logger.info("Gateway processing getAll reservation data")
+        data = await stub.GetAll({})
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
