@@ -88,7 +88,7 @@ async def getById(item_id):
 
 
 @router.get(
-    "/host}",
+    "/host",
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get all reservations by host id",
 )

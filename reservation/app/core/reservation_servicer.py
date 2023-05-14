@@ -91,7 +91,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def Delete(self, request, context):
         logger.success('Request for deletion of Reservation accepted')
         try:
-            item = await Reservation.get(request.id)
+            item = await Reservation.get(uuid.UUID(request.id))
             if not item:
                 logger.info('Delete failed, document with given id not found')
                 return reservation_crud_pb2.ReservationResult(status="Failed, not found")
@@ -110,7 +110,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def DeleteGuest(self, request, context):
         logger.success('Request for deletion of Guest accepted')
         try:
-            item = await Guest.get(request.id)
+            item = await Guest.get(uuid.UUID(request.id))
             if not item:
                 logger.info('Delete failed, document with given id not found')
                 return reservation_crud_pb2.ReservationResult(status="Failed, not found")
@@ -124,7 +124,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def DeleteAccommodation(self, request, context):
         logger.success('Request for deletion of Guest accepted')
         try:
-            item = await Accommodation.get(request.id)
+            item = await Accommodation.get(uuid.UUID(request.id))
             if not item:
                 logger.info('Delete failed, document with given id not found')
                 return reservation_crud_pb2.ReservationResult(status="Failed, not found")
@@ -247,7 +247,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def GetById(self, request, context):
         logger.success('Request for fetch reservation accepted')
         try:
-            item = await Reservation.get(request.id)
+            item = await Reservation.get(uuid.UUID(request.id))
         except (ValueError, DocumentNotFound):
             logger.info('Fetch failed, document with given id not found')
             return reservation_crud_pb2.ReservationDto()

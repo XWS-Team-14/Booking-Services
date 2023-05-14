@@ -36,7 +36,7 @@ class ReservationHelper():
         elif request.status == 1:
             status = ReservationStatus.REJECTED
         guest = Guest(id = request.guest.id, canceledReservations = request.guest.canceledReservations)
-        accommodation = Accommodation(id = request.accommodation.id, automaticAccept = request.automaticAccept)
+        accommodation = Accommodation(id = request.accommodation.id, automaticAccept = request.accommodation.automaticAccept)
         return Reservation(
             id=request.reservation_id,
             accommodation=accommodation,
