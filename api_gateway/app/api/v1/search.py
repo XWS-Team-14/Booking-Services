@@ -47,6 +47,7 @@ async def search(
         )
         # fix paths for image_urls
         updated_url = "http://localhost:8000/api/static/images/"
+        logger.info(res)
         try:
             for item in res.items:
                 updated_urls = []
@@ -55,5 +56,4 @@ async def search(
                 item.imageUrls = updated_urls
         except Exception as e:
             logger.error(f"Error {e}")
-
-    return Response(status_code=200, media_type="application/json", content=res)
+    return res
