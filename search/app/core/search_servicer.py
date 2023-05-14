@@ -87,21 +87,20 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
                             image_urls_list.append(urls)
 
                         amongas = search_pb2.SearchResult(
-                                accommodation_id=item.id,
-                                host_id=item.userId,
-                                name=item.name,
-                                location=location,
-                                features=features_list,
-                                image_urls=image_urls_list,
-                                min_guests=item.minGuests,
-                                max_guests=item.maxGuests,
-                                base_price=item2.basePrice,
-                                total_price=item2.totalPrice,
-                            )
-                        
-                        result.items.append(
-                            amongas
+                            accommodation_id=item.id,
+                            host_id=item.userId,
+                            name=item.name,
+                            location=location,
+                            features=features_list,
+                            image_urls=image_urls_list,
+                            min_guests=item.minGuests,
+                            max_guests=item.maxGuests,
+                            base_price=item2.basePrice,
+                            total_price=item2.totalPrice,
+                            auto_accept_flag=item.autoAcceptFlag,
                         )
+
+                        result.items.append(amongas)
         except Exception as e:
             logger.error(f"Error {e}")
 
