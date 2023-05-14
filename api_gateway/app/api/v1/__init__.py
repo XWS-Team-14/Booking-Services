@@ -13,6 +13,5 @@ router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 router.include_router(accommodation_router, prefix="/accommodation", tags=["Accommodation"])
 router.include_router(user_router, prefix="/user", tags=["User"])
 router.include_router(availability_router, prefix="/avail", tags=["Availability"])
-router.include_router(reservation_router, prefix="/reservation")
-router.include_router(accommodation_router, prefix="/accommodation")
+router.include_router(reservation_router, prefix="/reservation", tags=["Reservation"])
 
