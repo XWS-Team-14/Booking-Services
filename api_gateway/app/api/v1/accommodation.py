@@ -26,6 +26,7 @@ async def save_accommodation(
     country: Annotated[str, Form()],
     city: Annotated[str, Form()],
     address: Annotated[str, Form()],
+    auto_accept_flag: Annotated[str, Form()],
     min_guests: Annotated[int, Form()],
     max_guests: Annotated[int, Form()],
     features: Annotated[List[str], Form()],
@@ -104,6 +105,7 @@ async def save_accommodation(
             image_urls=image_urls_list,
             min_guests=int(min_guests),
             max_guests=int(max_guests),
+            auto_accept_flag=auto_accept_flag,
         )
 
         await stub.Create(accommodation)

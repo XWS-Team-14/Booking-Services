@@ -75,6 +75,7 @@ class AvailabilityHelper():
         retVal.interval.date_start  = AvailabilityHelper.convertDateTime(availability.available_interval.date_start)
         retVal.pricing_type = availability.pricing_type.name
         retVal.base_price = availability.base_price
+        retVal.total_price = availability.base_price
         special_pricing_list = list()
         ocuppied_intervals_list = list()
         if availability.special_pricing: 

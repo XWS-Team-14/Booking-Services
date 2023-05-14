@@ -39,9 +39,9 @@ class AccommodationCrudStub(object):
             request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
             response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
         )
-        self.GetByLocation = channel.unary_unary(
-            "/AccommodationCrud/GetByLocation",
-            request_serializer=accommodation__crud__pb2.Location.SerializeToString,
+        self.GetBySearch = channel.unary_unary(
+            "/AccommodationCrud/GetBySearch",
+            request_serializer=accommodation__crud__pb2.SearchParamsAcc.SerializeToString,
             response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
         )
         self.DeleteByUser = channel.unary_unary(
@@ -89,7 +89,7 @@ class AccommodationCrudServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
-    def GetByLocation(self, request, context):
+    def GetBySearch(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
@@ -135,9 +135,9 @@ def add_AccommodationCrudServicer_to_server(servicer, server):
             request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
             response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
         ),
-        "GetByLocation": grpc.unary_unary_rpc_method_handler(
-            servicer.GetByLocation,
-            request_deserializer=accommodation__crud__pb2.Location.FromString,
+        "GetBySearch": grpc.unary_unary_rpc_method_handler(
+            servicer.GetBySearch,
+            request_deserializer=accommodation__crud__pb2.SearchParamsAcc.FromString,
             response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
         ),
         "DeleteByUser": grpc.unary_unary_rpc_method_handler(
@@ -307,7 +307,7 @@ class AccommodationCrud(object):
         )
 
     @staticmethod
-    def GetByLocation(
+    def GetBySearch(
         request,
         target,
         options=(),
@@ -322,8 +322,8 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/GetByLocation",
-            accommodation__crud__pb2.Location.SerializeToString,
+            "/AccommodationCrud/GetBySearch",
+            accommodation__crud__pb2.SearchParamsAcc.SerializeToString,
             accommodation__crud__pb2.Accommodations.FromString,
             options,
             channel_credentials,
