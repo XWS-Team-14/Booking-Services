@@ -1,13 +1,16 @@
 from app.schemas.availability import AvailabilityDto
 from app.config import get_yaml_config
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Cookie
 from fastapi.responses import Response
 from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
 import json
+from typing import Annotated
 from loguru import logger
 import grpc
 from proto import availability_crud_pb2_grpc, availability_crud_pb2
+from app.utils.jwt import get_role_from_token
+from jwt import ExpiredSignatureError, InvalidTokenError
 
 router = APIRouter(
     tags=["Availability"],
@@ -66,9 +69,18 @@ async def getById(item_id):
     status_code=status.HTTP_204_NO_CONTENT,
     description="Create new availability",
 )
-async def create(item: AvailabilityDto):
+async def create(item: AvailabilityDto,access_token: Annotated[str | None, Cookie()] = None):
     logger.info("Gateway processing create Availability request");
-
+    try:
+            role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(status_code=401, media_type="text/html", content="Token expired.")
+    except InvalidTokenError:
+        return Response(status_code=401, media_type="text/html", content="Invalid token.")
+    if role != "host":
+        return Response(
+                status_code=401, media_type="text/html", content="Invalid role"
+            )
     availability_server = (
             get_yaml_config().get("availability_server").get("ip")
             + ":"
@@ -105,8 +117,18 @@ async def create(item: AvailabilityDto):
     status_code=status.HTTP_204_NO_CONTENT,
     description="Update availability",
 )
-async def update(item: AvailabilityDto):
+async def update(item: AvailabilityDto,access_token: Annotated[str | None, Cookie()] = None):
     logger.info("Gateway processing update Availability request");
+    try:
+            role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(status_code=401, media_type="text/html", content="Token expired.")
+    except InvalidTokenError:
+        return Response(status_code=401, media_type="text/html", content="Invalid token.")
+    if role != "host":
+        return Response(
+                status_code=401, media_type="text/html", content="Invalid role"
+            )
     availability_server = (
             get_yaml_config().get("availability_server").get("ip")
             + ":"
@@ -139,8 +161,18 @@ async def update(item: AvailabilityDto):
     status_code=status.HTTP_204_NO_CONTENT,
     description="Update availability",
 )
-async def delete(item_id):
+async def delete(item_id,access_token: Annotated[str | None, Cookie()] = None):
     logger.info("Gateway processing delete Availability request");
+    try:
+            role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(status_code=401, media_type="text/html", content="Token expired.")
+    except InvalidTokenError:
+        return Response(status_code=401, media_type="text/html", content="Invalid token.")
+    if role != "host":
+        return Response(
+                status_code=401, media_type="text/html", content="Invalid role"
+            )
     availability_server = (
             get_yaml_config().get("availability_server").get("ip")
             + ":"

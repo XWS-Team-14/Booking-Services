@@ -7,7 +7,8 @@ from fastapi.responses import JSONResponse
 from fastapi_utils.cbv import cbv
 from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
-from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2, accommodation_crud_pb2_grpc, accommodation_crud_pb2
+from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2, accommodation_crud_pb2_grpc, \
+    accommodation_crud_pb2
 from starlette.responses import Response
 
 from app import schemas
@@ -22,6 +23,7 @@ router = APIRouter(
 @cbv(router)
 class User:
     @router.get("/active",
+                response_class=JSONResponse,
                 status_code=status.HTTP_200_OK,
                 description="Get currently active user", )
     async def get_active(self, access_token: Annotated[str | None, Cookie()] = None) -> Response:
@@ -48,6 +50,29 @@ class User:
         return JSONResponse(
             status_code=200, media_type="text/html", content=jsonable_encoder(user)
         )
+
+    @router.get("/{user_id}",
+                status_code=status.HTTP_200_OK,
+                description="Get user by id", )
+    async def get_by_id(self, user_id) -> Response:
+        logger.info(f"Tested get user by id {user_id}")
+        user_server = get_server("user_server")
+        async with grpc.aio.insecure_channel(user_server) as channel:
+            stub_user = user_pb2_grpc.UserServiceStub(channel)
+            grpc_user_response = await stub_user.GetById(user_pb2.UserId(id=str(user_id)))
+            if grpc_user_response.error_message:
+                return Response(status_code=grpc_user_response.error_code, media_type="text/html",
+                                content=grpc_user_response.error_message)
+        user = {
+            'first_name': grpc_user_response.first_name,
+            'last_name': grpc_user_response.last_name,
+            'gender': grpc_user_response.gender,
+            'home_address': grpc_user_response.home_address
+        }
+        return JSONResponse(
+            status_code=200, media_type="text/html", content=jsonable_encoder(user)
+        )
+
     @router.put(
         "/details",
         status_code=status.HTTP_200_OK,
