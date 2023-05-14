@@ -29,6 +29,7 @@ message Accommodation {
   repeated string image_urls = 6;
   int32 min_guests = 7;
   int32 max_guests = 8;
+  string auto_accept_flag = 9;
 }
 
 message Accommodations {

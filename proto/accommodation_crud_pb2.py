@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x18\x61\x63\x63ommodation_crud.proto\"\x14\n\x12\x45mptyAccommodation\":\n\x08Location\x12\x0f\n\x07\x63ountry\x18\x02 \x01(\t\x12\x0c\n\x04\x63ity\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\"\xa5\x01\n\rAccommodation\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x1b\n\x08location\x18\x04 \x01(\x0b\x32\t.Location\x12\x10\n\x08\x66\x65\x61tures\x18\x05 \x03(\t\x12\x12\n\nimage_urls\x18\x06 \x03(\t\x12\x12\n\nmin_guests\x18\x07 \x01(\x05\x12\x12\n\nmax_guests\x18\x08 \x01(\x05\"/\n\x0e\x41\x63\x63ommodations\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.Accommodation\"\x13\n\x05\x44toId\x12\n\n\x02id\x18\x01 \x01(\t\">\n\x0fSearchParamsAcc\x12\x1b\n\x08location\x18\x01 \x01(\x0b\x32\t.Location\x12\x0e\n\x06guests\x18\x02 \x01(\x05\x32\xf0\x02\n\x11\x41\x63\x63ommodationCrud\x12.\n\x06GetAll\x12\x13.EmptyAccommodation\x1a\x0f.Accommodations\x12!\n\x07GetById\x12\x06.DtoId\x1a\x0e.Accommodation\x12-\n\x06\x43reate\x12\x0e.Accommodation\x1a\x13.EmptyAccommodation\x12%\n\x06\x44\x65lete\x12\x06.DtoId\x1a\x13.EmptyAccommodation\x12-\n\x06Update\x12\x0e.Accommodation\x1a\x13.EmptyAccommodation\x12\x30\n\x0bGetBySearch\x12\x10.SearchParamsAcc\x1a\x0f.Accommodations\x12+\n\x0c\x44\x65leteByUser\x12\x06.DtoId\x1a\x13.EmptyAccommodation\x12$\n\tGetByUser\x12\x06.DtoId\x1a\x0f.Accommodationsb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x18\x61\x63\x63ommodation_crud.proto\"\x14\n\x12\x45mptyAccommodation\":\n\x08Location\x12\x0f\n\x07\x63ountry\x18\x02 \x01(\t\x12\x0c\n\x04\x63ity\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\"\xbf\x01\n\rAccommodation\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x1b\n\x08location\x18\x04 \x01(\x0b\x32\t.Location\x12\x10\n\x08\x66\x65\x61tures\x18\x05 \x03(\t\x12\x12\n\nimage_urls\x18\x06 \x03(\t\x12\x12\n\nmin_guests\x18\x07 \x01(\x05\x12\x12\n\nmax_guests\x18\x08 \x01(\x05\x12\x18\n\x10\x61uto_accept_flag\x18\t \x01(\t\"/\n\x0e\x41\x63\x63ommodations\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.Accommodation\"\x13\n\x05\x44toId\x12\n\n\x02id\x18\x01 \x01(\t\">\n\x0fSearchParamsAcc\x12\x1b\n\x08location\x18\x01 \x01(\x0b\x32\t.Location\x12\x0e\n\x06guests\x18\x02 \x01(\x05\x32\xf0\x02\n\x11\x41\x63\x63ommodationCrud\x12.\n\x06GetAll\x12\x13.EmptyAccommodation\x1a\x0f.Accommodations\x12!\n\x07GetById\x12\x06.DtoId\x1a\x0e.Accommodation\x12-\n\x06\x43reate\x12\x0e.Accommodation\x1a\x13.EmptyAccommodation\x12%\n\x06\x44\x65lete\x12\x06.DtoId\x1a\x13.EmptyAccommodation\x12-\n\x06Update\x12\x0e.Accommodation\x1a\x13.EmptyAccommodation\x12\x30\n\x0bGetBySearch\x12\x10.SearchParamsAcc\x1a\x0f.Accommodations\x12+\n\x0c\x44\x65leteByUser\x12\x06.DtoId\x1a\x13.EmptyAccommodation\x12$\n\tGetByUser\x12\x06.DtoId\x1a\x0f.Accommodationsb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'accommodation_crud_pb2', globals())
@@ -25,13 +25,13 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _LOCATION._serialized_start=50
   _LOCATION._serialized_end=108
   _ACCOMMODATION._serialized_start=111
-  _ACCOMMODATION._serialized_end=276
-  _ACCOMMODATIONS._serialized_start=278
-  _ACCOMMODATIONS._serialized_end=325
-  _DTOID._serialized_start=327
-  _DTOID._serialized_end=346
-  _SEARCHPARAMSACC._serialized_start=348
-  _SEARCHPARAMSACC._serialized_end=410
-  _ACCOMMODATIONCRUD._serialized_start=413
-  _ACCOMMODATIONCRUD._serialized_end=781
+  _ACCOMMODATION._serialized_end=302
+  _ACCOMMODATIONS._serialized_start=304
+  _ACCOMMODATIONS._serialized_end=351
+  _DTOID._serialized_start=353
+  _DTOID._serialized_end=372
+  _SEARCHPARAMSACC._serialized_start=374
+  _SEARCHPARAMSACC._serialized_end=436
+  _ACCOMMODATIONCRUD._serialized_start=439
+  _ACCOMMODATIONCRUD._serialized_end=807
 # @@protoc_insertion_point(module_scope)

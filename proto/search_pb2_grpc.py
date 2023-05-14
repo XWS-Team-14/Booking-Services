@@ -15,10 +15,10 @@ class SearchStub(object):
             channel: A grpc.Channel.
         """
         self.Search = channel.unary_unary(
-                '/search.Search/Search',
-                request_serializer=search__pb2.SearchParams.SerializeToString,
-                response_deserializer=search__pb2.SearchResults.FromString,
-                )
+            "/search.Search/Search",
+            request_serializer=search__pb2.SearchParams.SerializeToString,
+            response_deserializer=search__pb2.SearchResults.FromString,
+        )
 
 
 class SearchServicer(object):
@@ -27,40 +27,53 @@ class SearchServicer(object):
     def Search(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_SearchServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Search': grpc.unary_unary_rpc_method_handler(
-                    servicer.Search,
-                    request_deserializer=search__pb2.SearchParams.FromString,
-                    response_serializer=search__pb2.SearchResults.SerializeToString,
-            ),
+        "Search": grpc.unary_unary_rpc_method_handler(
+            servicer.Search,
+            request_deserializer=search__pb2.SearchParams.FromString,
+            response_serializer=search__pb2.SearchResults.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'search.Search', rpc_method_handlers)
+        "search.Search", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class Search(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def Search(request,
+    def Search(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/search.Search/Search',
+            "/search.Search/Search",
             search__pb2.SearchParams.SerializeToString,
             search__pb2.SearchResults.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )

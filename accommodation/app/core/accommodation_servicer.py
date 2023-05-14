@@ -150,6 +150,7 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             image_urls=image_urls_list,
             min_guests=obj_to_return.min_guests,
             max_guests=obj_to_return.max_guests,
+            auto_accept_flag=obj_to_return.auto_accept_flag,
         )
 
     def convert_from_dto(
@@ -178,6 +179,7 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             image_urls=image_urls_list,
             min_guests=obj_to_return.min_guests,
             max_guests=obj_to_return.max_guests,
+            auto_accept_flag=obj_to_return.auto_accept_flag,
         )
 
     def convert_from_dto_location(
