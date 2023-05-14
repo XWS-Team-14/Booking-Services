@@ -118,7 +118,20 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             return availability_crud_pb2.Result(status ="Failed, not found");
         else : 
             logger.success('Succesfully fetched');
-            await item.set({Availability.occupied_intervals:item.occupied_intervals.append(Interval(date_start = request.interval.date_start, date_end = request.interval.date_end))})
+            occ_intervals = []
+            requested_interval = Interval(date_start = AvailabilityHelper.convertDate(request.interval.date_start), date_end = AvailabilityHelper.convertDate(request.interval.date_end))
+            if item.occupied_intervals is not None :
+                logger.info('extending its not none');
+                for interval in item.occupied_intervals :
+                    if AvailabilityHelper.dateIntersection(requested_interval, interval) :
+                        logger.info('Interval has overlap, Failiure');
+                        return availability_crud_pb2.Result(status ="Interval has overlap, Failiure");    
+                logger.info(item.occupied_intervals);
+                occ_intervals.extend(item.occupied_intervals)
+                
+            occ_intervals.append(requested_interval)
+            item.occupied_intervals = occ_intervals
+            await item.replace()
             logger.success('Succesfully updated intervals');
             return availability_crud_pb2.Result(status ="Success");
         
