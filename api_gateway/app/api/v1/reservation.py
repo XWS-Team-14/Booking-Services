@@ -121,7 +121,7 @@ async def getByHost(access_token: Annotated[str | None, Cookie()] = None):
         status_code=200, media_type="application/json", content=json
     )
 @router.get(
-    "/guest/id/{item_id}",
+    "/guest/id",
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get one reservation by id",
 )

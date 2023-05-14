@@ -5,6 +5,9 @@ import json
 from uuid import uuid4
 from fastapi import APIRouter, Form, UploadFile, Cookie
 from fastapi.responses import HTMLResponse, Response
+from google.protobuf import json_format
+from rest_framework import status
+
 from ...config import get_yaml_config
 from typing import Annotated, List
 from types import SimpleNamespace
@@ -162,3 +165,23 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
     except Exception as e:
         logger.error(f"Error {e}")
     return res
+@router.get(
+    "/all",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get all reservations",
+)
+async def getAll():
+    logger.info("Gateway processing getAll reservations")
+    accommodation_server = (
+            get_yaml_config().get("accommodation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("accommodation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+        stub = accommodation_crud_pb2_grpc.AcommodationCrudStub(channel)
+        logger.info("Gateway processing getAll reservation data")
+        data = await stub.GetAll({})
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
