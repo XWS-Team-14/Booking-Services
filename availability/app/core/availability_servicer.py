@@ -98,7 +98,14 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
 
     async def GetAllSearch(self, request, context):
         logger.success('Request for search fetch Availability accepted');
-        
+        retVal = availability_crud_pb2.ExpandedAvailabilityDtos()
+        if request.interval.date_start == "" or request.interval.date_end == "" or request.num_of_guests == 0:
+            logger.info('Some parts of request data are missing, fetching all');
+            aas = await Availability.find_all().to_list()
+            logger.info(aas)
+            for aa in aas:
+                retVal.items.append(AvailabilityHelper.convertToExpandedDto(aa));
+            return retVal;
         if not AvailabilityHelper.validateDates(AvailabilityHelper.convertDateInterval(request.interval)):
             logger.exception('Dates are not valid');
             return availability_crud_pb2.ExpandedAvailabilityDtos()
@@ -107,7 +114,6 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             GTE(Availability.available_interval.date_end, AvailabilityHelper.convertDate(request.interval.date_end))
         ).to_list()
         realList = [x for x in list if AvailabilityHelper.isAvailable(request.interval,x)]
-        retVal = availability_crud_pb2.ExpandedAvailabilityDtos()
         holidays = await Holiday.find_all().to_list()
         for item in realList:
             retVal.items.append(AvailabilityHelper.convertToExpandedDto(item));

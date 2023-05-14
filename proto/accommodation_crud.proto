@@ -6,7 +6,7 @@ service AccommodationCrud {
   rpc Create (Accommodation) returns (EmptyAccommodation);
   rpc Delete (DtoId) returns (EmptyAccommodation);
   rpc Update (Accommodation) returns (EmptyAccommodation);
-  rpc GetByLocation (Location) returns (Accommodations);
+  rpc GetBySearch (SearchParamsAcc) returns (Accommodations);
   rpc DeleteByUser (DtoId) returns (EmptyAccommodation);
   rpc GetByUser (DtoId) returns (Accommodations);
 }
@@ -29,6 +29,7 @@ message Accommodation {
   repeated string image_urls = 6;
   int32 min_guests = 7;
   int32 max_guests = 8;
+  string auto_accept_flag = 9;
 }
 
 message Accommodations {
@@ -37,4 +38,9 @@ message Accommodations {
 
 message DtoId {
   string id = 1;
+}
+
+message SearchParamsAcc {
+  Location location = 1;
+  int32 guests = 2;
 }
