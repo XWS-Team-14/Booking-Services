@@ -509,3 +509,26 @@ async def deleteGuest(item_id):
     return Response(
         status_code=200, media_type="application/json", content=data.status
     )
+@router.get(
+    "/accommodation/id/{item_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get one reservation by id",
+)
+async def getAccommodationById(item_id):
+    logger.info("Gateway processing getById Reservation request")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
+    async with grpc.aio.insecure_channel(reservation_server) as channel:
+        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+        data = await stub.GetAccommodationById(reservation_crud_pb2.AccommodationResId(id=item_id))
+        if data.reservation_id == "":
+            return Response(
+                status_code=200, media_type="application/json", content="Invalid id"
+            )
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )

@@ -6,7 +6,6 @@ from uuid import uuid4
 from fastapi import APIRouter, Form, UploadFile, Cookie
 from fastapi.responses import HTMLResponse, Response
 from google.protobuf import json_format
-from rest_framework import status
 
 from ...config import get_yaml_config
 from typing import Annotated, List
@@ -168,9 +167,7 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
         logger.error(f"Error {e}")
     return res
 @router.get(
-    "/all",
-    status_code=status.HTTP_204_NO_CONTENT,
-    description="Get all reservations",
+    "/all"
 )
 async def getAll():
     logger.info("Gateway processing getAll reservations")
