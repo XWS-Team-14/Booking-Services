@@ -34,7 +34,6 @@ async def save_accommodation(
     min_guests: Annotated[int, Form()],
     max_guests: Annotated[int, Form()],
     features: Annotated[List[str], Form()],
-    automatic_accept: Annotated[str, Form()],
     files: List[UploadFile],
 ):
     """Post method used to save acoommodation
@@ -117,7 +116,7 @@ async def save_accommodation(
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         await stub.CreateAccommodation(reservation_crud_pb2.AccommodationResDto(
-            id=accommodation.id, automaticAccept = bool(automatic_accept)))
+            id=accommodation.id, automaticAccept = bool(auto_accept_flag)))
     return Response(
         status_code=200, media_type="text/html", content="Accommodation saved!"
     )
