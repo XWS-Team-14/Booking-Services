@@ -1,11 +1,15 @@
 import grpc
+import json
 
 from proto import accommodation_crud_pb2, accommodation_crud_pb2_grpc
 from proto import search_pb2_grpc, search_pb2
 from proto import availability_crud_pb2, availability_crud_pb2_grpc
 
+from google.protobuf.json_format import MessageToJson
+
 from app.config import get_yaml_config
 from loguru import logger
+from types import SimpleNamespace
 
 
 class SearchServicer(search_pb2_grpc.SearchServicer):
@@ -53,4 +57,49 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
             )
             avvs = await stub2.GetAllSearch(params)
         logger.info(avvs)
-        return search_pb2.SearchResults()
+
+        res = json.loads(
+            MessageToJson(accs), object_hook=lambda d: SimpleNamespace(**d)
+        )
+        res2 = json.loads(
+            MessageToJson(avvs), object_hook=lambda d: SimpleNamespace(**d)
+        )
+
+        # fix paths for image_urls
+        result = search_pb2.SearchResults()
+        try:
+            for item in res.items:
+                logger.info(res2)
+                for item2 in res2.items:
+                    if item.id == item2.accommodationId:
+                        location = search_pb2.Location(
+                            country=item.location.country,
+                            city=item.location.city,
+                            address=item.location.address,
+                        )
+                        features_list = list()
+                        image_urls_list = list()
+
+                        for item in item.features:
+                            features_list.append(item)
+                        for item in item.imageUrls:
+                            image_urls_list.append(item)
+
+                        result.append(
+                            search_pb2.SearchResults(
+                                accomodation_id=item.id,
+                                host_id=item.userId,
+                                name=item.name,
+                                location=location,
+                                features=features_list,
+                                image_urls=image_urls_list,
+                                min_guests=item.minGuests,
+                                max_guests=item.maxGuests,
+                                base_price=item2.basePrice,
+                                total_price=item2.totalPrice,
+                            )
+                        )
+        except Exception as e:
+            logger.error(f"Error {e}")
+
+        return result

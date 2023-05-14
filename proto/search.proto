@@ -17,17 +17,16 @@ message SearchParams {
 }
 
 message SearchResults {
-  string reservation_id = 1;
-  string accommodation_id = 2;
-  string host_id = 3;
-  string name = 4;
-  Location location = 5;
-  repeated string features = 6;
-  repeated string image_urls = 7;
-  int32 min_guests = 8;
-  int32 max_guests = 9;
-  double base_price = 10;
-  double total_price = 11;
+  string accommodation_id = 1;
+  string host_id = 2;
+  string name = 3;
+  Location location = 4;
+  repeated string features = 5;
+  repeated string image_urls = 6;
+  int32 min_guests = 7;
+  int32 max_guests = 8;
+  double base_price = 9;
+  double total_price = 10;
 }
 
 
