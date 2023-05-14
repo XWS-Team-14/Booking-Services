@@ -24,9 +24,9 @@ class ReservationHelper():
                      canceledReservations = request.canceledReservations)
 
     def convertDto(request):
-        beginning = ReservationHelper.convertDate(request.beginning_date);
-        ending = ReservationHelper.convertDate(request.ending_date);
-        status = ReservationStatus.PENDING;
+        beginning = ReservationHelper.convertDate(request.beginning_date)
+        ending = ReservationHelper.convertDate(request.ending_date)
+        status = ReservationStatus.PENDING
         if request.status == 3:
             status = ReservationStatus.ACCEPTED
         elif request.status == 1:

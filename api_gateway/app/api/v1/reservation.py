@@ -20,7 +20,7 @@ router = APIRouter(
     description="Get all reservations",
 )
 async def getAll():
-    logger.info("Gateway processing getAll reservations");
+    logger.info("Gateway processing getAll reservations")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -28,8 +28,8 @@ async def getAll():
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        logger.info("Gateway processing getAll reservation data");
-        data = await stub.GetAll({});
+        logger.info("Gateway processing getAll reservation data")
+        data = await stub.GetAll({})
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
     return Response(
         status_code=200, media_type="application/json", content=json
@@ -41,7 +41,7 @@ async def getAll():
     description="Get all reservations",
 )
 async def getAllGuests():
-    logger.info("Gateway processing getAll guests");
+    logger.info("Gateway processing getAll guests")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -49,8 +49,8 @@ async def getAllGuests():
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        logger.info("Gateway processing getAll reservation data");
-        data = await stub.GetAllGuests({});
+        logger.info("Gateway processing getAll reservation data")
+        data = await stub.GetAllGuests({})
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
     return Response(
         status_code=200, media_type="application/json", content=json
@@ -62,7 +62,7 @@ async def getAllGuests():
     description="Get one reservation by id",
 )
 async def getById(item_id):
-    logger.info("Gateway processing getById Reservation request");
+    logger.info("Gateway processing getById Reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -70,7 +70,7 @@ async def getById(item_id):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.GetById(reservation_crud_pb2.ReservationId(id=item_id));
+        data = await stub.GetById(reservation_crud_pb2.ReservationId(id=item_id))
         if data.reservation_id == "":
             return Response(
                 status_code=200, media_type="application/json", content="Invalid id"
@@ -87,7 +87,7 @@ async def getById(item_id):
     description="Get all reservations by host id",
 )
 async def getByHost(host_id):
-    logger.info("Gateway processing getPendingByHostId Reservation request");
+    logger.info("Gateway processing getPendingByHostId Reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -106,7 +106,7 @@ async def getByHost(host_id):
     description="Get one reservation by id",
 )
 async def getGuestById(item_id):
-    logger.info("Gateway processing getGuestById  request");
+    logger.info("Gateway processing getGuestById  request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -114,7 +114,7 @@ async def getGuestById(item_id):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.GetGuestById(reservation_crud_pb2.GuestId(id=item_id));
+        data = await stub.GetGuestById(reservation_crud_pb2.GuestId(id=item_id))
         if data.id == "":
             return Response(
                 status_code=200, media_type="application/json", content="Invalid id"
@@ -130,7 +130,7 @@ async def getGuestById(item_id):
     description="Get pending reservations by host id",
 )
 async def getPendingByHost(host_id):
-    logger.info("Gateway processing getPendingByHostId Reservation request");
+    logger.info("Gateway processing getPendingByHostId Reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -150,7 +150,7 @@ async def getPendingByHost(host_id):
     description="Get pending reservations by host id",
 )
 async def getActiveByHost(host_id):
-    logger.info("Gateway processing getActiveByHostId Reservation request");
+    logger.info("Gateway processing getActiveByHostId Reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -170,7 +170,7 @@ async def getActiveByHost(host_id):
     description="Get pending reservations by guest id",
 )
 async def getActiveByGuest(guest_id):
-    logger.info("Gateway processing getActiveByGuestId Reservation request");
+    logger.info("Gateway processing getActiveByGuestId Reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -191,7 +191,7 @@ async def getActiveByGuest(guest_id):
     description="Create new reservation",
 )
 async def create(item: ReservationDto):
-    logger.info("Gateway processing create Availability request");
+    logger.info("Gateway processing create Availability request")
 
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
@@ -213,7 +213,7 @@ async def create(item: ReservationDto):
         reservation.total_price = item.total_price
         reservation.status = item.status
 
-        response = await stub.Create(reservation);
+        response = await stub.Create(reservation)
 
         if response.status == "Invalid date":
             return Response(
@@ -230,7 +230,7 @@ async def create(item: ReservationDto):
     description="Create new reservation",
 )
 async def createGuest(item: Guest):
-    logger.info("Gateway processing create Availability request");
+    logger.info("Gateway processing create Availability request")
 
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
@@ -243,7 +243,7 @@ async def createGuest(item: Guest):
         guest = reservation_crud_pb2.Guest()
         guest.id = str(item.id)
         guest.canceledReservations = item.canceledReservations
-        response = await stub.CreateGuest(guest);
+        response = await stub.CreateGuest(guest)
     return Response(
         status_code=200, media_type="application/json", content="Success"
     )
@@ -255,7 +255,7 @@ async def createGuest(item: Guest):
     description="Update reservation",
 )
 async def update(item: ReservationDto):
-    logger.info("Gateway processing update reservation request");
+    logger.info("Gateway processing update reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -277,7 +277,7 @@ async def update(item: ReservationDto):
         reservation.total_price = item.total_price
         reservation.status = item.status
 
-        response = await stub.Update(reservation);
+        response = await stub.Update(reservation)
     return Response(
         status_code=200, media_type="application/json", content=response.status
     )
@@ -288,7 +288,7 @@ async def update(item: ReservationDto):
     description="Update reservation",
 )
 async def updateGuest(item: Guest):
-    logger.info("Gateway processing update reservation request");
+    logger.info("Gateway processing update reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -302,7 +302,7 @@ async def updateGuest(item: Guest):
         guest.id = str(item.id)
         guest.canceledReservations = item.canceledReservations
 
-        response = await stub.UpdateGuest(guest);
+        response = await stub.UpdateGuest(guest)
     return Response(
         status_code=200, media_type="application/json", content=response.status
     )
@@ -314,7 +314,7 @@ async def updateGuest(item: Guest):
     description="Accept a reservation",
 )
 async def AcceptReservation(item: ReservationDto):
-    logger.info("Gateway processing accept reservation request");
+    logger.info("Gateway processing accept reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -336,7 +336,7 @@ async def AcceptReservation(item: ReservationDto):
         reservation.total_price = item.total_price
         reservation.status = item.status
 
-        response = await stub.AcceptReservation(reservation);
+        response = await stub.AcceptReservation(reservation)
         #after completing this step, adequate changes should be made in availability servicer
 
     return Response(
@@ -349,7 +349,7 @@ async def AcceptReservation(item: ReservationDto):
     description="Update reservation",
 )
 async def delete(item_id):
-    logger.info("Gateway processing delete reservation request");
+    logger.info("Gateway processing delete reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -357,7 +357,7 @@ async def delete(item_id):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.Delete(reservation_crud_pb2.ReservationId(id=item_id));
+        data = await stub.Delete(reservation_crud_pb2.ReservationId(id=item_id))
     return Response(
         status_code=200, media_type="application/json", content=data.status
     )
@@ -368,7 +368,7 @@ async def delete(item_id):
     description="Update reservation",
 )
 async def delete(item_id):
-    logger.info("Gateway processing delete reservation request");
+    logger.info("Gateway processing delete reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -376,7 +376,7 @@ async def delete(item_id):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.DeleteGuest(reservation_crud_pb2.Guest(id=item_id));
+        data = await stub.DeleteGuest(reservation_crud_pb2.Guest(id=item_id))
     return Response(
         status_code=200, media_type="application/json", content=data.status
     )
