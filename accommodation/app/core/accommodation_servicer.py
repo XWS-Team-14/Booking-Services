@@ -82,18 +82,18 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
             updated_list = []
             if location.city != "":
                 for obj in objs:
-                    if obj.location.city == location.city:
+                    if obj.location.city.find(location.city) != -1:
                         updated_list.append(obj)
                 objs = updated_list.copy()
             if location.country != "":
                 for obj in objs:
-                    if obj.location.country == location.country:
+                    if obj.location.country.find(location.country) != -1:
                         updated_list.append(obj)
                 objs = updated_list.copy()
                 updated_list = []
             if location.address != "":
                 for obj in objs:
-                    if obj.location.address == location.address:
+                    if obj.location.address.find(location.address) != -1:
                         updated_list.append(obj)
                 objs = updated_list.copy()
                 updated_list = []
