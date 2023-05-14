@@ -13,6 +13,11 @@ service ReservationCrud {
   rpc GetPendingReservationsByHost(HostId) returns (ReservationDtos);
   rpc GetActiveByGuest(GuestId) returns (ReservationDtos);
   rpc GetActiveByHost(HostId) returns (ReservationDtos);
+  rpc GetGuestById (GuestId) returns (Guest);
+  rpc CreateGuest (Guest) returns (ReservationResult);
+  rpc DeleteGuest (GuestId) returns (ReservationResult);
+  rpc UpdateGuest (Guest) returns (ReservationResult);
+  rpc GetAllGuests(NoParameter) returns (Guests);
 }
 
 message NoParameter {
@@ -45,9 +50,12 @@ message HostId {
   string id = 1;
 }
 message Guest {
-  string guest_id = 1;
+  string id = 1;
   int32 canceledReservations = 2;
 }
+message Guests {
+ repeated Guest items = 1;
+}
 message GuestId{
-  string guest_id = 1;
+  string id = 1;
 }

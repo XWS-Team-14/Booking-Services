@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16reservation_crud.proto\"\r\n\x0bNoParameter\"#\n\x11ReservationResult\x12\x0e\n\x06status\x18\x01 \x01(\t\"\xd6\x01\n\x0eReservationDto\x12\x16\n\x0ereservation_id\x18\x01 \x01(\t\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x02 \x01(\t\x12\x0f\n\x07host_id\x18\x03 \x01(\t\x12\x15\n\x05guest\x18\x04 \x01(\x0b\x32\x06.Guest\x12\x18\n\x10number_of_guests\x18\x05 \x01(\x05\x12\x16\n\x0e\x62\x65ginning_date\x18\x06 \x01(\t\x12\x13\n\x0b\x65nding_date\x18\x07 \x01(\t\x12\x13\n\x0btotal_price\x18\x08 \x01(\x01\x12\x0e\n\x06status\x18\t \x01(\x05\"1\n\x0fReservationDtos\x12\x1e\n\x05items\x18\x01 \x03(\x0b\x32\x0f.ReservationDto\"\x1b\n\rReservationId\x12\n\n\x02id\x18\x01 \x01(\t\"\x14\n\x06HostId\x12\n\n\x02id\x18\x01 \x01(\t\"7\n\x05Guest\x12\x10\n\x08guest_id\x18\x01 \x01(\t\x12\x1c\n\x14\x63\x61nceledReservations\x18\x02 \x01(\x05\"\x1b\n\x07GuestId\x12\x10\n\x08guest_id\x18\x01 \x01(\t2\xdb\x04\n\x0fReservationCrud\x12(\n\x06GetAll\x12\x0c.NoParameter\x1a\x10.ReservationDtos\x12*\n\x07GetById\x12\x0e.ReservationId\x1a\x0f.ReservationDto\x12-\n\x06\x43reate\x12\x0f.ReservationDto\x1a\x12.ReservationResult\x12,\n\x06\x44\x65lete\x12\x0e.ReservationId\x1a\x12.ReservationResult\x12-\n\x06Update\x12\x0f.ReservationDto\x1a\x12.ReservationResult\x12&\n\tGetByHost\x12\x07.HostId\x1a\x10.ReservationDtos\x12(\n\nGetByGuest\x12\x08.GuestId\x1a\x10.ReservationDtos\x12\x41\n\x1cGetReservationsForAcceptance\x12\x0f.ReservationDto\x1a\x10.ReservationDtos\x12\x38\n\x11\x41\x63\x63\x65ptReservation\x12\x0f.ReservationDto\x1a\x12.ReservationResult\x12\x39\n\x1cGetPendingReservationsByHost\x12\x07.HostId\x1a\x10.ReservationDtos\x12.\n\x10GetActiveByGuest\x12\x08.GuestId\x1a\x10.ReservationDtos\x12,\n\x0fGetActiveByHost\x12\x07.HostId\x1a\x10.ReservationDtosb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16reservation_crud.proto\"\r\n\x0bNoParameter\"#\n\x11ReservationResult\x12\x0e\n\x06status\x18\x01 \x01(\t\"\xd6\x01\n\x0eReservationDto\x12\x16\n\x0ereservation_id\x18\x01 \x01(\t\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x02 \x01(\t\x12\x0f\n\x07host_id\x18\x03 \x01(\t\x12\x15\n\x05guest\x18\x04 \x01(\x0b\x32\x06.Guest\x12\x18\n\x10number_of_guests\x18\x05 \x01(\x05\x12\x16\n\x0e\x62\x65ginning_date\x18\x06 \x01(\t\x12\x13\n\x0b\x65nding_date\x18\x07 \x01(\t\x12\x13\n\x0btotal_price\x18\x08 \x01(\x01\x12\x0e\n\x06status\x18\t \x01(\x05\"1\n\x0fReservationDtos\x12\x1e\n\x05items\x18\x01 \x03(\x0b\x32\x0f.ReservationDto\"\x1b\n\rReservationId\x12\n\n\x02id\x18\x01 \x01(\t\"\x14\n\x06HostId\x12\n\n\x02id\x18\x01 \x01(\t\"1\n\x05Guest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x1c\n\x14\x63\x61nceledReservations\x18\x02 \x01(\x05\"\x1f\n\x06Guests\x12\x15\n\x05items\x18\x01 \x03(\x0b\x32\x06.Guest\"\x15\n\x07GuestId\x12\n\n\x02id\x18\x01 \x01(\t2\xa7\x06\n\x0fReservationCrud\x12(\n\x06GetAll\x12\x0c.NoParameter\x1a\x10.ReservationDtos\x12*\n\x07GetById\x12\x0e.ReservationId\x1a\x0f.ReservationDto\x12-\n\x06\x43reate\x12\x0f.ReservationDto\x1a\x12.ReservationResult\x12,\n\x06\x44\x65lete\x12\x0e.ReservationId\x1a\x12.ReservationResult\x12-\n\x06Update\x12\x0f.ReservationDto\x1a\x12.ReservationResult\x12&\n\tGetByHost\x12\x07.HostId\x1a\x10.ReservationDtos\x12(\n\nGetByGuest\x12\x08.GuestId\x1a\x10.ReservationDtos\x12\x41\n\x1cGetReservationsForAcceptance\x12\x0f.ReservationDto\x1a\x10.ReservationDtos\x12\x38\n\x11\x41\x63\x63\x65ptReservation\x12\x0f.ReservationDto\x1a\x12.ReservationResult\x12\x39\n\x1cGetPendingReservationsByHost\x12\x07.HostId\x1a\x10.ReservationDtos\x12.\n\x10GetActiveByGuest\x12\x08.GuestId\x1a\x10.ReservationDtos\x12,\n\x0fGetActiveByHost\x12\x07.HostId\x1a\x10.ReservationDtos\x12 \n\x0cGetGuestById\x12\x08.GuestId\x1a\x06.Guest\x12)\n\x0b\x43reateGuest\x12\x06.Guest\x1a\x12.ReservationResult\x12+\n\x0b\x44\x65leteGuest\x12\x08.GuestId\x1a\x12.ReservationResult\x12)\n\x0bUpdateGuest\x12\x06.Guest\x1a\x12.ReservationResult\x12%\n\x0cGetAllGuests\x12\x0c.NoParameter\x1a\x07.Guestsb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'reservation_crud_pb2', globals())
@@ -33,9 +33,11 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _HOSTID._serialized_start=375
   _HOSTID._serialized_end=395
   _GUEST._serialized_start=397
-  _GUEST._serialized_end=452
-  _GUESTID._serialized_start=454
-  _GUESTID._serialized_end=481
-  _RESERVATIONCRUD._serialized_start=484
-  _RESERVATIONCRUD._serialized_end=1087
+  _GUEST._serialized_end=446
+  _GUESTS._serialized_start=448
+  _GUESTS._serialized_end=479
+  _GUESTID._serialized_start=481
+  _GUESTID._serialized_end=502
+  _RESERVATIONCRUD._serialized_start=505
+  _RESERVATIONCRUD._serialized_end=1312
 # @@protoc_insertion_point(module_scope)

@@ -2,11 +2,13 @@ import uuid
 from datetime import date, datetime
 
 from beanie.exceptions import DocumentNotFound
+from pydantic.datetime_parse import timedelta
 
 from proto import reservation_crud_pb2_grpc, reservation_crud_pb2
 from loguru import logger
 
 from .reservation_helper import ReservationHelper
+from ..models.guest import Guest
 from ..models.reservation import Reservation
 from ..models.reservation_status import ReservationStatus
 
@@ -21,6 +23,13 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         reservation.id = uuid.uuid4()
         await reservation.insert()
         logger.success('reservation succesfully saved');
+        return reservation_crud_pb2.ReservationResult(status="Success");
+
+    async def CreateGuest(self, request, context):
+        logger.success('Request for creation of guest accepted');
+        guest = ReservationHelper.convertGuestDto(request);
+        await guest.insert()
+        logger.success('guest succesfully saved');
         return reservation_crud_pb2.ReservationResult(status="Success");
 
     async def Update(self, request, context):
@@ -41,6 +50,21 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         logger.success('Reservation succesfully updated');
         return reservation_crud_pb2.ReservationResult(status="Success");
 
+    async def UpdateGuest(self, request, context):
+        logger.success('Request for update of guest accepted');
+        guest = ReservationHelper.convertGuestDto(request);
+        try:
+            item = await guest.get(guest.id);
+            if not item:
+                logger.info('Update failed, document with given id not found');
+                return reservation_crud_pb2.ReservationResult(status="Failed, not found");
+            await guest.replace()
+        except (ValueError, DocumentNotFound):
+            logger.info('Update failed, document with given id not found');
+            return reservation_crud_pb2.ReservationResult(status="Failed, not found");
+        logger.success('Reservation succesfully updated');
+        return reservation_crud_pb2.ReservationResult(status="Success");
+
     async def Delete(self, request, context):
         logger.success('Request for deletion of Reservation accepted');
         try:
@@ -51,8 +75,27 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         except (ValueError, DocumentNotFound):
             logger.info('Delete failed, document with given id not found');
             return reservation_crud_pb2.ReservationResult(status="Failed, not found");
+        if item.beginning_date <= (datetime.today() + timedelta(days=1)):
+            return reservation_crud_pb2.ReservationResult(status = "You cannot cancel a reservation that is less than one day from now")
+        guest = ReservationHelper.convertGuestDto(item.guest);
+        guest.canceledReservations = guest.canceledReservations + 1
+        await guest.replace()
         await item.delete();
         logger.success('reservation succesfully deleted');
+        return reservation_crud_pb2.ReservationResult(status="Success");
+
+    async def DeleteGuest(self, request, context):
+        logger.success('Request for deletion of Guest accepted');
+        try:
+            item = await Guest.get(request.id);
+            if not item:
+                logger.info('Delete failed, document with given id not found');
+                return reservation_crud_pb2.ReservationResult(status="Failed, not found");
+        except (ValueError, DocumentNotFound):
+            logger.info('Delete failed, document with given id not found');
+            return reservation_crud_pb2.ReservationResult(status="Failed, not found");
+        await item.delete();
+        logger.success('guest succesfully deleted');
         return reservation_crud_pb2.ReservationResult(status="Success");
 
     async def GetAll(self, request, context):
@@ -62,6 +105,16 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         logger.info('fetched data converting')
         for reservation in reservations:
             retVal.items.append(ReservationHelper.convertToDto(reservation));
+        logger.success('Succesfully fetched');
+        return retVal;
+
+    async def GetAllGuests(self, request, context):
+        logger.success('Request for fetch all of guests accepted');
+        guests = await Guest.find_all().to_list()
+        retVal = reservation_crud_pb2.Guests()
+        logger.info('fetched data converting')
+        for guest in guests:
+            retVal.items.append(ReservationHelper.convertGuestToDto(guest));
         logger.success('Succesfully fetched');
         return retVal;
 
@@ -92,7 +145,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         retVal = reservation_crud_pb2.ReservationDtos()
         for reservation in reservations:
             reservation_dto = ReservationHelper.convertToDto(reservation)
-            if reservation_dto.guest.guest_id == request.guest_id:
+            if reservation_dto.guest.id == request.id:
                 retVal.items.append(reservation_dto)
         return retVal
 
@@ -102,7 +155,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         retVal = reservation_crud_pb2.ReservationDtos()
         for reservation in reservations:
 
-            if str(reservation.guest.guest_id) == request.guest_id:
+            if str(reservation.guest.id) == request.id:
                 if reservation.beginning_date >= datetime.now():
                     reservation_dto = ReservationHelper.convertToDto(reservation)
                     retVal.items.append(reservation_dto)
@@ -161,3 +214,17 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         else:
             logger.success('Succesfully fetched');
             return ReservationHelper.convertToDto(item);
+
+    async def GetGuestById(self, request, context):
+        logger.success('Request for fetch reservation accepted')
+        try:
+            item = await Guest.find_one(Guest.id == uuid.UUID(request.id))
+        except (ValueError, DocumentNotFound):
+            logger.info('Fetch failed, document with given id not found')
+            return reservation_crud_pb2.Guest()
+        if not item:
+            logger.info('fetched nothing')
+            return reservation_crud_pb2.Guest()
+        else:
+            logger.success('Succesfully fetched')
+            return ReservationHelper.convertGuestToDto(item)

@@ -4,7 +4,11 @@ from beanie import Document
 from pydantic import BaseModel
 
 
-class Guest (BaseModel):
-    guest_id : uuid.UUID
+class Guest (Document):
+    id : uuid.UUID
     canceledReservations : int
 
+    class Settings:
+        indexes = [
+            "id"
+        ]

@@ -6,7 +6,7 @@ from enum import Enum
 from pydantic import BaseModel
 
 class Guest(BaseModel):
-    guest_id: uuid.UUID
+    id: uuid.UUID
     canceledReservations : int
 
 

@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, date
 
 from proto import reservation_crud_pb2
@@ -18,6 +19,10 @@ class ReservationHelper():
         # '2019-05-18T15:17:08.132263'
         return datetime.isoformat().split('T')[0]
 
+    def convertGuestDto(request):
+        return Guest(id = request.id,
+                     canceledReservations = request.canceledReservations)
+
     def convertDto(request):
         beginning = ReservationHelper.convertDate(request.beginning_date);
         ending = ReservationHelper.convertDate(request.ending_date);
@@ -26,7 +31,7 @@ class ReservationHelper():
             status = ReservationStatus.ACCEPTED
         elif request.status == 1:
             status = ReservationStatus.REJECTED
-        guest = Guest(guest_id = request.guest.guest_id, canceledReservations = request.guest.canceledReservations)
+        guest = Guest(id = request.guest.id, canceledReservations = request.guest.canceledReservations)
         return Reservation(
             id=request.reservation_id,
             accommodation_id=request.accommodation_id,
@@ -44,7 +49,7 @@ class ReservationHelper():
         retVal.reservation_id = str(reservation.id)
         retVal.accommodation_id = str(reservation.accommodation_id)
         retVal.host_id = str(reservation.host_id)
-        retVal.guest.guest_id = str(reservation.guest.guest_id)
+        retVal.guest.id = str(reservation.guest.id)
         retVal.guest.canceledReservations = reservation.guest.canceledReservations
         retVal.number_of_guests = reservation.number_of_guests
         retVal.beginning_date = ReservationHelper.convertDateTime(reservation.beginning_date)
@@ -53,6 +58,11 @@ class ReservationHelper():
         retVal.status = reservation.status.value
         return retVal
 
+    def convertGuestToDto(guest):
+        retVal = reservation_crud_pb2.Guest()
+        retVal.id = str(guest.id)
+        retVal.canceledReservations = guest.canceledReservations
+        return retVal
 
     def validateDates(start, end):
         return date.today() < start.date() < end.date()
