@@ -1,6 +1,10 @@
+from typing import Annotated
+
+from jwt import ExpiredSignatureError, InvalidTokenError
+
 from ...schemas.reservation import ReservationDto, Guest
 from ...config import get_yaml_config
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Cookie
 from fastapi.responses import Response
 # from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
@@ -8,6 +12,7 @@ import json
 from loguru import logger
 import grpc
 from proto import reservation_crud_pb2_grpc, reservation_crud_pb2
+from ...utils.jwt import get_id_from_token, get_role_from_token
 
 router = APIRouter(
     tags=["Reservation"],
@@ -82,12 +87,26 @@ async def getById(item_id):
 
 
 @router.get(
-    "/host/{host_id}",
+    "/host}",
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get all reservations by host id",
 )
-async def getByHost(host_id):
+async def getByHost(access_token: Annotated[str | None, Cookie()] = None):
     logger.info("Gateway processing getPendingByHostId Reservation request")
+    try:
+        host_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "host":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -125,12 +144,27 @@ async def getGuestById(item_id):
     )
 
 @router.get(
-    "/host/pending/{host_id}",
+    "/host/pending",
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get pending reservations by host id",
 )
-async def getPendingByHost(host_id):
+async def getPendingByHost(access_token: Annotated[str | None, Cookie()] = None):
     logger.info("Gateway processing getPendingByHostId Reservation request")
+
+    try:
+        host_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "host":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -145,12 +179,25 @@ async def getPendingByHost(host_id):
     )
 
 @router.get(
-    "/host/active/{host_id}",
+    "/host/active",
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get pending reservations by host id",
 )
-async def getActiveByHost(host_id):
-    logger.info("Gateway processing getActiveByHostId Reservation request")
+async def getActiveByHost(access_token: Annotated[str | None, Cookie()] = None):
+    logger.info("Gateway processing getPendingByHostId Reservation request")
+    try:
+        host_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "host":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -165,12 +212,26 @@ async def getActiveByHost(host_id):
     )
 
 @router.get(
-    "/guest/active/{guest_id}",
+    "/guest/active",
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get pending reservations by guest id",
 )
-async def getActiveByGuest(guest_id):
-    logger.info("Gateway processing getActiveByGuestId Reservation request")
+async def getActiveByGuest(access_token: Annotated[str | None, Cookie()] = None):
+    logger.info("Gateway processing get active by guest Reservation request")
+    try:
+        guest_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "guest":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -313,7 +374,19 @@ async def updateGuest(item: Guest):
     status_code=status.HTTP_204_NO_CONTENT,
     description="Accept a reservation",
 )
-async def AcceptReservation(item: ReservationDto):
+async def AcceptReservation(item: ReservationDto, access_token: Annotated[str | None, Cookie()] = None):
+    try:
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "host":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
     logger.info("Gateway processing accept reservation request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
@@ -348,8 +421,21 @@ async def AcceptReservation(item: ReservationDto):
     status_code=status.HTTP_204_NO_CONTENT,
     description="Update reservation",
 )
-async def delete(item_id):
-    logger.info("Gateway processing delete reservation request")
+async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
+    logger.info("Gateway processing delete Reservation request")
+    try:
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "guest":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
@@ -368,7 +454,7 @@ async def delete(item_id):
     description="Update reservation",
 )
 async def delete(item_id):
-    logger.info("Gateway processing delete reservation request")
+    logger.info("Gateway processing delete guest request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
             + ":"
