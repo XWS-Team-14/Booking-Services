@@ -2,7 +2,6 @@ import json
 import grpc
 from app.config import get_yaml_config
 from fastapi import APIRouter
-from fastapi.responses import Response
 from proto import search_pb2_grpc, search_pb2
 from loguru import logger
 from types import SimpleNamespace
@@ -13,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post(
+@router.get(
     "/",
     description="Search",
 )
