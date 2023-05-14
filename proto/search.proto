@@ -15,8 +15,10 @@ message SearchParams {
   int32 guests = 2;
   Interval details = 3;  
 }
-
-message SearchResults {
+message SearchResults{
+  repeated SearchResult items = 1;
+}
+message SearchResult {
   string accommodation_id = 1;
   string host_id = 2;
   string name = 3;

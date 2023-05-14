@@ -68,10 +68,11 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         # fix paths for image_urls
         result = search_pb2.SearchResults()
         try:
+            logger.info(res)
             for item in res.items:
                 logger.info(res2)
                 for item2 in res2.items:
-                    if item.id == item2.accommodationId:
+                    if item.id == item2.accomodationId:
                         location = search_pb2.Location(
                             country=item.location.country,
                             city=item.location.city,
@@ -80,14 +81,13 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
                         features_list = list()
                         image_urls_list = list()
 
-                        for item in item.features:
-                            features_list.append(item)
-                        for item in item.imageUrls:
-                            image_urls_list.append(item)
+                        for features in item.features:
+                            features_list.append(features)
+                        for urls in item.imageUrls:
+                            image_urls_list.append(urls)
 
-                        result.append(
-                            search_pb2.SearchResults(
-                                accomodation_id=item.id,
+                        amongas = search_pb2.SearchResult(
+                                accommodation_id=item.id,
                                 host_id=item.userId,
                                 name=item.name,
                                 location=location,
@@ -98,6 +98,9 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
                                 base_price=item2.basePrice,
                                 total_price=item2.totalPrice,
                             )
+                        
+                        result.items.append(
+                            amongas
                         )
         except Exception as e:
             logger.error(f"Error {e}")
