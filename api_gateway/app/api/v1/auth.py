@@ -17,9 +17,7 @@ from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2
 
 from app.utils import get_server
 
-router = APIRouter(
-    tags=["Auth"],
-)
+router = APIRouter()
 
 
 @cbv(router)

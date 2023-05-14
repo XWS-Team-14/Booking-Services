@@ -11,7 +11,7 @@ config = get_yaml_config().get("app")
 router = APIRouter(prefix=f"/{config.get('api_prefix')}")
 router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 router.include_router(accommodation_router, prefix="/accommodation", tags=["Accommodation"])
-router.include_router(user_router, prefix="/user", tags=["User"])
+router.include_router(user_router, prefix="/user", tags=["User management"])
 router.include_router(availability_router, prefix="/avail", tags=["Availability"])
 router.include_router(reservation_router, prefix="/reservation", tags=["Reservation"])
 
