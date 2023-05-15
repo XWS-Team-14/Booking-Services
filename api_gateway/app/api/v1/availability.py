@@ -1,8 +1,8 @@
-from app.schemas.availability import AvailabilityDto, SearchDetails
-from app.config import get_yaml_config
+from ...schemas.availability import AvailabilityDto, SearchDetails
+from ...config import get_yaml_config
 from fastapi import APIRouter, status, Cookie
 from fastapi.responses import Response
-from fastapi_utils.cbv import cbv
+#from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
 import json
 from typing import Annotated
@@ -10,7 +10,7 @@ from loguru import logger
 import grpc
 from proto import availability_crud_pb2_grpc, availability_crud_pb2
 from proto import accommodation_crud_pb2_grpc, accommodation_crud_pb2
-from app.utils.jwt import get_role_from_token,get_id_from_token
+from ...utils.jwt import get_role_from_token,get_id_from_token
 from jwt import ExpiredSignatureError, InvalidTokenError
 
 router = APIRouter(
@@ -118,6 +118,47 @@ async def getForUser(access_token: Annotated[str | None, Cookie()] = None):
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+
+@router.get(
+    "/accommodation/{item_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get one availability by id",
+)
+async def getByAccommodation(item_id, access_token: Annotated[str | None, Cookie()] = None):
+    logger.info("Gateway processing getByUser Availability request");
+    try:
+        user_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    availability_server = (
+            get_yaml_config().get("availability_server").get("ip")
+            + ":"
+            + get_yaml_config().get("availability_server").get("port")
+    )
+    accommodation_server = (
+            get_yaml_config().get("accommodation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("accommodation_server").get("port")
+    )
+
+    async with grpc.aio.insecure_channel(availability_server) as channel:
+        stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
+        availability_data = await stub.GetByAccommodationId(availability_crud_pb2.AvailabilityId(id = item_id))
+    logger.info("Gateway fetched Availability data");
+
+
+    json = json_format.MessageToJson(availability_data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
+
 @router.post(
     "/create",
     status_code=status.HTTP_204_NO_CONTENT,

@@ -121,11 +121,25 @@ async def getByHost(access_token: Annotated[str | None, Cookie()] = None):
         status_code=200, media_type="application/json", content=json
     )
 @router.get(
-    "/guest/id",
+    "/guest",
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get one reservation by id",
 )
-async def getGuestById(item_id):
+async def getGuestById(access_token: Annotated[str | None, Cookie()] = None):
+    try:
+        guest_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "guest":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     logger.info("Gateway processing getGuestById  request")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
@@ -134,7 +148,7 @@ async def getGuestById(item_id):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.GetGuestById(reservation_crud_pb2.GuestId(id=item_id))
+        data = await stub.GetGuestById(reservation_crud_pb2.GuestId(id=guest_id))
         if data.id == "":
             return Response(
                 status_code=200, media_type="application/json", content="Invalid id"
@@ -300,7 +314,7 @@ async def create(item: ReservationDto):
                     id=availabilityStub.GetByAccommodationId(reservation.accommodation.id),
                     interval = availability_crud_pb2.Interval(
                         date_start = reservation.beginning_date,
-                        end_date = reservation.ending_date) ))
+                        date_end = reservation.ending_date) ))
 
         else:
             reservation.status = item.status
@@ -452,7 +466,7 @@ async def AcceptReservation(item: ReservationDto, access_token: Annotated[str | 
                 id=availabilityStub.GetByAccommodationId(reservation.accommodation.id),
                 interval=availability_crud_pb2.Interval(
                     date_start=reservation.beginning_date,
-                    end_date=reservation.ending_date)))
+                    date_end=reservation.ending_date)))
         #after completing this step, adequate changes should be made in availability servicer
 
     return Response(
@@ -524,7 +538,7 @@ async def getAccommodationById(item_id):
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetAccommodationById(reservation_crud_pb2.AccommodationResId(id=item_id))
-        if data.reservation_id == "":
+        if data.id == "":
             return Response(
                 status_code=200, media_type="application/json", content="Invalid id"
             )

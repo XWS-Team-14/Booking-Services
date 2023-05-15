@@ -183,3 +183,37 @@ async def getAll():
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+
+@router.get("/id/{item_id}")
+async def GetById(item_id,access_token: Annotated[str | None, Cookie()] = None):
+    try:
+        user_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+
+    accommodation_server = (
+        get_yaml_config().get("accommodation_server").get("ip")
+        + ":"
+        + get_yaml_config().get("accommodation_server").get("port")
+    )
+
+    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+        stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
+
+        response = await stub.GetById(accommodation_crud_pb2.DtoId(id = item_id))
+
+    if response.id == "":
+        return Response(
+            status_code=200, media_type="application/json", content="Invalid id"
+        )
+    json = json_format.MessageToJson(response, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )

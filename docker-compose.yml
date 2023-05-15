@@ -8,8 +8,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-    #ports:
-    #- 27017:27017
+    ports:
+    - 27017:27017
 
   mongo-auth:
     image: mongo
@@ -35,8 +35,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-    ports:
-    - 27017:27017
+    #ports:
+    #- 27017:27017
   
   mongo-user_control:
     image: mongo

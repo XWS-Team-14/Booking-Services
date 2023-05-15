@@ -284,4 +284,4 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
             return reservation_crud_pb2.AccommodationResDto()
         else:
             logger.success('Succesfully fetched')
-            return ReservationHelper.convertGuestToDto(item)
+            return ReservationHelper.convertAccommodationToDto(item)

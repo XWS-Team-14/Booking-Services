@@ -66,7 +66,7 @@ class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudService
     async def GetById(self, request, context):
         logger.info("GetById request started")
         try:
-            obj_to_return = await Accommodation.get(request.id)
+            obj_to_return = await Accommodation.get(uuid.UUID(request.id))
         except Exception as e:
             logger.error(f"Trying to get object that does not exist {e}")
             return accommodation_crud_pb2.Accommodation()
