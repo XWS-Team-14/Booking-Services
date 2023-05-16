@@ -90,7 +90,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         aas = await Availability.find_all().to_list()
         logger.info("fetched data converting")
         for aa in aas:
-            if str(aa.accomodation_id) == request.id:
+            if str(aa.accommodation_id) == request.id:
                 return AvailabilityHelper.convertToDto(aa)
         logger.info("fetched nothing")
         return availability_crud_pb2.AvailabilityDto()

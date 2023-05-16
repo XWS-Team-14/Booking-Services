@@ -37,7 +37,7 @@ message Interval{
 }
 message AvailabilityDto{
     string availability_id = 1;
-    string accomodation_id = 2;
+    string accommodation_id = 2;
     Interval interval = 3;
     string pricing_type = 4; 
     double base_price = 5;
@@ -46,7 +46,7 @@ message AvailabilityDto{
 }
 message ExpandedAvailabilityDto{
     string availability_id = 1;
-    string accomodation_id = 2;
+    string accommodation_id = 2;
     Interval interval = 3;
     string pricing_type = 4; 
     double base_price = 5;

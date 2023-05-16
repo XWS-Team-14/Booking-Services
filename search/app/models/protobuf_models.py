@@ -53,7 +53,7 @@ class SpecialPricing(BaseModel):
 
 class ExpandedAvailabilityDto(BaseModel):
     availability_id: UUID4
-    accomodation_id: UUID4
+    accommodation_id: UUID4
     interval: Interval
     pricing_type: str
     base_price: float

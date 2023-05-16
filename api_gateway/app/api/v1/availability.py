@@ -108,7 +108,7 @@ async def getForUser(access_token: Annotated[str | None, Cookie()] = None):
     retVal = availability_crud_pb2.AvailabilityDtos()
     if accommodation_data:
         for item in availability_data.items:
-            if any(item.accomodation_id == x.id for x in accommodation_data.items):
+            if any(item.accommodation_id == x.id for x in accommodation_data.items):
                 retVal.items.append(item)
 
     json = json_format.MessageToJson(retVal, preserving_proto_field_name=True)
@@ -185,7 +185,7 @@ async def create(
 
         availability = availability_crud_pb2.AvailabilityDto()
         availability.availability_id = item.availability_id
-        availability.accomodation_id = item.accomodation_id
+        availability.accommodation_id = item.accommodation_id
         availability.interval.date_start = item.interval.date_start
         availability.interval.date_end = item.interval.date_end
         availability.base_price = item.base_price
@@ -236,7 +236,7 @@ async def update(
 
         availability = availability_crud_pb2.AvailabilityDto()
         availability.availability_id = item.availability_id
-        availability.accomodation_id = item.accomodation_id
+        availability.accommodation_id = item.accommodation_id
         availability.interval.date_start = item.interval.date_start
         availability.interval.date_end = item.interval.date_end
         availability.base_price = item.base_price

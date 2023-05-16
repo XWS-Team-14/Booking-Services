@@ -10,15 +10,12 @@ from typing import Optional
 
 class Availability(Document):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    accomodation_id: uuid.UUID
+    accommodation_id: uuid.UUID
     available_interval: Interval
     pricing_type: PricingTypeEnum
     base_price: float
-    special_pricing:Optional[List[SpecialPricing]]
-    occupied_intervals :Optional[List[Interval]]
-    
+    special_pricing: Optional[List[SpecialPricing]]
+    occupied_intervals: Optional[List[Interval]]
+
     class Settings:
-        indexes = [
-            "id"
-        ]
-    
+        indexes = ["id"]

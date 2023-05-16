@@ -55,7 +55,7 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         try:
             for item in parsed_accs.items:
                 for item2 in parsed_avvs.items:
-                    if item.id == item2.accomodationId:
+                    if item.id == item2.accommodationId:
                         result.items.append(SearchResult(item, item2))
         except Exception as e:
             logger.error(f"Error {e}")
