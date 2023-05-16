@@ -24,4 +24,4 @@ class ResponseAccommodation(BaseModel):
 
 class SearchParams(BaseModel):
     location: Location
-    guests: int
+    guests: int = 0

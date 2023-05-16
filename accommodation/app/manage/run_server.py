@@ -1,5 +1,5 @@
 from loguru import logger
-from app.core.accommodation_servicer import AccommodationServiceServicer
+from app.core.accommodation_servicer import AccommodationServicer
 from app.db.mongodb import start_async_mongodb
 from proto import accommodation_pb2_grpc
 import grpc
@@ -11,7 +11,7 @@ async def serve(port):
     server = grpc.aio.server()
     # Add services
     accommodation_pb2_grpc.add_AccommodationServiceServicer_to_server(
-        AccommodationServiceServicer(), server
+        AccommodationServicer(), server
     )
 
     server.add_insecure_port("[::]:" + port)

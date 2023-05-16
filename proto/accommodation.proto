@@ -28,7 +28,7 @@ message ResponseAccommodation {
 
 message ResponseAccommodations {
   Response response = 1;
-  Accommodations items = 2;
+  repeated Accommodation items = 2;
 }
 
 message Location {
@@ -49,9 +49,6 @@ message Accommodation {
   bool auto_accept_flag = 9;
 }
 
-message Accommodations {
-  repeated Accommodation items = 1;
-}
 
 message InputId {
   string id = 1;

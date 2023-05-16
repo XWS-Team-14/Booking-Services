@@ -13,7 +13,7 @@ class Accommodation(Document):
     image_urls: list[str]
     min_guests: int
     max_guests: int
-    auto_accept_flag: bool
+    auto_accept_flag: bool = False
 
     class Settings:
         indexes = [
