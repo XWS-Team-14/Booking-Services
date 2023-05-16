@@ -100,7 +100,7 @@ async def getForUser(access_token: Annotated[str | None, Cookie()] = None):
     logger.info("Gateway fetched Availability data")
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
         stub = accommodation_pb2_grpc.AccommodationCrudStub(channel)
-        dto = accommodation_pb2.DtoId(
+        dto = accommodation_pb2.InputId(
             id=user_id,
         )
         accommodation_data = await stub.GetByUser(dto)
@@ -139,11 +139,6 @@ async def getByAccommodation(
         get_yaml_config().get("availability_server").get("ip")
         + ":"
         + get_yaml_config().get("availability_server").get("port")
-    )
-    (
-        get_yaml_config().get("accommodation_server").get("ip")
-        + ":"
-        + get_yaml_config().get("accommodation_server").get("port")
     )
 
     async with grpc.aio.insecure_channel(availability_server) as channel:
