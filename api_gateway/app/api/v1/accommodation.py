@@ -9,15 +9,16 @@ from google.protobuf import json_format
 
 from ...config import get_yaml_config
 from typing import Annotated, List
-from types import SimpleNamespace
 from jwt import ExpiredSignatureError, InvalidTokenError
 
 from ...utils.get_server import get_server
-from proto import accommodation_crud_pb2_grpc, reservation_crud_pb2_grpc, reservation_crud_pb2
-from proto import accommodation_crud_pb2
-from google.protobuf.json_format import MessageToJson
+from proto import reservation_crud_pb2_grpc, reservation_crud_pb2
+from proto import accommodation_pb2, accommodation_pb2_grpc
+from google.protobuf.json_format import MessageToDict, Parse
 from loguru import logger
 from ...utils.jwt import get_id_from_token, get_role_from_token
+
+from app.schemas.accommodation import Location, Accommodation, ResponseAccommodations
 
 router = APIRouter()
 
@@ -78,15 +79,11 @@ async def save_accommodation(
             # Might be good to check if every image was saved properly
             await asyncio.gather(*tasks)
     # Send grpc request to save accommodation data
-    accommodation_server = (
-        get_yaml_config().get("accommodation_server").get("ip")
-        + ":"
-        + get_yaml_config().get("accommodation_server").get("port")
-    )
+    accommodation_server = get_server("accommodation_server")
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
-        stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
+        stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
 
-        location = accommodation_crud_pb2.Location(
+        location = Location(
             country=country,
             city=city,
             address=address,
@@ -100,9 +97,9 @@ async def save_accommodation(
         for item in image_uris:
             image_urls_list.append(item)
 
-        accommodation = accommodation_crud_pb2.Accommodation(
+        accommodation = Accommodation(
             id=str(uuid4()),
-            user_id=user_id,
+            host_id=user_id,
             name=name,
             location=location,
             features=features_list,
@@ -112,13 +109,21 @@ async def save_accommodation(
             auto_accept_flag=auto_accept_flag,
         )
 
-        await stub.Create(accommodation)
+        response = await stub.Create(
+            Parse(json.dumps(accommodation.dict()), accommodation_pb2.Accommodation())
+        )
+
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        await stub.CreateAccommodation(reservation_crud_pb2.AccommodationResDto(
-            id=accommodation.id, automaticAccept = bool(auto_accept_flag)))
+        await stub.CreateAccommodation(
+            reservation_crud_pb2.AccommodationResDto(
+                id=accommodation.id, automaticAccept=bool(auto_accept_flag)
+            )
+        )
     return Response(
-        status_code=200, media_type="text/html", content="Accommodation saved!"
+        status_code=response.status_code,
+        media_type="text/html",
+        content=response.message_string,
     )
 
 
@@ -138,57 +143,50 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
-    accommodation_server = (
-        get_yaml_config().get("accommodation_server").get("ip")
-        + ":"
-        + get_yaml_config().get("accommodation_server").get("port")
-    )
+    accommodation_server = get_server("accommodation_server")
 
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
-        stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
-        dto = accommodation_crud_pb2.DtoId(
+        stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
+        dto = accommodation_pb2.InputId(
             id=user_id,
         )
         response = await stub.GetByUser(dto)
 
-    res = json.loads(
-        MessageToJson(response), object_hook=lambda d: SimpleNamespace(**d)
+    parsed_response = ResponseAccommodations.parse_obj(
+        MessageToDict(response, preserving_proto_field_name=True)
     )
     # fix paths for image_urls
     updated_url = "http://localhost:8000/api/static/images/"
     try:
-        for item in res.items:
+        for item in parsed_response.items:
             updated_urls = []
-            for img_url in item.imageUrls:
+            for img_url in item.image_urls:
                 updated_urls.append(updated_url + img_url)
-            item.imageUrls = updated_urls
+            item.image_urls = updated_urls
     except Exception as e:
         logger.error(f"Error {e}")
-    return res
-@router.get(
-    "/all"
-)
+    return Response(
+        status_code=parsed_response.response.status_code, content=parsed_response.items
+    )
+
+
+@router.get("/all")
 async def getAll():
     logger.info("Gateway processing getAll reservations")
-    accommodation_server = (
-            get_yaml_config().get("accommodation_server").get("ip")
-            + ":"
-            + get_yaml_config().get("accommodation_server").get("port")
-    )
+    accommodation_server = get_server("accommodation_server")
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
-        stub = accommodation_crud_pb2_grpc.AcommodationCrudStub(channel)
+        stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
         logger.info("Gateway processing getAll reservation data")
         data = await stub.GetAll({})
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
-    return Response(
-        status_code=200, media_type="application/json", content=json
-    )
+    return Response(status_code=200, media_type="application/json", content=json)
+
 
 @router.get("/id/{item_id}")
-async def GetById(item_id,access_token: Annotated[str | None, Cookie()] = None):
+async def GetById(item_id, access_token: Annotated[str | None, Cookie()] = None):
     try:
-        user_id = get_id_from_token(access_token)
-        user_role = get_role_from_token(access_token)
+        get_id_from_token(access_token)
+        get_role_from_token(access_token)
     except ExpiredSignatureError:
         return Response(
             status_code=401, media_type="text/html", content="Token expired."
@@ -205,15 +203,13 @@ async def GetById(item_id,access_token: Annotated[str | None, Cookie()] = None):
     )
 
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
-        stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
+        stub = accommodation_pb2_grpc.AccommodationCrudStub(channel)
 
-        response = await stub.GetById(accommodation_crud_pb2.DtoId(id = item_id))
+        response = await stub.GetById(accommodation_pb2.DtoId(id=item_id))
 
     if response.id == "":
         return Response(
             status_code=200, media_type="application/json", content="Invalid id"
         )
     json = json_format.MessageToJson(response, preserving_proto_field_name=True)
-    return Response(
-        status_code=200, media_type="application/json", content=json
-    )
+    return Response(status_code=200, media_type="application/json", content=json)

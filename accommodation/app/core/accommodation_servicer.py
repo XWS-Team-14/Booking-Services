@@ -58,7 +58,6 @@ class AccommodationServicer(accommodation_pb2_grpc.AccommodationServiceServicer)
     async def Create(self, request, context):
         logger.info("Create request started")
         response = Response(message_string="", status_code=0)
-        logger.info(MessageToDict(request, preserving_proto_field_name=True))
         parsed_request = Accommodation.parse_obj(
             MessageToDict(request, preserving_proto_field_name=True)
         )
