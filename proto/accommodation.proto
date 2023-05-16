@@ -1,0 +1,63 @@
+syntax = "proto3";
+package accommodation;
+
+service AccommodationService {
+  rpc GetAll (Empty) returns (ResponseAccommodations);
+  rpc GetById (InputId) returns (ResponseAccommodation);
+  rpc Create (Accommodation) returns (Response);
+  rpc Delete (InputId) returns (Response);
+  rpc Update (Accommodation) returns (Response);
+  rpc GetBySearch (SearchParams) returns (ResponseAccommodations);
+  rpc DeleteByUser (InputId) returns (Response);
+  rpc GetByUser (InputId) returns (ResponseAccommodations);
+}
+
+message Empty {
+
+}
+
+message Response {
+  string message_string = 1;
+  int32 status_code = 2;
+}
+
+message ResponseAccommodation {
+  Response response = 1;
+  Accommodation item = 2;
+}
+
+message ResponseAccommodations {
+  Response response = 1;
+  Accommodations items = 2;
+}
+
+message Location {
+  string country = 1;
+  string city = 2;
+  string address = 3;
+}
+
+message Accommodation {
+  string id = 1;
+  string host_id = 2;
+  string name = 3;
+  Location location = 4;
+  repeated string features = 5;
+  repeated string image_urls = 6;
+  int32 min_guests = 7;
+  int32 max_guests = 8;
+  bool auto_accept_flag = 9;
+}
+
+message Accommodations {
+  repeated Accommodation items = 1;
+}
+
+message InputId {
+  string id = 1;
+}
+
+message SearchParams {
+  Location location = 1;
+  int32 guests = 2;
+}

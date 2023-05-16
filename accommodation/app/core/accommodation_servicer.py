@@ -1,193 +1,192 @@
-from app.models.accommodation import Accommodation
-from app.models.location import Location
-from proto import accommodation_crud_pb2_grpc, accommodation_crud_pb2
-from loguru import logger
 import uuid
+from loguru import logger
+from app.models.accommodation import Accommodation
+from app.model.protobuf_models import (
+    Response,
+    InputId,
+    ResponseAccommodation,
+    ResponseAccommodations,
+    SearchParams,
+)
+from proto import accommodation_pb2_grpc, accommodation_pb2
+from google.protobuf.json_format import Parse, MessageToDict
 
 
-class AccommodationServicer(accommodation_crud_pb2_grpc.AccommodationCrudServicer):
+class AccommodationServicer(accommodation_pb2_grpc.AccommodationServicer):
     async def Delete(self, request, context):
         logger.info("Delete request started")
+        response = Response(message_string="", status_code=0)
+        parsed_request = InputId.parse_obj(MessageToDict(request))
         try:
-            await Accommodation.find_one(id == request.id).delete()
-        except Exception as e:
-            logger.error(f"Error {e}")
-            return accommodation_crud_pb2.EmptyAccommodation()
-        logger.success(f"Deleted an object with id = {request.id}")
-        return accommodation_crud_pb2.EmptyAccommodation()
-
-    async def DeleteByUser(self, request, context):
-        logger.info("Delete request started")
-        try:
-            await Accommodation.find(
-                Accommodation.user_id == uuid.UUID(request.id)
+            await Accommodation.find_one(
+                Accommodation.id == uuid.UUID(parsed_request.id)
             ).delete()
         except Exception as e:
             logger.error(f"Error {e}")
-            return accommodation_crud_pb2.EmptyAccommodation()
-        logger.success(f"Deleted an object with id = {request.id}")
-        return accommodation_crud_pb2.EmptyAccommodation()
+            response.message_string = e
+            response.status_code = 500
+        else:
+            response.message_string = "Success!"
+            response.status_code = 200
+            logger.success(f"Deleted object with id = {parsed_request.id}")
+        return Parse(response, accommodation_pb2.Response())
+
+    async def DeleteByUser(self, request, context):
+        logger.info("DeleteByUser request started")
+        response = Response(message_string="", status_code=0)
+        parsed_request = InputId.parse_obj(MessageToDict(request))
+        try:
+            await Accommodation.find(
+                Accommodation.host_id == uuid.UUID(parsed_request.id)
+            ).delete()
+        except Exception as e:
+            logger.error(f"Error {e}")
+            response.message_string = e
+            response.status_code = 500
+        else:
+            response.message_string = "Success!"
+            response.status_code = 200
+            logger.success(f"Deleted objects for user with id = {parsed_request.id}")
+        return Parse(response, accommodation_pb2.Response())
 
     async def Create(self, request, context):
         logger.info("Create request started")
+        response = Response(message_string="", status_code=0)
+        parsed_request = Accommodation.parse_obj(MessageToDict(request))
         try:
-            obj = self.convert_from_dto(request)
-            await obj.insert()
+            await parsed_request.insert()
         except Exception as e:
             logger.error(f"Error creating object {e}")
-            return accommodation_crud_pb2.EmptyAccommodation()
-        logger.success(f"Created object with id = {request.id}")
-        return accommodation_crud_pb2.EmptyAccommodation()
+            response.message_string = e
+            response.status_code = 500
+        else:
+            response.message_string = "Success!"
+            response.status_code = 200
+            logger.success(f"Created object with id = {request.id}")
+        return Parse(response, accommodation_pb2.Response())
 
     async def Update(self, request, context):
         logger.info("Update request started")
+        response = Response(message_string="", status_code=0)
+        parsed_request = Accommodation.parse_obj(MessageToDict(request))
         try:
-            new_obj = self.convert_from_dto(request)
-            await Accommodation.find_one(id=new_obj.id)
-            new_obj.replace()
-        except Exception:
-            logger.error("Trying to update object that does not exist")
-            return accommodation_crud_pb2.EmptyAccommodation()
-        logger.success(f"Updated an object with id = {request.id}")
-        return accommodation_crud_pb2.EmptyAccommodation()
+            await parsed_request.replace()
+        except Exception as e:
+            logger.error(f"Error updating object {e}")
+            response.message_string = e
+            response.status_code = 500
+        else:
+            response.message_string = "Success!"
+            response.status_code = 200
+            logger.success(f"Created object with id = {request.id}")
+        return Parse(response, accommodation_pb2.Response())
 
     async def GetAll(self, request, context):
         logger.info("GetAll request started")
+        response = ResponseAccommodations(response=Response(), items=[])
         try:
-            objs = await Accommodation.find().to_list()
-        except Exception:
-            logger.error("Error getting accommodations")
-            return accommodation_crud_pb2.Accommodations()
-        transformed_objs = accommodation_crud_pb2.Accommodations()
-        for obj in objs:
-            transformed_objs.items.append(self.convert_to_dto(obj))
-        return transformed_objs
+            response.items = await Accommodation.find().to_list()
+        except Exception as e:
+            logger.error(f"Error getting all objects {e}")
+            response.response.message_string = e
+            response.response.status_code = 500
+        else:
+            response.response.message_string = "Success!"
+            response.response.status_code = 200
+            logger.success("Sucessfully fetched all accommodations")
+        return Parse(response, accommodation_pb2.ResponseAccommodations())
 
     async def GetById(self, request, context):
         logger.info("GetById request started")
+        response = ResponseAccommodation(response=Response(), item=None)
+        parsed_request = InputId.parse_obj(MessageToDict(request))
         try:
-            obj_to_return = await Accommodation.get(uuid.UUID(request.id))
+            response.item = await Accommodation.get(uuid.UUID(parsed_request.id))
         except Exception as e:
-            logger.error(f"Trying to get object that does not exist {e}")
-            return accommodation_crud_pb2.Accommodation()
-        accommodation = self.convert_to_dto(obj_to_return)
-        return accommodation
+            logger.error(f"Error getting object {e}")
+            response.response.message_string = e
+            response.response.status_code = 500
+        else:
+            response.response.message_string = "Success!"
+            response.response.status_code = 200
+            logger.success("Sucessfully fetched all accommodations")
+        return Parse(response, accommodation_pb2.ResponseAccommodation())
 
     async def GetBySearch(self, request, context):
         logger.info("GetBySearch request started")
+        response = ResponseAccommodations(response=Response(), items=[])
+        parsed_request = SearchParams.parse_obj(MessageToDict(request))
         try:
-            location = self.convert_from_dto_location(request)
-            guests = int(request.guests)
-            objs = await Accommodation.find_all().to_list()
+            response.items = await Accommodation.find_all().to_list()
             updated_list = []
-            if location.city != "":
-                for obj in objs:
-                    if obj.location.city.find(location.city) != -1:
-                        updated_list.append(obj)
-                objs = updated_list.copy()
-            if location.country != "":
-                for obj in objs:
-                    if obj.location.country.find(location.country) != -1:
-                        updated_list.append(obj)
-                objs = updated_list.copy()
-                updated_list = []
-            if location.address != "":
-                for obj in objs:
-                    if obj.location.address.find(location.address) != -1:
-                        updated_list.append(obj)
-                objs = updated_list.copy()
-                updated_list = []
-            if guests != 0:
-                for obj in objs:
-                    if obj.min_guests <= guests and obj.max_guests >= guests:
-                        updated_list.append(obj)
-                objs = updated_list.copy()
+            if parsed_request.location is not None:
+                if (
+                    parsed_request.location.city != ""
+                    and parsed_request.location.city is not None
+                ):
+                    for item in response.items:
+                        if item.location.city.find(parsed_request.location.city) != -1:
+                            updated_list.append(item)
+                    response.items = updated_list.copy()
+                    updated_list = []
+                if (
+                    parsed_request.location.country != ""
+                    and parsed_request.location.country is not None
+                ):
+                    for item in response.items:
+                        if (
+                            item.location.country.find(parsed_request.location.country)
+                            != -1
+                        ):
+                            updated_list.append(item)
+                    response.items = updated_list.copy()
+                    updated_list = []
+                if (
+                    parsed_request.location.address != ""
+                    and parsed_request.location.address is not None
+                ):
+                    for item in response.items:
+                        if (
+                            item.location.address.find(parsed_request.location.address)
+                            != -1
+                        ):
+                            updated_list.append(item)
+                    response.items = updated_list.copy()
+                    updated_list = []
+                if request.guests != 0 and request.guests is not None:
+                    for item in response.items:
+                        if (
+                            item.min_guests <= request.guests
+                            and item.max_guests >= request.guests
+                        ):
+                            updated_list.append(item)
+                response.items = updated_list.copy()
         except Exception as e:
-            logger.error(f"Error getting accommodations {e}")
-            return accommodation_crud_pb2.Accommodations()
-        transformed_objs = accommodation_crud_pb2.Accommodations()
-        for obj in objs:
-            transformed_objs.items.append(self.convert_to_dto(obj))
-        return transformed_objs
+            logger.error(f"Error getting objects for search {e}")
+            response.response.message_string = e
+            response.response.status_code = 500
+        else:
+            response.response.message_string = "Success!"
+            response.response.status_code = 200
+            logger.success("Sucessfully fetched all accommodations for params")
+        return Parse(response, accommodation_pb2.ResponseAccommodations())
 
     async def GetByUser(self, request, context):
         logger.info("GetByUser request started")
+        response = ResponseAccommodations(response=Response(), items=[])
+        parsed_request = InputId.parse_obj(MessageToDict(request))
         try:
-            objs = await Accommodation.find(
-                Accommodation.user_id == uuid.UUID(request.id)
+            response.items = await Accommodation.find(
+                Accommodation.host_id == uuid.UUID(parsed_request.id)
             ).to_list()
         except Exception as e:
-            logger.error(f"Error {e}")
-            return accommodation_crud_pb2.EmptyAccommodation()
-        transformed_objs = accommodation_crud_pb2.Accommodations()
-        for obj in objs:
-            transformed_objs.items.append(self.convert_to_dto(obj))
-        return transformed_objs
-
-    def convert_to_dto(
-        self,
-        obj_to_return: Accommodation,
-    ) -> accommodation_crud_pb2.Accommodation:
-        location = accommodation_crud_pb2.Location(
-            country=obj_to_return.location.country,
-            city=obj_to_return.location.city,
-            address=obj_to_return.location.address,
-        )
-        features_list = list()
-        image_urls_list = list()
-
-        for item in obj_to_return.features:
-            features_list.append(item)
-        for item in obj_to_return.image_urls:
-            image_urls_list.append(item)
-
-        return accommodation_crud_pb2.Accommodation(
-            id=str(obj_to_return.id),
-            user_id=str(obj_to_return.user_id),
-            name=obj_to_return.name,
-            location=location,
-            features=features_list,
-            image_urls=image_urls_list,
-            min_guests=obj_to_return.min_guests,
-            max_guests=obj_to_return.max_guests,
-            auto_accept_flag=obj_to_return.auto_accept_flag,
-        )
-
-    def convert_from_dto(
-        self,
-        obj_to_return: accommodation_crud_pb2.Accommodation,
-    ) -> Accommodation:
-        location = Location(
-            country=obj_to_return.location.country,
-            city=obj_to_return.location.city,
-            address=obj_to_return.location.address,
-        )
-        features_list = list()
-        image_urls_list = list()
-
-        for item in obj_to_return.features:
-            features_list.append(item)
-        for item in obj_to_return.image_urls:
-            image_urls_list.append(item)
-
-        return Accommodation(
-            id=obj_to_return.id,
-            user_id=obj_to_return.user_id,
-            name=obj_to_return.name,
-            location=location,
-            features=features_list,
-            image_urls=image_urls_list,
-            min_guests=obj_to_return.min_guests,
-            max_guests=obj_to_return.max_guests,
-            auto_accept_flag=obj_to_return.auto_accept_flag,
-        )
-
-    def convert_from_dto_location(
-        self,
-        obj_to_return: accommodation_crud_pb2.Location,
-    ) -> Location:
-        return Location(
-            country=obj_to_return.location.country,
-            city=obj_to_return.location.city,
-            address=obj_to_return.location.address,
-        )
+            logger.error(f"Error getting objects for user {e}")
+            response.response.message_string = e
+            response.response.status_code = 500
+        else:
+            response.response.message_string = "Success!"
+            response.response.status_code = 200
+            logger.success(
+                f"Sucessfully fetched all accommodations for user {parsed_request.id}"
+            )
+        return Parse(response, accommodation_pb2.ResponseAccommodations())
