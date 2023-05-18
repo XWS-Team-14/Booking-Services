@@ -30,8 +30,8 @@ class InputId(BaseModel):
 
 
 class ResponseAccommodations(BaseModel):
-    response: Response
-    items: list[Accommodation]
+    response: Response = Response.construct()
+    items: list[Accommodation] = []
 
 
 class ResponseAccommodation(BaseModel):
