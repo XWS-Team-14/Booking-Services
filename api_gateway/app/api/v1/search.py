@@ -1,11 +1,11 @@
 import json
 import grpc
-from app.config import get_yaml_config
 from fastapi import APIRouter
 from proto import search_pb2_grpc, search_pb2
 from loguru import logger
-from types import SimpleNamespace
-from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import MessageToDict, Parse
+from app.utils.get_server import get_server
+from app.schemas.search import SearchParams, Location, DateInterval, SearchResults
 
 router = APIRouter(
     tags=["Search"],
@@ -24,25 +24,19 @@ async def search(
     date_start: str | None = "",
     date_end: str | None = "",
 ):
-    search_server = (
-        get_yaml_config().get("search_server").get("ip")
-        + ":"
-        + get_yaml_config().get("search_server").get("port")
-    )
-    location = search_pb2.Location(
-        city=city,
-        country=country,
-        address=address,
-    )
-    interval = search_pb2.Interval(date_start=date_start, date_end=date_end)
-    request_data = search_pb2.SearchParams(
-        location=location, details=interval, guests=guests
+    search_server = get_server("search_server")
+    params = SearchParams(
+        location=Location(country=country, city=city, address=address),
+        guests=guests,
+        interval=DateInterval(date_start=date_start, date_end=date_end),
     )
     async with grpc.aio.insecure_channel(search_server) as channel:
         stub = search_pb2_grpc.SearchStub(channel)
-        data = await stub.Search(request_data)
-        res = json.loads(
-            MessageToJson(data), object_hook=lambda d: SimpleNamespace(**d)
+        data = await stub.Search(
+            Parse(json.dumps(params.dict()), search_pb2.SearchParams())
+        )
+        res = SearchResults.parse_obj(
+            MessageToDict(data, preserving_proto_field_name=True)
         )
         # fix paths for image_urls
         updated_url = "http://localhost:8000/api/static/images/"
@@ -55,4 +49,4 @@ async def search(
                 item.imageUrls = updated_urls
         except Exception as e:
             logger.error(f"Error {e}")
-    return res
+    return res.items

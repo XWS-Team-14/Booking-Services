@@ -31,8 +31,8 @@ class Accommodation(BaseModel):
 
 
 class ResponseAccommodations(BaseModel):
-    response: Response
-    items: list[Accommodation]
+    response: Response = Response.construct()
+    items: list[Accommodation] = []
 
 
 class SearchParamsAccommodation(BaseModel):
