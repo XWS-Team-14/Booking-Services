@@ -19,7 +19,12 @@ from loguru import logger
 from ...utils.jwt import get_id_from_token, get_role_from_token
 from app.utils.json_encoder import UUIDEncoder
 
-from app.schemas.accommodation import Location, Accommodation, ResponseAccommodations
+from app.schemas.accommodation import (
+    Location,
+    Accommodation,
+    ResponseAccommodations,
+    ResponseAccommodation,
+)
 
 router = APIRouter()
 
@@ -201,20 +206,30 @@ async def GetById(item_id, access_token: Annotated[str | None, Cookie()] = None)
             status_code=401, media_type="text/html", content="Invalid token."
         )
 
-    accommodation_server = (
-        get_yaml_config().get("accommodation_server").get("ip")
-        + ":"
-        + get_yaml_config().get("accommodation_server").get("port")
-    )
+    accommodation_server = get_server("accommodation_server")
 
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
-        stub = accommodation_pb2_grpc.AccommodationCrudStub(channel)
+        stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
 
-        response = await stub.GetById(accommodation_pb2.DtoId(id=item_id))
+        response = await stub.GetById(accommodation_pb2.InputId(id=item_id))
 
-    if response.id == "":
+    parsed_response = ResponseAccommodation.parse_obj(
+        MessageToDict(response, preserving_proto_field_name=True)
+    )
+    if response.item.id == "":
         return Response(
             status_code=200, media_type="application/json", content="Invalid id"
         )
-    json = json_format.MessageToJson(response, preserving_proto_field_name=True)
-    return Response(status_code=200, media_type="application/json", content=json)
+    updated_url = "http://localhost:8000/api/static/images/"
+    try:
+        updated_urls = []
+        for img_url in parsed_response.item.image_urls:
+            updated_urls.append(updated_url + img_url)
+        parsed_response.item.image_urls = updated_urls
+    except Exception as e:
+        logger.error(f"Error {e}")
+
+    return ORJSONResponse(
+        status_code=parsed_response.response.status_code,
+        content=parsed_response.dict(),
+    )
