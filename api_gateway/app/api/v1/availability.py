@@ -99,7 +99,7 @@ async def getForUser(access_token: Annotated[str | None, Cookie()] = None):
         availability_data = await stub.GetAll({})
     logger.info("Gateway fetched Availability data")
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
-        stub = accommodation_pb2_grpc.AccommodationCrudStub(channel)
+        stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
         dto = accommodation_pb2.InputId(
             id=user_id,
         )

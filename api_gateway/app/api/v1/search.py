@@ -1,6 +1,7 @@
 import json
 import grpc
 from fastapi import APIRouter
+from fastapi.responses import ORJSONResponse
 from proto import search_pb2_grpc, search_pb2
 from loguru import logger
 from google.protobuf.json_format import MessageToDict, Parse
@@ -35,18 +36,15 @@ async def search(
         data = await stub.Search(
             Parse(json.dumps(params.dict()), search_pb2.SearchParams())
         )
-        res = SearchResults.parse_obj(
-            MessageToDict(data, preserving_proto_field_name=True)
-        )
-        # fix paths for image_urls
-        updated_url = "http://localhost:8000/api/static/images/"
-        logger.info(res)
-        try:
-            for item in res.items:
-                updated_urls = []
-                for img_url in item.imageUrls:
-                    updated_urls.append(updated_url + img_url)
-                item.imageUrls = updated_urls
-        except Exception as e:
-            logger.error(f"Error {e}")
-    return res.items
+    res = SearchResults.parse_obj(MessageToDict(data, preserving_proto_field_name=True))
+    # fix paths for image_urls
+    updated_url = "http://localhost:8000/api/static/images/"
+    try:
+        for item in res.items:
+            updated_urls = []
+            for img_url in item.image_urls:
+                updated_urls.append(updated_url + img_url)
+            item.image_urls = updated_urls
+    except Exception as e:
+        logger.error(f"Error {e}")
+    return ORJSONResponse(status_code=res.response.status_code, content=res.dict())

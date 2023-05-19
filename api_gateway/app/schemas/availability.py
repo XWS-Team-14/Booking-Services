@@ -24,4 +24,4 @@ class AvailabilityDto(BaseModel):
 
 class SearchDetails(BaseModel):
     interval: DateInterval
-    num_of_guests: int
+    guests: int

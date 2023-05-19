@@ -55,8 +55,11 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         try:
             for item in parsed_accs.items:
                 for item2 in parsed_avvs.items:
-                    if item.id == item2.accommodationId:
-                        result.items.append(SearchResult(item, item2))
+                    if item.id == item2.accommodation_id:
+                        result.items.append(
+                            SearchResult.construct().create(item, item2)
+                        )
+                        break
         except Exception as e:
             logger.error(f"Error {e}")
             result.response.message_string = e
@@ -64,6 +67,7 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         else:
             result.response.message_string = "Success!"
             result.response.status_code = 200
+            logger.info(result)
             logger.success("Fetched search data")
         return Parse(
             json.dumps(result.dict(), cls=UUIDEncoder), search_pb2.SearchResults()

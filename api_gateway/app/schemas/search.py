@@ -7,9 +7,9 @@ class DateInterval(BaseModel):
 
 
 class Location(BaseModel):
-    country: str
-    city: str
-    address: str
+    country: str = ""
+    city: str = ""
+    address: str = ""
 
 
 class SearchParams(BaseModel):
@@ -21,15 +21,15 @@ class SearchParams(BaseModel):
 class SearchResult(BaseModel):
     accommodation_id: UUID4
     host_id: UUID4
-    name: str
-    location: Location
-    features: list[str]
-    image_urls: list[str]
-    min_guests: int
-    max_guests: int
-    base_price: float
-    total_price: float
-    auto_accept_flag: bool
+    name: str = ""
+    location: Location = Location.construct()
+    features: list[str] = []
+    image_urls: list[str] = []
+    min_guests: int = 0
+    max_guests: int = 0
+    base_price: float = 0
+    total_price: float = 0
+    auto_accept_flag: bool = False
 
 
 class Response(BaseModel):

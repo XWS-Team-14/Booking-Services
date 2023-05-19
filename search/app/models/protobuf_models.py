@@ -54,12 +54,12 @@ class SpecialPricing(BaseModel):
 class ExpandedAvailabilityDto(BaseModel):
     availability_id: UUID4
     accommodation_id: UUID4
-    interval: Interval
-    pricing_type: str
-    base_price: float
-    total_price: float
-    special_pricing: list[SpecialPricing]
-    occupied_intervals: list[Interval]
+    interval: Interval = Interval.construct()
+    pricing_type: str = ""
+    base_price: float = 0
+    total_price: float = 0
+    special_pricing: list[SpecialPricing] = []
+    occupied_intervals: list[Interval] = []
 
 
 class ExpandedAvailabilityDtos(BaseModel):

@@ -4,7 +4,7 @@ import grpc
 import json
 from uuid import uuid4
 from fastapi import APIRouter, Form, UploadFile, Cookie
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response, ORJSONResponse
 from google.protobuf import json_format
 
 from ...config import get_yaml_config
@@ -17,6 +17,7 @@ from proto import accommodation_pb2, accommodation_pb2_grpc
 from google.protobuf.json_format import MessageToDict, Parse
 from loguru import logger
 from ...utils.jwt import get_id_from_token, get_role_from_token
+from app.utils.json_encoder import UUIDEncoder
 
 from app.schemas.accommodation import Location, Accommodation, ResponseAccommodations
 
@@ -110,14 +111,17 @@ async def save_accommodation(
         )
 
         response = await stub.Create(
-            Parse(json.dumps(accommodation.dict()), accommodation_pb2.Accommodation())
+            Parse(
+                json.dumps(accommodation.dict(), cls=UUIDEncoder),
+                accommodation_pb2.Accommodation(),
+            )
         )
 
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         await stub.CreateAccommodation(
             reservation_crud_pb2.AccommodationResDto(
-                id=accommodation.id, automaticAccept=bool(auto_accept_flag)
+                id=str(accommodation.id), automaticAccept=bool(auto_accept_flag)
             )
         )
     return Response(
@@ -165,8 +169,9 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
             item.image_urls = updated_urls
     except Exception as e:
         logger.error(f"Error {e}")
-    return Response(
-        status_code=parsed_response.response.status_code, content=parsed_response.items
+    return ORJSONResponse(
+        status_code=parsed_response.response.status_code,
+        content=parsed_response.dict(),
     )
 
 

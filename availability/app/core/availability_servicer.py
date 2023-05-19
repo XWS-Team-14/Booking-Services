@@ -15,6 +15,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
     async def Create(self, request, context):
         logger.success("Request for creation of Availability accepted")
         availability = AvailabilityHelper.convertDto(request)
+        logger.info(availability)
         if not AvailabilityHelper.validateDates(availability.available_interval):
             logger.exception("Dates are not valid")
             return availability_crud_pb2.Result(status="Invalid date")
@@ -98,11 +99,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
     async def GetAllSearch(self, request, context):
         logger.success("Request for search fetch Availability accepted")
         retVal = availability_crud_pb2.ExpandedAvailabilityDtos()
-        if (
-            request.interval.date_start == ""
-            or request.interval.date_end == ""
-            or request.guests == 0
-        ):
+        if request.interval.date_start == "" or request.interval.date_end == "":
             logger.info("Some parts of request data are missing, fetching all")
             aas = await Availability.find_all().to_list()
             logger.info(aas)
@@ -131,7 +128,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         for item in realList:
             retVal.items.append(AvailabilityHelper.convertToExpandedDto(item))
             retVal.items[-1].total_price = AvailabilityHelper.calculatePrice(
-                request.interval, request.num_of_guests, item, holidays
+                request.interval, request.guests, item, holidays
             )
         logger.success("Succesfully fetched")
 
