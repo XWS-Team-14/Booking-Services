@@ -5,7 +5,6 @@ import json
 from uuid import uuid4
 from fastapi import APIRouter, Form, UploadFile, Cookie
 from fastapi.responses import HTMLResponse, Response, ORJSONResponse
-from google.protobuf import json_format
 
 from ...config import get_yaml_config
 from typing import Annotated, List
@@ -188,8 +187,24 @@ async def getAll():
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
         logger.info("Gateway processing getAll reservation data")
         data = await stub.GetAll({})
-        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
-    return Response(status_code=200, media_type="application/json", content=json)
+
+    parsed_response = ResponseAccommodations.parse_obj(
+        MessageToDict(data, preserving_proto_field_name=True)
+    )
+    # fix paths for image_urls
+    updated_url = "http://localhost:8000/api/static/images/"
+    try:
+        for item in parsed_response.items:
+            updated_urls = []
+            for img_url in item.image_urls:
+                updated_urls.append(updated_url + img_url)
+            item.image_urls = updated_urls
+    except Exception as e:
+        logger.error(f"Error {e}")
+    return ORJSONResponse(
+        status_code=parsed_response.response.status_code,
+        content=parsed_response.dict(),
+    )
 
 
 @router.get("/id/{item_id}")
