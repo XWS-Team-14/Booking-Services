@@ -1,3 +1,5 @@
+import uuid
+
 from ...schemas.availability import AvailabilityDto, SearchDetails
 from ...config import get_yaml_config
 from fastapi import APIRouter, status, Cookie
@@ -185,7 +187,7 @@ async def create(item: AvailabilityDto,access_token: Annotated[str | None, Cooki
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
 
         availability = availability_crud_pb2.AvailabilityDto()
-        availability.availability_id = item.availability_id
+        availability.availability_id = str(uuid.uuid4())
         availability.accomodation_id = item.accomodation_id
         availability.interval.date_start = item.interval.date_start
         availability.interval.date_end = item.interval.date_end
