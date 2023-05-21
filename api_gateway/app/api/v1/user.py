@@ -41,6 +41,7 @@ class User:
                 return Response(status_code=grpc_user_response.error_code, media_type="text/html",
                                 content=grpc_user_response.error_message)
         user = {
+            'id': user_id,
             'first_name': grpc_user_response.first_name,
             'last_name': grpc_user_response.last_name,
             'gender': grpc_user_response.gender,
