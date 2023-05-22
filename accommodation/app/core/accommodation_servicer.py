@@ -1,20 +1,22 @@
-import uuid
 import json
-from loguru import logger
+import uuid
+
 from app.models.accommodation import Accommodation
 from app.models.protobuf_models import (
-    Response,
     InputId,
+    Response,
     ResponseAccommodation,
     ResponseAccommodations,
     SearchParams,
 )
 from app.utils.json_encoder import UUIDEncoder
-from proto import accommodation_pb2_grpc, accommodation_pb2
-from google.protobuf.json_format import Parse, MessageToDict
+from google.protobuf.json_format import MessageToDict, Parse
+from loguru import logger
+
+from proto import accommodation_pb2, accommodation_pb2_grpc
 
 
-class AccommodationServicer(accommodation_pb2_grpc.AccommodationServiceServicer):
+class AccommodationService(accommodation_pb2_grpc.AccommodationServiceServicer):
     async def Delete(self, request, context):
         logger.info("Delete request started")
         response = Response(message_string="", status_code=0)

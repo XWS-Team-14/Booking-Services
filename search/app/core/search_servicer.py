@@ -1,21 +1,25 @@
-import grpc
 import json
 
-from proto import accommodation_pb2, accommodation_pb2_grpc
-from proto import search_pb2, search_pb2_grpc
-from proto import availability_crud_pb2, availability_crud_pb2_grpc
-
-from google.protobuf.json_format import MessageToDict, Parse
-
-from loguru import logger
-from app.utils.json_encoder import UUIDEncoder
-from app.utils.get_server import get_server
+import grpc
+from app.models.export_results import SearchResult, SearchResults
 from app.models.protobuf_models import (
-    SearchParams,
-    ResponseAccommodations,
     ExpandedAvailabilityDtos,
+    ResponseAccommodations,
+    SearchParams,
 )
-from app.models.export_results import SearchResults, SearchResult
+from app.utils.get_server import get_server
+from app.utils.json_encoder import UUIDEncoder
+from google.protobuf.json_format import MessageToDict, Parse
+from loguru import logger
+
+from proto import (
+    accommodation_pb2,
+    accommodation_pb2_grpc,
+    availability_crud_pb2,
+    availability_crud_pb2_grpc,
+    search_pb2,
+    search_pb2_grpc,
+)
 
 
 class SearchServicer(search_pb2_grpc.SearchServicer):
@@ -52,6 +56,19 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         )
 
         result = SearchResults.construct()
+
+        if parsed_accs.response.status_code != 200:
+            result.response.status_code = parsed_accs.response.status_code
+            result.response.message_string = parsed_accs.response.message_string
+            return Parse(
+                json.dumps(result.dict(), cls=UUIDEncoder), search_pb2.SearchResults()
+            )
+        # if parsed_avvs.response.status_code != 200:
+        #    result.response.status_code = parsed_avvs.response.status_code
+        #    result.response.message_string = parsed_avvs.response.message_string
+        #    return Parse(
+        #        json.dumps(result.dict(), cls=UUIDEncoder), search_pb2.SearchResults()
+        #    )
         try:
             for item in parsed_accs.items:
                 for item2 in parsed_avvs.items:

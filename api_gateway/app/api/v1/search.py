@@ -1,12 +1,14 @@
 import json
+
 import grpc
+from app.schemas.search import DateInterval, Location, SearchParams, SearchResults
+from app.utils.get_server import get_server
 from fastapi import APIRouter
 from fastapi.responses import ORJSONResponse
-from proto import search_pb2_grpc, search_pb2
-from loguru import logger
 from google.protobuf.json_format import MessageToDict, Parse
-from app.utils.get_server import get_server
-from app.schemas.search import SearchParams, Location, DateInterval, SearchResults
+from loguru import logger
+
+from proto import search_pb2, search_pb2_grpc
 
 router = APIRouter(
     tags=["Search"],

@@ -1,22 +1,22 @@
 import uuid
+
 from app.core.availability_helper import AvailabilityHelper
 from app.models.availability import Availability
-from app.models.interval import Interval
 from app.models.holiday import Holiday
-
-from proto import availability_crud_pb2_grpc, availability_crud_pb2
-from loguru import logger
-from beanie.operators import GTE, LTE
-
+from app.models.interval import Interval
 from beanie.exceptions import DocumentNotFound
+from beanie.operators import GTE, LTE
+from loguru import logger
+
+from proto import availability_crud_pb2, availability_crud_pb2_grpc
 
 
 class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
     async def Create(self, request, context):
         logger.success("Request for creation of Availability accepted")
-        availability = AvailabilityHelper.convertDto(request)
+        availability = AvailabilityHelper.convert_dto(request)
         logger.info(availability)
-        if not AvailabilityHelper.validateDates(availability.available_interval):
+        if not AvailabilityHelper.validate_dates(availability.available_interval):
             logger.exception("Dates are not valid")
             return availability_crud_pb2.Result(status="Invalid date")
         availability.id = uuid.uuid4()
@@ -26,8 +26,8 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
 
     async def Update(self, request, context):
         logger.success("Request for update of Availability accepted")
-        availability = AvailabilityHelper.convertDto(request)
-        if not AvailabilityHelper.validateDates(availability.available_interval):
+        availability = AvailabilityHelper.convert_dto(request)
+        if not AvailabilityHelper.validate_dates(availability.available_interval):
             logger.exception("Dates are not valid")
             return availability_crud_pb2.Result(status="Invalid date")
         try:
@@ -68,7 +68,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         retVal = availability_crud_pb2.AvailabilityDtos()
         logger.info("fetched data converting")
         for aa in aas:
-            retVal.items.append(AvailabilityHelper.convertToDto(aa))
+            retVal.items.append(AvailabilityHelper.convert_to_dto(aa))
         logger.success("Succesfully fetched")
         return retVal
 
@@ -84,7 +84,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             return availability_crud_pb2.AvailabilityDto()
         else:
             logger.success("Succesfully fetched")
-            return AvailabilityHelper.convertToDto(item)
+            return AvailabilityHelper.convert_to_dto(item)
 
     async def GetByAccommodationId(self, request, context):
         logger.success("Request for fetch  availability by accommodation Id accepted")
@@ -92,7 +92,7 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         logger.info("fetched data converting")
         for aa in aas:
             if str(aa.accommodation_id) == request.id:
-                return AvailabilityHelper.convertToDto(aa)
+                return AvailabilityHelper.convert_to_dto(aa)
         logger.info("fetched nothing")
         return availability_crud_pb2.AvailabilityDto()
 
@@ -104,30 +104,30 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             aas = await Availability.find_all().to_list()
             logger.info(aas)
             for aa in aas:
-                retVal.items.append(AvailabilityHelper.convertToExpandedDto(aa))
+                retVal.items.append(AvailabilityHelper.convert_to_expanded_dto(aa))
             return retVal
-        if not AvailabilityHelper.validateDates(
-            AvailabilityHelper.convertDateInterval(request.interval)
+        if not AvailabilityHelper.validate_dates(
+            AvailabilityHelper.convert_date_interval(request.interval)
         ):
             logger.exception("Dates are not valid")
             return availability_crud_pb2.ExpandedAvailabilityDtos()
         list = await Availability.find(
             LTE(
                 Availability.available_interval.date_start,
-                AvailabilityHelper.convertDate(request.interval.date_start),
+                AvailabilityHelper.convert_date(request.interval.date_start),
             ),
             GTE(
                 Availability.available_interval.date_end,
-                AvailabilityHelper.convertDate(request.interval.date_end),
+                AvailabilityHelper.convert_date(request.interval.date_end),
             ),
         ).to_list()
         realList = [
-            x for x in list if AvailabilityHelper.isAvailable(request.interval, x)
+            x for x in list if AvailabilityHelper.is_available(request.interval, x)
         ]
         holidays = await Holiday.find_all().to_list()
         for item in realList:
-            retVal.items.append(AvailabilityHelper.convertToExpandedDto(item))
-            retVal.items[-1].total_price = AvailabilityHelper.calculatePrice(
+            retVal.items.append(AvailabilityHelper.convert_to_expanded_dto(item))
+            retVal.items[-1].total_price = AvailabilityHelper.calculate_price(
                 request.interval, request.guests, item, holidays
             )
         logger.success("Succesfully fetched")
@@ -148,13 +148,13 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             logger.success("Succesfully fetched")
             occ_intervals = []
             requested_interval = Interval(
-                date_start=AvailabilityHelper.convertDate(request.interval.date_start),
-                date_end=AvailabilityHelper.convertDate(request.interval.date_end),
+                date_start=AvailabilityHelper.convert_date(request.interval.date_start),
+                date_end=AvailabilityHelper.convert_date(request.interval.date_end),
             )
             if item.occupied_intervals is not None:
                 logger.info("extending its not none")
                 for interval in item.occupied_intervals:
-                    if AvailabilityHelper.dateIntersection(
+                    if AvailabilityHelper.date_intersection(
                         requested_interval, interval
                     ):
                         logger.info("Interval has overlap, Failiure")

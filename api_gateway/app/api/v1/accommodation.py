@@ -1,29 +1,33 @@
-import httpx
 import asyncio
-import grpc
 import json
+from typing import Annotated, List
 from uuid import uuid4
-from fastapi import APIRouter, Form, UploadFile, Cookie
-from fastapi.responses import HTMLResponse, Response, ORJSONResponse
+
+import grpc
+import httpx
+from app.schemas.accommodation import (
+    Accommodation,
+    Location,
+    ResponseAccommodation,
+    ResponseAccommodations,
+)
+from app.utils.json_encoder import UUIDEncoder
+from fastapi import APIRouter, Cookie, Form, UploadFile
+from fastapi.responses import HTMLResponse, ORJSONResponse, Response
+from google.protobuf.json_format import MessageToDict, Parse
+from jwt import ExpiredSignatureError, InvalidTokenError
+from loguru import logger
+
+from proto import (
+    accommodation_pb2,
+    accommodation_pb2_grpc,
+    reservation_crud_pb2,
+    reservation_crud_pb2_grpc,
+)
 
 from ...config import get_yaml_config
-from typing import Annotated, List
-from jwt import ExpiredSignatureError, InvalidTokenError
-
 from ...utils.get_server import get_server
-from proto import reservation_crud_pb2_grpc, reservation_crud_pb2
-from proto import accommodation_pb2, accommodation_pb2_grpc
-from google.protobuf.json_format import MessageToDict, Parse
-from loguru import logger
 from ...utils.jwt import get_id_from_token, get_role_from_token
-from app.utils.json_encoder import UUIDEncoder
-
-from app.schemas.accommodation import (
-    Location,
-    Accommodation,
-    ResponseAccommodations,
-    ResponseAccommodation,
-)
 
 router = APIRouter()
 
