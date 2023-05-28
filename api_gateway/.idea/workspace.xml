@@ -6,16 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/accommodation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/accommodation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/availability.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/availability.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/reservation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/reservation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/schemas/availability.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/availability.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../availability/app/core/availability_helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/../availability/app/core/availability_helper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../availability/app/core/availability_servicer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../availability/app/core/availability_servicer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../availability/app/models/availability.py" beforeDir="false" afterPath="$PROJECT_DIR$/../availability/app/models/availability.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/availability_crud.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/availability_crud.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/availability_crud_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/availability_crud_pb2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/availability_crud_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/availability_crud_pb2_grpc.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
