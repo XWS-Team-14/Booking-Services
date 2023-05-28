@@ -24,17 +24,17 @@ router = APIRouter()
 
 @router.post("/", response_class=HTMLResponse)
 async def save_accommodation(
-    # Add additional data that needs to be here
-    access_token: Annotated[str | None, Cookie()],
-    name: Annotated[str, Form()],
-    country: Annotated[str, Form()],
-    city: Annotated[str, Form()],
-    address: Annotated[str, Form()],
-    auto_accept_flag: Annotated[str, Form()],
-    min_guests: Annotated[int, Form()],
-    max_guests: Annotated[int, Form()],
-    features: Annotated[List[str], Form()],
-    files: List[UploadFile],
+        # Add additional data that needs to be here
+        access_token: Annotated[str | None, Cookie()],
+        name: Annotated[str, Form()],
+        country: Annotated[str, Form()],
+        city: Annotated[str, Form()],
+        address: Annotated[str, Form()],
+        auto_accept_flag: Annotated[str, Form()],
+        min_guests: Annotated[int, Form()],
+        max_guests: Annotated[int, Form()],
+        features: Annotated[List[str], Form()],
+        files: List[UploadFile],
 ):
     """Post method used to save acoommodation
 
@@ -79,9 +79,9 @@ async def save_accommodation(
             await asyncio.gather(*tasks)
     # Send grpc request to save accommodation data
     accommodation_server = (
-        get_yaml_config().get("accommodation_server").get("ip")
-        + ":"
-        + get_yaml_config().get("accommodation_server").get("port")
+            get_yaml_config().get("accommodation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("accommodation_server").get("port")
     )
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
         stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
@@ -116,7 +116,7 @@ async def save_accommodation(
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         await stub.CreateAccommodation(reservation_crud_pb2.AccommodationResDto(
-            id=accommodation.id, automaticAccept = bool(auto_accept_flag)))
+            id=accommodation.id, automaticAccept=bool(auto_accept_flag)))
     return Response(
         status_code=200, media_type="text/html", content="Accommodation saved!"
     )
@@ -139,9 +139,9 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
     accommodation_server = (
-        get_yaml_config().get("accommodation_server").get("ip")
-        + ":"
-        + get_yaml_config().get("accommodation_server").get("port")
+            get_yaml_config().get("accommodation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("accommodation_server").get("port")
     )
 
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
@@ -165,6 +165,8 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
     except Exception as e:
         logger.error(f"Error {e}")
     return res
+
+
 @router.get(
     "/all"
 )
@@ -184,8 +186,9 @@ async def getAll():
         status_code=200, media_type="application/json", content=json
     )
 
+
 @router.get("/id/{item_id}")
-async def GetById(item_id,access_token: Annotated[str | None, Cookie()] = None):
+async def GetById(item_id, access_token: Annotated[str | None, Cookie()] = None):
     try:
         user_id = get_id_from_token(access_token)
         user_role = get_role_from_token(access_token)
@@ -199,15 +202,15 @@ async def GetById(item_id,access_token: Annotated[str | None, Cookie()] = None):
         )
 
     accommodation_server = (
-        get_yaml_config().get("accommodation_server").get("ip")
-        + ":"
-        + get_yaml_config().get("accommodation_server").get("port")
+            get_yaml_config().get("accommodation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("accommodation_server").get("port")
     )
 
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
         stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
 
-        response = await stub.GetById(accommodation_crud_pb2.DtoId(id = item_id))
+        response = await stub.GetById(accommodation_crud_pb2.DtoId(id=item_id))
 
     if response.id == "":
         return Response(
