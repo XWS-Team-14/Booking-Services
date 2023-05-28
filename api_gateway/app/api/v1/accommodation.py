@@ -176,7 +176,7 @@ async def getAll():
             + get_yaml_config().get("accommodation_server").get("port")
     )
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
-        stub = accommodation_crud_pb2_grpc.AcommodationCrudStub(channel)
+        stub = accommodation_crud_pb2_grpc.AccommodationCrudStub(channel)
         logger.info("Gateway processing getAll reservation data")
         data = await stub.GetAll({})
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
