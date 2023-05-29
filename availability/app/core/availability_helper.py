@@ -10,7 +10,13 @@ from app.models.pricing_type import PricingTypeEnum
 from app.models.special_pricing import SpecialPricing
 
 
-class AvailabilityHelper():
+class AvailabilityHelper:
+    def convertDateInterval(interval):
+        logger.info(interval.date_start)
+        logger.info(interval.date_end)
+        return Interval(date_start=AvailabilityHelper.convertDate(interval.date_start),
+                        date_end=AvailabilityHelper.convertDate(interval.date_end))
+
     def convertDate(date):
         # assuming iso YYYY-MM-DD date format3
         date_data = date.split('-')
@@ -20,10 +26,6 @@ class AvailabilityHelper():
     def convertDateTime(datetime):
         # '2019-05-18T15:17:08.132263'
         return datetime.isoformat().split('T')[0]
-
-    def convertDateInterval(interval):
-        return Interval(date_start=AvailabilityHelper.convertDate(interval.date_start),
-                        date_end=AvailabilityHelper.convertDate(interval.date_end))
 
     def convertDto(request):
         special_pricing_list = list()
@@ -103,9 +105,12 @@ class AvailabilityHelper():
         return retVal
 
     def isAvailable(requested_interval, availability):
+        if not availability.occupied_intervals:
+            return True
+
         for interval in availability.occupied_intervals:
-            if AvailabilityHelper.dateIntersection(interval, AvailabilityHelper.convertDateInterval(
-                requested_interval)): return False;
+            if AvailabilityHelper.dateIntersection(interval, AvailabilityHelper.convertDateInterval(requested_interval)):
+                return False
         return True
 
     def dateIntersection(intervalA, intervalB):
@@ -114,16 +119,15 @@ class AvailabilityHelper():
         return False
 
     def calculatePrice(requested_interval, num_of_guests, availability, holidays):
-        # logger.info("price for - " + str(availability.base_price));
-        guest_mul = 1;
-        price = 0;
+        # logger.info("price for - " + str(availability.base_price))
+        guest_mul = 1
+        price = 0
         requested_interval_date = AvailabilityHelper.convertDateInterval(requested_interval)
         if availability.pricing_type.name == 'Per_guest':
-            guest_mul = num_of_guests;
+            guest_mul = num_of_guests
         if not availability.special_pricing:
             # list of special price modifiers is empty
-            return ((
-                                requested_interval_date.date_end.date() - requested_interval_date.date_start.date()).days + 1) * availability.base_price * guest_mul;
+            return ((requested_interval_date.date_end.date() - requested_interval_date.date_start.date()).days + 1) * availability.base_price * guest_mul
         else:
             holiday_mul = AvailabilityHelper.getSpecialPrice(availability, 'Holiday')
             weekend_mul = AvailabilityHelper.getSpecialPrice(availability, 'Weekend')
@@ -133,17 +137,17 @@ class AvailabilityHelper():
                 # logger.info("curr=date" + str(curr_date))
                 if AvailabilityHelper.isHoliday(curr_date, holidays):
                     # logger.info("hollidayy")
-                    price = price + (availability.base_price * guest_mul * holiday_mul);
+                    price = price + (availability.base_price * guest_mul * holiday_mul)
                     logger.info(price)
                     continue
                 if AvailabilityHelper.isWeekend(curr_date):
                     # logger.info("weeekend")
-                    price = price + (availability.base_price * guest_mul * weekend_mul);
+                    price = price + (availability.base_price * guest_mul * weekend_mul)
                     # logger.info(price)
                     continue
-                price = price + availability.base_price * guest_mul;
+                price = price + availability.base_price * guest_mul
                 # logger.info(price)
-        return price;
+        return price
 
     def isWeekend(date):
         if date.weekday() > 4: return True
@@ -158,7 +162,7 @@ class AvailabilityHelper():
         for special_price in availability.special_pricing:
             if special_price.title == title:
                 return special_price.pricing_markup
-        return 1;
+        return 1
 
     def validateDates(interval):
 
