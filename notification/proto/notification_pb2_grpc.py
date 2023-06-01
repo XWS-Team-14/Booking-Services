@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import notification_pb2 as notification__pb2
+import notification_pb2 as notification__pb2
 
 
 class NotificationServiceStub(object):

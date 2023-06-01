@@ -1,12 +1,16 @@
 from loguru import logger
 import grpc
 
+from app.core.notification_servicer import NotificationServicer
+from proto import notification_pb2_grpc
+
 _cleanup_coroutines = []
 
 
 async def serve(port):
     server = grpc.aio.server()
     # Add services
+    notification_pb2_grpc.add_NotificationServiceServicer_to_server(NotificationServicer(), server)
     server.add_insecure_port('[::]:'+port)
     logger.info('Starting GRPC server')
     await server.start()
