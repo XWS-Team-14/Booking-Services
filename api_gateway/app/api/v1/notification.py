@@ -1,9 +1,6 @@
-import json
-
 import grpc
 from fastapi import APIRouter
 from fastapi_utils.cbv import cbv
-from google.protobuf.json_format import Parse, ParseDict
 from proto import notification_pb2_grpc, notification_pb2
 from starlette.responses import HTMLResponse, Response
 
@@ -23,8 +20,10 @@ class Notification:
         notification_server = get_server("notification_server")
         sender = notification_pb2.Sender(id=payload.sender.id, name=payload.sender.name)
         receiver = notification_pb2.Receiver(id=payload.receiver.id)
-        notification = notification_pb2.Notification(type=payload.type, title=payload.title, content=payload.content,
+        accommodation = notification_pb2.Accommodation(id=payload.accommodation.id, name=payload.accommodation.name)
+        notification = notification_pb2.Notification(type=payload.type,
                                                      sender=sender, receiver=receiver, status=payload.status,
+                                                     accommodation=accommodation,
                                                      timestamp=payload.timestamp)
         async with grpc.aio.insecure_channel(notification_server) as channel:
             stub = notification_pb2_grpc.NotificationServiceStub(channel)

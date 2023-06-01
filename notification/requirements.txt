@@ -3,3 +3,4 @@ grpcio-tools
 loguru
 PyYAML
 firebase-admin
+pydantic

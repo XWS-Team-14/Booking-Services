@@ -10,11 +10,15 @@ class Sender(BaseModel):
     name: str
 
 
+class Accommodation(BaseModel):
+    id: str
+    name: str
+
+
 class Notification(BaseModel):
     type: str
-    title: str
-    content: str
     sender: Sender
     receiver: Receiver
+    accommodation: Accommodation
     status: str
     timestamp: str

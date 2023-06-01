@@ -20,13 +20,17 @@ message Receiver {
   string id = 1;
 }
 
+message Accommodation {
+  string id = 1;
+  string name = 2;
+}
+
 message Notification {
   optional string key = 1;
   string type = 2;
-  string title = 3;
-  string content = 4;
-  Sender sender = 5;
-  Receiver receiver = 6;
-  string status = 7;
-  string timestamp = 8;
+  Sender sender = 3;
+  Receiver receiver = 4;
+  Accommodation accommodation = 5;
+  string status = 6;
+  string timestamp = 7;
 }
