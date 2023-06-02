@@ -1,0 +1,36 @@
+syntax = "proto3";
+package notification;
+
+service NotificationService {
+  rpc Send (Notification) returns (Empty);
+}
+
+message Empty {
+  optional string error_message = 1;
+  optional int32 error_code = 2;
+}
+
+message Sender {
+  string id = 1;
+  string name = 2;
+  optional string picture = 3;
+}
+
+message Receiver {
+  string id = 1;
+}
+
+message Accommodation {
+  string id = 1;
+  string name = 2;
+}
+
+message Notification {
+  optional string key = 1;
+  string type = 2;
+  Sender sender = 3;
+  Receiver receiver = 4;
+  Accommodation accommodation = 5;
+  string status = 6;
+  string timestamp = 7;
+}

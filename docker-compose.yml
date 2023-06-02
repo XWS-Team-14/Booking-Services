@@ -119,6 +119,14 @@ services:
     #ports:
     #- 50056:50056
 
+  notification:
+    build: ./notification
+    image: notification:latest
+    container_name: notification
+    command: "python main.py runserver 50057"
+    volumes:
+      - ./proto:/app/proto
+
   api_gateway:
     build: ./api_gateway
     image: api_gateway:latest
