@@ -23,3 +23,11 @@ class ReservationDto(BaseModel):
     ending_date: datetime
     total_price: float
     status: int
+
+class CreateReservationDto(BaseModel):
+    accommodation_id: str
+    host_id: str
+    number_of_guests: int
+    beginning_date: str
+    ending_date: str
+    total_price: float

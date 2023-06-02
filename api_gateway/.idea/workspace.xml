@@ -5,10 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../notification/app/core/notification_helper.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../notification/app/models/accommodation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/notification.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/notification.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/notification.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/notification.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../notification/app/core/notification_servicer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../notification/app/core/notification_servicer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../notification/app/models/notification.py" beforeDir="false" afterPath="$PROJECT_DIR$/../notification/app/models/notification.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../notification/app/models/receiver.py" beforeDir="false" afterPath="$PROJECT_DIR$/../notification/app/models/receiver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../notification/app/models/sender.py" beforeDir="false" afterPath="$PROJECT_DIR$/../notification/app/models/sender.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../notification/proto/notification.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../notification/proto/notification.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../notification/proto/notification_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../notification/proto/notification_pb2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../notification/proto/notification_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/../notification/proto/notification_pb2_grpc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../notification/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../notification/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proto/notification.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/notification.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proto/notification_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/notification_pb2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,16 +44,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Sanja/Documents/XWS/Microservices/Booking-Services/api_gateway&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "C:/Users/Sanja/Documents/XWS/Microservices/Booking-Services/notification"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\notification" />
+      <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\notification\app\models" />
+      <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\notification\app" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\notification" />
+      <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\notification\secret" />
       <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\api_gateway\app" />
       <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\api_gateway\app\api\v1" />
       <recent name="C:\Users\Sanja\Documents\XWS\Microservices\Booking-Services\api_gateway\app\api" />

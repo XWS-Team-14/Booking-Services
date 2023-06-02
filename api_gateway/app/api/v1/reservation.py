@@ -1,17 +1,16 @@
 from typing import Annotated
 
-from jwt import ExpiredSignatureError, InvalidTokenError
-
-from ...schemas.reservation import ReservationDto, Guest
-from ...config import get_yaml_config
+import grpc
 from fastapi import APIRouter, status, Cookie
 from fastapi.responses import Response
 # from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
-import json
+from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
-import grpc
+
 from proto import reservation_crud_pb2_grpc, reservation_crud_pb2, availability_crud_pb2_grpc, availability_crud_pb2
+from ...config import get_yaml_config
+from ...schemas.reservation import ReservationDto, Guest, CreateReservationDto
 from ...utils.get_server import get_server
 from ...utils.jwt import get_id_from_token, get_role_from_token
 
@@ -41,6 +40,7 @@ async def getAll():
         status_code=200, media_type="application/json", content=json
     )
 
+
 @router.get(
     "/all/guests",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -61,6 +61,7 @@ async def getAllGuests():
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+
 
 @router.get(
     "/id/{item_id}",
@@ -115,11 +116,13 @@ async def getByHost(access_token: Annotated[str | None, Cookie()] = None):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.GetByHost(reservation_crud_pb2.HostId( id = host_id))
+        data = await stub.GetByHost(reservation_crud_pb2.HostId(id=host_id))
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+
+
 @router.get(
     "/guest",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -157,6 +160,8 @@ async def getGuestById(access_token: Annotated[str | None, Cookie()] = None):
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+
+
 @router.get(
     "/accommodation/{item_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -176,6 +181,7 @@ async def getReservationsByAccommodation(item_id):
         return Response(
             status_code=200, media_type="application/json", content=json
         )
+
 
 @router.get(
     "/host/pending",
@@ -206,11 +212,12 @@ async def getPendingByHost(access_token: Annotated[str | None, Cookie()] = None)
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.GetPendingReservationsByHost(reservation_crud_pb2.HostId(id = host_id))
+        data = await stub.GetPendingReservationsByHost(reservation_crud_pb2.HostId(id=host_id))
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+
 
 @router.get(
     "/host/active",
@@ -239,11 +246,12 @@ async def getActiveByHost(access_token: Annotated[str | None, Cookie()] = None):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.GetActiveByHost(reservation_crud_pb2.HostId(id = host_id))
+        data = await stub.GetActiveByHost(reservation_crud_pb2.HostId(id=host_id))
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+
 
 @router.get(
     "/guest/active",
@@ -273,7 +281,7 @@ async def getActiveByGuest(access_token: Annotated[str | None, Cookie()] = None)
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        data = await stub.GetActiveByGuest(reservation_crud_pb2.GuestId(id = guest_id))
+        data = await stub.GetActiveByGuest(reservation_crud_pb2.GuestId(id=guest_id))
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
     return Response(
         status_code=200, media_type="application/json", content=json
@@ -285,8 +293,22 @@ async def getActiveByGuest(access_token: Annotated[str | None, Cookie()] = None)
     status_code=status.HTTP_204_NO_CONTENT,
     description="Create new reservation",
 )
-async def create(item: ReservationDto):
-    logger.info("Gateway processing create Availability request")
+async def create(item: CreateReservationDto, access_token: Annotated[str | None, Cookie()] = None):
+    logger.info("Gateway processing create reservation request")
+    try:
+        user_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != 'guest':
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     availability_server = get_server("availability_server")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
@@ -295,29 +317,14 @@ async def create(item: ReservationDto):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        reservation = reservation_crud_pb2.ReservationDto()
-        reservation.reservation_id = str(item.reservation_id)
-        reservation.accommodation.id = str(item.accommodation.id)
-        reservation.accommodation.automaticAccept = item.accommodation.automaticAccept
+        reservation = reservation_crud_pb2.CreateReservationDto()
+        reservation.accommodation_id = str(item.accommodation_id)
         reservation.host_id = str(item.host_id)
-        reservation.guest.id = str(item.guest.id)
-        reservation.guest.canceledReservations = item.guest.canceledReservations
+        reservation.guest_id = str(user_id)
         reservation.number_of_guests = item.number_of_guests
-        reservation.beginning_date = str(item.beginning_date)
-        reservation.ending_date = str(item.ending_date)
+        reservation.beginning_date = item.beginning_date
+        reservation.ending_date = item.ending_date
         reservation.total_price = item.total_price
-        if(reservation.accommodation.automaticAccept):
-            async with grpc.aio.insecure_channel(availability_server) as channel:
-                availabilityStub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
-                reservation.status = 3
-                availabilityStub.AddOccupiedInterval(availability_crud_pb2.UpdateIntervalDto(
-                    id=availabilityStub.GetByAccommodationId(reservation.accommodation.id),
-                    interval = availability_crud_pb2.Interval(
-                        date_start = reservation.beginning_date,
-                        date_end = reservation.ending_date) ))
-
-        else:
-            reservation.status = item.status
 
         response = await stub.Create(reservation)
 
@@ -325,6 +332,15 @@ async def create(item: ReservationDto):
             return Response(
                 status_code=200, media_type="application/json", content="Invalid date"
             )
+
+        if response.status == 'ReservationStatus.ACCEPTED':
+            async with grpc.aio.insecure_channel(availability_server) as availability_channel:
+                availability_stub = availability_crud_pb2_grpc.AvailabilityCrudStub(availability_channel)
+                a_response = await availability_stub.AddOccupiedInterval(availability_crud_pb2.UpdateIntervalDto(
+                    id=item.accommodation_id,
+                    interval=availability_crud_pb2.Interval(
+                        date_start=reservation.beginning_date,
+                        date_end=reservation.ending_date)))
 
     return Response(
         status_code=200, media_type="application/json", content="Success"
@@ -368,7 +384,6 @@ async def update(item: ReservationDto):
             + get_yaml_config().get("reservation_server").get("port")
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
-
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
 
         reservation = reservation_crud_pb2.ReservationDto()
@@ -389,6 +404,7 @@ async def update(item: ReservationDto):
         status_code=200, media_type="application/json", content=response.status
     )
 
+
 @router.put(
     "/update/guest",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -402,7 +418,6 @@ async def updateGuest(item: Guest):
             + get_yaml_config().get("reservation_server").get("port")
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
-
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
 
         guest = reservation_crud_pb2.Guest()
@@ -467,11 +482,12 @@ async def AcceptReservation(item: ReservationDto, access_token: Annotated[str | 
                 interval=availability_crud_pb2.Interval(
                     date_start=reservation.beginning_date,
                     date_end=reservation.ending_date)))
-        #after completing this step, adequate changes should be made in availability servicer
+        # after completing this step, adequate changes should be made in availability servicer
 
     return Response(
         status_code=200, media_type="application/json", content=response.status
     )
+
 
 @router.delete(
     "/delete/{item_id}",
@@ -505,6 +521,7 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
         status_code=200, media_type="application/json", content=data.status
     )
 
+
 @router.delete(
     "/delete/guest/{item_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -523,6 +540,8 @@ async def deleteGuest(item_id):
     return Response(
         status_code=200, media_type="application/json", content=data.status
     )
+
+
 @router.get(
     "/accommodation/id/{item_id}",
     status_code=status.HTTP_204_NO_CONTENT,

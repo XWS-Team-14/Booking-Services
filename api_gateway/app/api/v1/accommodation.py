@@ -34,17 +34,17 @@ router = APIRouter()
 
 @router.post("/", response_class=HTMLResponse)
 async def save_accommodation(
-    # Add additional data that needs to be here
-    access_token: Annotated[str | None, Cookie()],
-    name: Annotated[str, Form()],
-    country: Annotated[str, Form()],
-    city: Annotated[str, Form()],
-    address: Annotated[str, Form()],
-    auto_accept_flag: Annotated[str, Form()],
-    min_guests: Annotated[int, Form()],
-    max_guests: Annotated[int, Form()],
-    features: Annotated[List[str], Form()],
-    files: List[UploadFile],
+        # Add additional data that needs to be here
+        access_token: Annotated[str | None, Cookie()],
+        name: Annotated[str, Form()],
+        country: Annotated[str, Form()],
+        city: Annotated[str, Form()],
+        address: Annotated[str, Form()],
+        auto_accept_flag: Annotated[str, Form()],
+        min_guests: Annotated[int, Form()],
+        max_guests: Annotated[int, Form()],
+        features: Annotated[List[str], Form()],
+        files: List[UploadFile],
 ):
     """Post method used to save acoommodation
 

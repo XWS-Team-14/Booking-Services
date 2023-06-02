@@ -9,33 +9,34 @@ service AvailabilityCrud {
   rpc Update (AvailabilityDto) returns (Result);
   rpc AddOccupiedInterval(UpdateIntervalDto) returns (Result);
   rpc GetByAccommodationId(AvailabilityId) returns (AvailabilityDto);
+  rpc GetPrice(PriceLookup) returns (Price);
 }
 
 message Empty {
 }
-message Result{
+message Result {
     string status = 1;
 }
-message SearchDetails{
+message SearchDetails {
     Interval interval = 1;
     int32 guests = 2;
 }
-message UpdateIntervalDto{
+message UpdateIntervalDto {
     string id = 1;
     Interval interval = 2;
 }
 message AvailabilityId {
   string id = 1;
 }
-message SpecialPricing{
+message SpecialPricing {
     string title = 1;
     double pricing_markup = 2;
 }
-message Interval{
+message Interval {
     string date_start = 1;
     string date_end = 2;
 }
-message AvailabilityDto{
+message AvailabilityDto {
     string availability_id = 1;
     string accommodation_id = 2;
     Interval interval = 3;
@@ -44,7 +45,7 @@ message AvailabilityDto{
     repeated SpecialPricing special_pricing = 6;
     repeated Interval occupied_intervals = 7;
 }
-message ExpandedAvailabilityDto{
+message ExpandedAvailabilityDto {
     string availability_id = 1;
     string accommodation_id = 2;
     Interval interval = 3;
@@ -54,9 +55,17 @@ message ExpandedAvailabilityDto{
     repeated SpecialPricing special_pricing = 7;
     repeated Interval occupied_intervals = 8;
 }
-message AvailabilityDtos{
+message AvailabilityDtos {
     repeated AvailabilityDto items = 1;
 }
-message ExpandedAvailabilityDtos{
+message ExpandedAvailabilityDtos {
     repeated ExpandedAvailabilityDto items = 1;
+}
+message Price {
+    double price = 1;
+}
+message PriceLookup {
+    Interval interval = 1;
+    int32 guests = 2;
+    string accommodation_id = 3;
 }

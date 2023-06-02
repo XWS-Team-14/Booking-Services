@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="availability" />
     <orderEntry type="module" module-name="reservation" />
     <orderEntry type="module" module-name="accommodation" />
+    <orderEntry type="module" module-name="notification" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />

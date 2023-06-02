@@ -25,3 +25,10 @@ class AvailabilityDto(BaseModel):
 class SearchDetails(BaseModel):
     interval: DateInterval
     guests: int
+    num_of_guests: int
+
+
+class PriceLookup(BaseModel):
+    interval: DateInterval
+    guests: int
+    accommodation_id: str

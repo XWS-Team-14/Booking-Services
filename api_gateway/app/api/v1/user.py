@@ -62,10 +62,11 @@ class User:
                     content=grpc_user_response.error_message,
                 )
         user = {
-            "first_name": grpc_user_response.first_name,
-            "last_name": grpc_user_response.last_name,
-            "gender": grpc_user_response.gender,
-            "home_address": grpc_user_response.home_address,
+            'id': user_id,
+            'first_name': grpc_user_response.first_name,
+            'last_name': grpc_user_response.last_name,
+            'gender': grpc_user_response.gender,
+            'home_address': grpc_user_response.home_address
         }
         return JSONResponse(
             status_code=200, media_type="text/html", content=jsonable_encoder(user)
