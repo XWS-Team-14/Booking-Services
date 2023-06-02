@@ -173,23 +173,23 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
 
     async def GetPrice(self, request, context):
         logger.success("Request for price calculation accepted")
-        logger.info(request.interval.date_start)
         if request.interval.date_start == "" or request.interval.date_end == "" or request.guests == 0:
             logger.info("Some parts of request data are missing, discard request")
             return availability_crud_pb2.Price()
-        interval = AvailabilityHelper.convertDateInterval(request.interval)
-        logger.info("interval", interval)
-        if not AvailabilityHelper.validateDates(interval):
+        interval = AvailabilityHelper.convert_date_interval(request.interval)
+        logger.info(interval)
+        if not AvailabilityHelper.validate_dates(interval):
             logger.exception("Dates are not valid")
             return availability_crud_pb2.Price()
-        availability = await Availability.find_one(Availability.accomodation_id == uuid.UUID(request.accommodation_id))
-        logger.info(availability)
-        if not AvailabilityHelper.isAvailable(request.interval, availability):
+        availability = await Availability.find_one(Availability.accommodation_id == uuid.UUID(request.accommodation_id))
+        if availability is None:
+             return availability_crud_pb2.Price()
+        if not AvailabilityHelper.is_available(interval, availability):
             logger.exception("Isn't available")
             return availability_crud_pb2.Price()
         holidays = await Holiday.find_all().to_list()
         retVal = availability_crud_pb2.Price()
-        retVal.price = AvailabilityHelper.calculatePrice(
+        retVal.price = AvailabilityHelper.calculate_price(
             request.interval, request.guests, availability, holidays
         )
         return retVal

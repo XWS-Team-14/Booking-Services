@@ -16,7 +16,7 @@ from loguru import logger
 from proto import accommodation_pb2, accommodation_pb2_grpc
 
 
-class AccommodationService(accommodation_pb2_grpc.AccommodationServiceServicer):
+class AccommodationServicer(accommodation_pb2_grpc.AccommodationServiceServicer):
     async def Delete(self, request, context):
         logger.info("Delete request started")
         response = Response(message_string="", status_code=0)

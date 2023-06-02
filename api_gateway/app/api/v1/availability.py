@@ -13,12 +13,12 @@ from proto import accommodation_pb2_grpc, accommodation_pb2
 from ...utils.jwt import get_role_from_token, get_id_from_token
 from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
-from proto import accommodation_crud_pb2_grpc, accommodation_crud_pb2
 from proto import availability_crud_pb2_grpc, availability_crud_pb2
 
 from app.config import get_yaml_config
 from app.schemas.availability import AvailabilityDto
 from app.utils.jwt import get_role_from_token, get_id_from_token
+import uuid
 
 router = APIRouter(
     tags=["Availability"],
@@ -90,9 +90,9 @@ async def get_by_user(access_token: Annotated[str | None, Cookie()] = None):
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
     accommodation_server = (
-            get_yaml_config().get("accommodation_server").get("ip")
-            + ":"
-            + get_yaml_config().get("accommodation_server").get("port")
+        get_yaml_config().get("accommodation_server").get("ip")
+        + ":"
+        + get_yaml_config().get("accommodation_server").get("port")
     )
 
     availability_server = (
@@ -122,7 +122,6 @@ async def get_by_user(access_token: Annotated[str | None, Cookie()] = None):
     return Response(status_code=200, media_type="application/json", content=json)
 
 
-
 @router.get(
     "/accommodation/{item_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -130,21 +129,21 @@ async def get_by_user(access_token: Annotated[str | None, Cookie()] = None):
 )
 async def get_by_accommodation(item_id):
     availability_server = (
-            get_yaml_config().get("availability_server").get("ip")
-            + ":"
-            + get_yaml_config().get("availability_server").get("port")
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
     )
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
-        availability_data = await stub.GetByAccommodationId(availability_crud_pb2.AvailabilityId(id=item_id))
+        availability_data = await stub.GetByAccommodationId(
+            availability_crud_pb2.AvailabilityId(id=item_id)
+        )
     logger.info("Gateway fetched Availability data")
 
-    json = json_format.MessageToJson(availability_data, preserving_proto_field_name=True)
-    return Response(
-        status_code=200, media_type="application/json", content=json
+    json = json_format.MessageToJson(
+        availability_data, preserving_proto_field_name=True
     )
     return Response(status_code=200, media_type="application/json", content=json)
-
 
 
 @router.post(
@@ -159,9 +158,7 @@ async def create(
     try:
         role = get_role_from_token(access_token)
     except ExpiredSignatureError:
-        return Response(
-            status_code=401, media_type="text/html", content="Invalid role"
-        )
+        return Response(status_code=401, media_type="text/html", content="Invalid role")
     availability_server = (
         get_yaml_config().get("availability_server").get("ip")
         + ":"
@@ -171,7 +168,7 @@ async def create(
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
 
         availability = availability_crud_pb2.AvailabilityDto()
-        availability.availability_id = item.availability_id
+        availability.availability_id = str(uuid.uuid4())
         availability.accommodation_id = item.accommodation_id
         availability.interval.date_start = item.interval.date_start
         availability.interval.date_end = item.interval.date_end
@@ -204,9 +201,7 @@ async def update(
     try:
         role = get_role_from_token(access_token)
     except ExpiredSignatureError:
-        return Response(
-            status_code=401, media_type="text/html", content="Invalid role"
-        )
+        return Response(status_code=401, media_type="text/html", content="Invalid role")
     availability_server = (
         get_yaml_config().get("availability_server").get("ip")
         + ":"
@@ -245,9 +240,7 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
     try:
         role = get_role_from_token(access_token)
     except ExpiredSignatureError:
-        return Response(
-            status_code=401, media_type="text/html", content="Invalid role"
-        )
+        return Response(status_code=401, media_type="text/html", content="Invalid role")
     availability_server = (
         get_yaml_config().get("availability_server").get("ip")
         + ":"
@@ -256,9 +249,7 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         data = await stub.Delete(availability_crud_pb2.AvailabilityId(id=item_id))
-    return Response(
-        status_code=200, media_type="application/json", content=data.status
-    )
+    return Response(status_code=200, media_type="application/json", content=data.status)
 
 
 @router.get(
@@ -267,27 +258,30 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
     description="Get price for accommodation and interval",
 )
 async def get_price(
-        date_start: str | None = "",
-        date_end: str | None = "",
-        guests: int | None = 0,
-        accommodation_id: str | None = ""
+    date_start: str | None = "",
+    date_end: str | None = "",
+    guests: int | None = 0,
+    accommodation_id: str | None = "",
 ):
     availability_server = (
-            get_yaml_config().get("availability_server").get("ip")
-            + ":"
-            + get_yaml_config().get("availability_server").get("port")
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
     )
     price_lookup = availability_crud_pb2.PriceLookup(
         accommodation_id=accommodation_id,
         guests=guests,
-        interval=availability_crud_pb2.Interval(date_start=date_start, date_end=date_end)
+        interval=availability_crud_pb2.Interval(
+            date_start=date_start, date_end=date_end
+        ),
     )
     logger.info("price lookup dto", price_lookup)
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         availability_data = await stub.GetPrice(price_lookup)
     logger.info(availability_data)
-    json = MessageToJson(
+    json = json_format.MessageToJson(
         availability_data, preserving_proto_field_name=True
     )
+    logger.info(json)
     return Response(status_code=200, media_type="application/json", content=json)

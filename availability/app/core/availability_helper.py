@@ -135,6 +135,9 @@ class AvailabilityHelper:
         return retVal
 
     def is_available(requested_interval, availability):
+        if not availability.occupied_intervals:
+            return True
+        
         for interval in availability.occupied_intervals:
             if AvailabilityHelper.date_intersection(
                 interval, AvailabilityHelper.convert_date_interval(requested_interval)
@@ -220,6 +223,6 @@ class AvailabilityHelper:
 
     def validate_dates(interval):
         return (
-            interval.date_start.date() > date.today()
-            and interval.date_start.date() < interval.date_end.date()
+            interval.date_start.date() >= date.today()
+            and interval.date_start.date() <= interval.date_end.date()
         )

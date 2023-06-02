@@ -15,7 +15,7 @@ class Availability(Document):
     pricing_type: PricingTypeEnum
     base_price: float
     special_pricing: Optional[List[SpecialPricing]]
-    occupied_intervals: Optional[List[Interval]]
+    occupied_intervals: Optional[List[Interval]] = []
 
     class Settings:
         indexes = ["id"]
