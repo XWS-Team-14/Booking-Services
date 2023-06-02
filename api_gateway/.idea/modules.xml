@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/api_gateway.iml" filepath="$PROJECT_DIR$/.idea/api_gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/../auth/.idea/auth.iml" filepath="$PROJECT_DIR$/../auth/.idea/auth.iml" />
       <module fileurl="file://$PROJECT_DIR$/../availability/.idea/availability.iml" filepath="$PROJECT_DIR$/../availability/.idea/availability.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../notification/.idea/notification.iml" filepath="$PROJECT_DIR$/../notification/.idea/notification.iml" />
       <module fileurl="file://$PROJECT_DIR$/../reservation/.idea/reservation.iml" filepath="$PROJECT_DIR$/../reservation/.idea/reservation.iml" />
       <module fileurl="file://$PROJECT_DIR$/../user_control/.idea/user_control.iml" filepath="$PROJECT_DIR$/../user_control/.idea/user_control.iml" />
     </modules>

@@ -5,11 +5,6 @@ app:
   api_prefix: "v1"
   static_prefix: "static"
 
-
-reservation_server:
-  ip: "reservation"
-  port: "50054"
-
 accommodation_server:
   ip: "accommodation"
   port: "50051"
@@ -22,13 +17,21 @@ availability_server:
   ip: "availability"
   port: "50053"
 
-user_server:
-  ip: "user_control"
-  port: "50056"
+reservation_server:
+  ip: "reservation"
+  port: "50054"
 
 search_server:
   ip: "search"
   port: "50055"
+
+user_server:
+  ip: "user_control"
+  port: "50056"
+
+notification_server:
+  ip: "notification"
+  port: "50057"
 
 static_server:
   url: "http://static_resources_server:8001/api/resources/images/"
