@@ -10,7 +10,7 @@ from loguru import logger
 
 from proto import reservation_crud_pb2_grpc, reservation_crud_pb2, availability_crud_pb2_grpc, availability_crud_pb2
 from ...config import get_yaml_config
-from ...schemas.reservation import ReservationDto, Guest
+from ...schemas.reservation import ReservationDto, Guest, CreateReservationDto
 from ...utils.get_server import get_server
 from ...utils.jwt import get_id_from_token, get_role_from_token
 
@@ -293,8 +293,22 @@ async def getActiveByGuest(access_token: Annotated[str | None, Cookie()] = None)
     status_code=status.HTTP_204_NO_CONTENT,
     description="Create new reservation",
 )
-async def create(item: ReservationDto):
-    logger.info("Gateway processing create Availability request")
+async def create(item: CreateReservationDto, access_token: Annotated[str | None, Cookie()] = None):
+    logger.info("Gateway processing create reservation request")
+    try:
+        user_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != 'guest':
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
     availability_server = get_server("availability_server")
     reservation_server = (
             get_yaml_config().get("reservation_server").get("ip")
@@ -303,29 +317,14 @@ async def create(item: ReservationDto):
     )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        reservation = reservation_crud_pb2.ReservationDto()
-        reservation.reservation_id = str(item.reservation_id)
-        reservation.accommodation.id = str(item.accommodation.id)
-        reservation.accommodation.automaticAccept = item.accommodation.automaticAccept
+        reservation = reservation_crud_pb2.CreateReservationDto()
+        reservation.accommodation_id = str(item.accommodation_id)
         reservation.host_id = str(item.host_id)
-        reservation.guest.id = str(item.guest.id)
-        reservation.guest.canceledReservations = item.guest.canceledReservations
+        reservation.guest_id = str(user_id)
         reservation.number_of_guests = item.number_of_guests
-        reservation.beginning_date = str(item.beginning_date)
-        reservation.ending_date = str(item.ending_date)
+        reservation.beginning_date = item.beginning_date
+        reservation.ending_date = item.ending_date
         reservation.total_price = item.total_price
-        if reservation.accommodation.automaticAccept:
-            async with grpc.aio.insecure_channel(availability_server) as channel:
-                availabilityStub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
-                reservation.status = 3
-                availabilityStub.AddOccupiedInterval(availability_crud_pb2.UpdateIntervalDto(
-                    id=availabilityStub.GetByAccommodationId(reservation.accommodation.id),
-                    interval=availability_crud_pb2.Interval(
-                        date_start=reservation.beginning_date,
-                        date_end=reservation.ending_date)))
-
-        else:
-            reservation.status = item.status
 
         response = await stub.Create(reservation)
 
@@ -334,10 +333,18 @@ async def create(item: ReservationDto):
                 status_code=200, media_type="application/json", content="Invalid date"
             )
 
+        if response.status == 'ReservationStatus.ACCEPTED':
+            async with grpc.aio.insecure_channel(availability_server) as availability_channel:
+                availability_stub = availability_crud_pb2_grpc.AvailabilityCrudStub(availability_channel)
+                a_response = await availability_stub.AddOccupiedInterval(availability_crud_pb2.UpdateIntervalDto(
+                    id=item.accommodation_id,
+                    interval=availability_crud_pb2.Interval(
+                        date_start=reservation.beginning_date,
+                        date_end=reservation.ending_date)))
+
     return Response(
         status_code=200, media_type="application/json", content="Success"
     )
-
 
 @router.post(
     "/create/guest",

@@ -116,7 +116,7 @@ async def save_accommodation(
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         await stub.CreateAccommodation(reservation_crud_pb2.AccommodationResDto(
-            id=accommodation.id, automaticAccept=bool(auto_accept_flag)))
+            id=accommodation.id, automaticAccept=True if auto_accept_flag == 'true' else False))
     return Response(
         status_code=200, media_type="text/html", content="Accommodation saved!"
     )

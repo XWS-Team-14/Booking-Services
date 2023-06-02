@@ -26,7 +26,7 @@ class ReservationCrudStub(object):
                 )
         self.Create = channel.unary_unary(
                 '/ReservationCrud/Create',
-                request_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
+                request_serializer=reservation__crud__pb2.CreateReservationDto.SerializeToString,
                 response_deserializer=reservation__crud__pb2.ReservationResult.FromString,
                 )
         self.Delete = channel.unary_unary(
@@ -276,7 +276,7 @@ def add_ReservationCrudServicer_to_server(servicer, server):
             ),
             'Create': grpc.unary_unary_rpc_method_handler(
                     servicer.Create,
-                    request_deserializer=reservation__crud__pb2.ReservationDto.FromString,
+                    request_deserializer=reservation__crud__pb2.CreateReservationDto.FromString,
                     response_serializer=reservation__crud__pb2.ReservationResult.SerializeToString,
             ),
             'Delete': grpc.unary_unary_rpc_method_handler(
@@ -430,7 +430,7 @@ class ReservationCrud(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/Create',
-            reservation__crud__pb2.ReservationDto.SerializeToString,
+            reservation__crud__pb2.CreateReservationDto.SerializeToString,
             reservation__crud__pb2.ReservationResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
