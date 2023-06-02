@@ -4,17 +4,16 @@ from typing import Annotated
 import grpc
 from fastapi import APIRouter, status, Cookie
 from fastapi.responses import Response
-# from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
 from google.protobuf.json_format import MessageToJson
 from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
-
 from proto import accommodation_crud_pb2_grpc, accommodation_crud_pb2
 from proto import availability_crud_pb2_grpc, availability_crud_pb2
-from ...config import get_yaml_config
-from ...schemas.availability import AvailabilityDto, DateInterval
-from ...utils.jwt import get_role_from_token, get_id_from_token
+
+from app.config import get_yaml_config
+from app.schemas.availability import AvailabilityDto
+from app.utils.jwt import get_role_from_token, get_id_from_token
 
 router = APIRouter(
     tags=["Availability"],
@@ -129,29 +128,12 @@ async def get_by_user(access_token: Annotated[str | None, Cookie()] = None):
     status_code=status.HTTP_204_NO_CONTENT,
     description="Get one availability by accommodation id",
 )
-async def get_by_accommodation(item_id, access_token: Annotated[str | None, Cookie()] = None):
-    try:
-        user_id = get_id_from_token(access_token)
-        user_role = get_role_from_token(access_token)
-    except ExpiredSignatureError:
-        return Response(
-            status_code=401, media_type="text/html", content="Token expired."
-        )
-    except InvalidTokenError:
-        return Response(
-            status_code=401, media_type="text/html", content="Invalid token."
-        )
+async def get_by_accommodation(item_id):
     availability_server = (
             get_yaml_config().get("availability_server").get("ip")
             + ":"
             + get_yaml_config().get("availability_server").get("port")
     )
-    accommodation_server = (
-            get_yaml_config().get("accommodation_server").get("ip")
-            + ":"
-            + get_yaml_config().get("accommodation_server").get("port")
-    )
-
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         availability_data = await stub.GetByAccommodationId(availability_crud_pb2.AvailabilityId(id=item_id))
