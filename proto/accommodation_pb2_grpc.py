@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import accommodation_crud_pb2 as accommodation__crud__pb2
+from . import accommodation_pb2 as accommodation__pb2
 
 
-class AccommodationCrudStub(object):
+class AccommodationServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,48 +15,48 @@ class AccommodationCrudStub(object):
             channel: A grpc.Channel.
         """
         self.GetAll = channel.unary_unary(
-            "/AccommodationCrud/GetAll",
-            request_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
+            "/accommodation.AccommodationService/GetAll",
+            request_serializer=accommodation__pb2.Empty.SerializeToString,
+            response_deserializer=accommodation__pb2.ResponseAccommodations.FromString,
         )
         self.GetById = channel.unary_unary(
-            "/AccommodationCrud/GetById",
-            request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.Accommodation.FromString,
+            "/accommodation.AccommodationService/GetById",
+            request_serializer=accommodation__pb2.InputId.SerializeToString,
+            response_deserializer=accommodation__pb2.ResponseAccommodation.FromString,
         )
         self.Create = channel.unary_unary(
-            "/AccommodationCrud/Create",
-            request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+            "/accommodation.AccommodationService/Create",
+            request_serializer=accommodation__pb2.Accommodation.SerializeToString,
+            response_deserializer=accommodation__pb2.Response.FromString,
         )
         self.Delete = channel.unary_unary(
-            "/AccommodationCrud/Delete",
-            request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+            "/accommodation.AccommodationService/Delete",
+            request_serializer=accommodation__pb2.InputId.SerializeToString,
+            response_deserializer=accommodation__pb2.Response.FromString,
         )
         self.Update = channel.unary_unary(
-            "/AccommodationCrud/Update",
-            request_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+            "/accommodation.AccommodationService/Update",
+            request_serializer=accommodation__pb2.Accommodation.SerializeToString,
+            response_deserializer=accommodation__pb2.Response.FromString,
         )
         self.GetBySearch = channel.unary_unary(
-            "/AccommodationCrud/GetBySearch",
-            request_serializer=accommodation__crud__pb2.SearchParamsAcc.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
+            "/accommodation.AccommodationService/GetBySearch",
+            request_serializer=accommodation__pb2.SearchParams.SerializeToString,
+            response_deserializer=accommodation__pb2.ResponseAccommodations.FromString,
         )
         self.DeleteByUser = channel.unary_unary(
-            "/AccommodationCrud/DeleteByUser",
-            request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
+            "/accommodation.AccommodationService/DeleteByUser",
+            request_serializer=accommodation__pb2.InputId.SerializeToString,
+            response_deserializer=accommodation__pb2.Response.FromString,
         )
         self.GetByUser = channel.unary_unary(
-            "/AccommodationCrud/GetByUser",
-            request_serializer=accommodation__crud__pb2.DtoId.SerializeToString,
-            response_deserializer=accommodation__crud__pb2.Accommodations.FromString,
+            "/accommodation.AccommodationService/GetByUser",
+            request_serializer=accommodation__pb2.InputId.SerializeToString,
+            response_deserializer=accommodation__pb2.ResponseAccommodations.FromString,
         )
 
 
-class AccommodationCrudServicer(object):
+class AccommodationServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetAll(self, request, context):
@@ -108,57 +108,57 @@ class AccommodationCrudServicer(object):
         raise NotImplementedError("Method not implemented!")
 
 
-def add_AccommodationCrudServicer_to_server(servicer, server):
+def add_AccommodationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
         "GetAll": grpc.unary_unary_rpc_method_handler(
             servicer.GetAll,
-            request_deserializer=accommodation__crud__pb2.EmptyAccommodation.FromString,
-            response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
+            request_deserializer=accommodation__pb2.Empty.FromString,
+            response_serializer=accommodation__pb2.ResponseAccommodations.SerializeToString,
         ),
         "GetById": grpc.unary_unary_rpc_method_handler(
             servicer.GetById,
-            request_deserializer=accommodation__crud__pb2.DtoId.FromString,
-            response_serializer=accommodation__crud__pb2.Accommodation.SerializeToString,
+            request_deserializer=accommodation__pb2.InputId.FromString,
+            response_serializer=accommodation__pb2.ResponseAccommodation.SerializeToString,
         ),
         "Create": grpc.unary_unary_rpc_method_handler(
             servicer.Create,
-            request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
-            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+            request_deserializer=accommodation__pb2.Accommodation.FromString,
+            response_serializer=accommodation__pb2.Response.SerializeToString,
         ),
         "Delete": grpc.unary_unary_rpc_method_handler(
             servicer.Delete,
-            request_deserializer=accommodation__crud__pb2.DtoId.FromString,
-            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+            request_deserializer=accommodation__pb2.InputId.FromString,
+            response_serializer=accommodation__pb2.Response.SerializeToString,
         ),
         "Update": grpc.unary_unary_rpc_method_handler(
             servicer.Update,
-            request_deserializer=accommodation__crud__pb2.Accommodation.FromString,
-            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+            request_deserializer=accommodation__pb2.Accommodation.FromString,
+            response_serializer=accommodation__pb2.Response.SerializeToString,
         ),
         "GetBySearch": grpc.unary_unary_rpc_method_handler(
             servicer.GetBySearch,
-            request_deserializer=accommodation__crud__pb2.SearchParamsAcc.FromString,
-            response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
+            request_deserializer=accommodation__pb2.SearchParams.FromString,
+            response_serializer=accommodation__pb2.ResponseAccommodations.SerializeToString,
         ),
         "DeleteByUser": grpc.unary_unary_rpc_method_handler(
             servicer.DeleteByUser,
-            request_deserializer=accommodation__crud__pb2.DtoId.FromString,
-            response_serializer=accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
+            request_deserializer=accommodation__pb2.InputId.FromString,
+            response_serializer=accommodation__pb2.Response.SerializeToString,
         ),
         "GetByUser": grpc.unary_unary_rpc_method_handler(
             servicer.GetByUser,
-            request_deserializer=accommodation__crud__pb2.DtoId.FromString,
-            response_serializer=accommodation__crud__pb2.Accommodations.SerializeToString,
+            request_deserializer=accommodation__pb2.InputId.FromString,
+            response_serializer=accommodation__pb2.ResponseAccommodations.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "AccommodationCrud", rpc_method_handlers
+        "accommodation.AccommodationService", rpc_method_handlers
     )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
 # This class is part of an EXPERIMENTAL API.
-class AccommodationCrud(object):
+class AccommodationService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -177,9 +177,9 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/GetAll",
-            accommodation__crud__pb2.EmptyAccommodation.SerializeToString,
-            accommodation__crud__pb2.Accommodations.FromString,
+            "/accommodation.AccommodationService/GetAll",
+            accommodation__pb2.Empty.SerializeToString,
+            accommodation__pb2.ResponseAccommodations.FromString,
             options,
             channel_credentials,
             insecure,
@@ -206,9 +206,9 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/GetById",
-            accommodation__crud__pb2.DtoId.SerializeToString,
-            accommodation__crud__pb2.Accommodation.FromString,
+            "/accommodation.AccommodationService/GetById",
+            accommodation__pb2.InputId.SerializeToString,
+            accommodation__pb2.ResponseAccommodation.FromString,
             options,
             channel_credentials,
             insecure,
@@ -235,9 +235,9 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/Create",
-            accommodation__crud__pb2.Accommodation.SerializeToString,
-            accommodation__crud__pb2.EmptyAccommodation.FromString,
+            "/accommodation.AccommodationService/Create",
+            accommodation__pb2.Accommodation.SerializeToString,
+            accommodation__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
@@ -264,9 +264,9 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/Delete",
-            accommodation__crud__pb2.DtoId.SerializeToString,
-            accommodation__crud__pb2.EmptyAccommodation.FromString,
+            "/accommodation.AccommodationService/Delete",
+            accommodation__pb2.InputId.SerializeToString,
+            accommodation__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
@@ -293,9 +293,9 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/Update",
-            accommodation__crud__pb2.Accommodation.SerializeToString,
-            accommodation__crud__pb2.EmptyAccommodation.FromString,
+            "/accommodation.AccommodationService/Update",
+            accommodation__pb2.Accommodation.SerializeToString,
+            accommodation__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
@@ -322,9 +322,9 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/GetBySearch",
-            accommodation__crud__pb2.SearchParamsAcc.SerializeToString,
-            accommodation__crud__pb2.Accommodations.FromString,
+            "/accommodation.AccommodationService/GetBySearch",
+            accommodation__pb2.SearchParams.SerializeToString,
+            accommodation__pb2.ResponseAccommodations.FromString,
             options,
             channel_credentials,
             insecure,
@@ -351,9 +351,9 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/DeleteByUser",
-            accommodation__crud__pb2.DtoId.SerializeToString,
-            accommodation__crud__pb2.EmptyAccommodation.FromString,
+            "/accommodation.AccommodationService/DeleteByUser",
+            accommodation__pb2.InputId.SerializeToString,
+            accommodation__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
@@ -380,9 +380,9 @@ class AccommodationCrud(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/AccommodationCrud/GetByUser",
-            accommodation__crud__pb2.DtoId.SerializeToString,
-            accommodation__crud__pb2.Accommodations.FromString,
+            "/accommodation.AccommodationService/GetByUser",
+            accommodation__pb2.InputId.SerializeToString,
+            accommodation__pb2.ResponseAccommodations.FromString,
             options,
             channel_credentials,
             insecure,

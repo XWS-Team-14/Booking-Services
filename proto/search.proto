@@ -4,6 +4,11 @@ service Search {
   rpc Search (SearchParams) returns (SearchResults);
 }
 
+message Response {
+  string message_string = 1;
+  int32 status_code = 2;
+}
+
 message Location {
   string country = 1;
   string city = 2;
@@ -13,10 +18,11 @@ message Location {
 message SearchParams {
   Location location = 1;
   int32 guests = 2;
-  Interval details = 3;  
+  Interval interval = 3;  
 }
 message SearchResults{
-  repeated SearchResult items = 1;
+  Response response = 1;
+  repeated SearchResult items = 2;
 }
 message SearchResult {
   string accommodation_id = 1;
@@ -29,7 +35,7 @@ message SearchResult {
   int32 max_guests = 8;
   double base_price = 9;
   double total_price = 10;
-  string auto_accept_flag = 11;
+  bool auto_accept_flag = 11;
 }
 
 

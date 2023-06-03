@@ -385,7 +385,7 @@ async def create(item: CreateReservationDto, access_token: Annotated[str | None,
                         date_end=reservation.ending_date)))
 
     return Response(
-        status_code=200, media_type="application/json", content="Success"
+        status_code=200, media_type="text/html", content="Success"
     )
 
 @router.post(
