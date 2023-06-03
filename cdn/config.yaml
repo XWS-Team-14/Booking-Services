@@ -1,6 +1,6 @@
 app:
   debug: True
-  title: "Static Resources Server"
+  title: "Content Delivery Network"
   version: "1.0"
   api_prefix: "resources"
   image_resources_location: 

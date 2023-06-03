@@ -1,6 +1,5 @@
-from typing import List
-
 from pydantic import BaseModel
+from typing import List
 
 
 class DateInterval(BaseModel):
@@ -15,7 +14,7 @@ class SpecialPricing(BaseModel):
 
 class AvailabilityDto(BaseModel):
     availability_id: str
-    accomodation_id: str
+    accommodation_id: str
     interval: DateInterval
     pricing_type: str
     base_price: float
@@ -25,6 +24,7 @@ class AvailabilityDto(BaseModel):
 
 class SearchDetails(BaseModel):
     interval: DateInterval
+    guests: int
     num_of_guests: int
 
 
