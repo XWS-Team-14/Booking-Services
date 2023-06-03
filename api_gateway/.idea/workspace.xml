@@ -7,10 +7,7 @@
     <list default="true" id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/api/v1/reservation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/reservation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../availability/app/core/availability_servicer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../availability/app/core/availability_servicer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/availability_crud.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/availability_crud.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/availability_crud_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/availability_crud_pb2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/availability_crud_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/availability_crud_pb2_grpc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/reservation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/reservation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../proto/reservation_crud.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/reservation_crud.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../proto/reservation_crud_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/reservation_crud_pb2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../proto/reservation_crud_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/reservation_crud_pb2_grpc.py" afterDir="false" />

@@ -58,7 +58,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
             logger.exception('Dates are not valid')
             return reservation_crud_pb2.ReservationResult(status="Invalid date")
         try:
-            item = await reservation.get(reservation.id)
+            item = await Reservation.get(reservation.id)
             if not item:
                 logger.info('Update failed, document with given id not found')
                 return reservation_crud_pb2.ReservationResult(status="Failed, not found")
@@ -237,27 +237,28 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
 
     async def GetReservationsByAccommodation(self, request, context):
         reservations = await Reservation.find_all().to_list()
-        retVal = reservation_crud_pb2.ReservationDtos
+        retVal = reservation_crud_pb2.ReservationDtos()
         for reservation in reservations:
             if str(reservation.accommodation.id) == request.id:
-                retVal.items.append(ReservationHelper.convertToDto(reservation))
+                reservation_dto = ReservationHelper.convertToDto(reservation)
+                retVal.items.append(reservation_dto)
         return retVal
 
-    async def AcceptReservation(self, request, context):
-        reservations = await self.GetReservationsForAcceptance(request, context)
-        if not reservations:
-            return reservation_crud_pb2.ReservationResult(
-                status="There are no requests that match those characteristics")
-        for reservation in reservations:
-            if str(reservation.id) == request.reservation_id:
-                reservation.status = ReservationStatus.ACCEPTED
-                reservation_dto = ReservationHelper.convertToDto(reservation)
-                await self.Update(reservation_dto, context)
-            else:
-                reservation.status = ReservationStatus.REJECTED
-                reservation_dto = ReservationHelper.convertToDto(reservation)
-                await self.Update(reservation_dto, context)
-        return reservation_crud_pb2.ReservationResult(status="success")
+    async def UpdateReservationStatus(self, request, context):
+        logger.info('Request for update reservation status accepted')
+        try:
+            item = await Reservation.find_one(Reservation.id == uuid.UUID(request.id))
+        except (ValueError, DocumentNotFound):
+            logger.info('Fetch failed, document with given id not found')
+            return reservation_crud_pb2.ReservationDto()
+        if not item:
+            logger.info('fetched nothing')
+            return reservation_crud_pb2.ReservationDto()
+
+        item.status = ReservationStatus.ACCEPTED if request.status == 'accepted' else ReservationStatus.REJECTED
+        await item.replace()
+
+        return ReservationHelper.convertToDto(item)
 
     async def GetById(self, request, context):
         logger.success('Request for fetch reservation accepted')

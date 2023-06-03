@@ -31,3 +31,6 @@ class CreateReservationDto(BaseModel):
     beginning_date: str
     ending_date: str
     total_price: float
+
+class UpdateReservationStatusDto(BaseModel):
+    status: str
