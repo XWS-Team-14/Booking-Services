@@ -345,11 +345,18 @@ async def create(item: CreateReservationDto, access_token: Annotated[str | None,
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
     availability_server = get_server("availability_server")
-    reservation_server = (
-            get_yaml_config().get("reservation_server").get("ip")
-            + ":"
-            + get_yaml_config().get("reservation_server").get("port")
+    reservation_server = get_server("reservation_server")
+
+    price_lookup = availability_crud_pb2.PriceLookup(
+        accommodation_id=item.accommodation_id,
+        guests=item.number_of_guests,
+        interval=availability_crud_pb2.Interval(date_start=item.beginning_date, date_end=item.ending_date)
     )
+    async with grpc.aio.insecure_channel(availability_server) as channel:
+        stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
+        availability_data = await stub.GetPrice(price_lookup)
+    logger.info(availability_data)
+
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         reservation = reservation_crud_pb2.CreateReservationDto()
@@ -359,7 +366,7 @@ async def create(item: CreateReservationDto, access_token: Annotated[str | None,
         reservation.number_of_guests = item.number_of_guests
         reservation.beginning_date = item.beginning_date
         reservation.ending_date = item.ending_date
-        reservation.total_price = item.total_price
+        reservation.total_price = availability_data.price
 
         response = await stub.Create(reservation)
 

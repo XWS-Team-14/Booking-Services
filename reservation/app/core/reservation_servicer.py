@@ -16,9 +16,6 @@ from ..models.reservation_status import ReservationStatus
 class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def Create(self, request, context):
         logger.success('Request for creation of reservation accepted')
-        # if not ReservationHelper.validateDates(request.beginning_date, request.ending_date):
-        #    logger.exception('Dates are not valid')
-        #    return reservation_crud_pb2.ReservationResult(status="Invalid date")
         guest = await Guest.find_one(Guest.id == uuid.UUID(request.guest_id))
         accommodation = await Accommodation.find_one(Accommodation.id == uuid.UUID(request.accommodation_id))
         status = ReservationStatus.ACCEPTED if accommodation.automaticAccept else ReservationStatus.PENDING
@@ -113,7 +110,8 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
             return reservation_crud_pb2.ReservationResult(
                 status="You cannot cancel a reservation that is less than one day from now")
         guest = ReservationHelper.convertGuestDto(item.guest)
-        guest.canceledReservations = guest.canceledReservations + 1
+        if item.status == ReservationStatus.ACCEPTED:
+            guest.canceledReservations = guest.canceledReservations + 1
         await guest.replace()
         await item.delete()
         logger.success('reservation succesfully deleted')
