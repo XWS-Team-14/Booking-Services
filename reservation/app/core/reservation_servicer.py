@@ -16,7 +16,7 @@ from ..models.reservation_status import ReservationStatus
 class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def Create(self, request, context):
         logger.success('Request for creation of reservation accepted')
-        #if not ReservationHelper.validateDates(request.beginning_date, request.ending_date):
+        # if not ReservationHelper.validateDates(request.beginning_date, request.ending_date):
         #    logger.exception('Dates are not valid')
         #    return reservation_crud_pb2.ReservationResult(status="Invalid date")
         guest = await Guest.find_one(Guest.id == uuid.UUID(request.guest_id))
@@ -257,6 +257,17 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
 
         item.status = ReservationStatus.ACCEPTED if request.status == 'accepted' else ReservationStatus.REJECTED
         await item.replace()
+
+        if item.status.ACCEPTED:
+            reservations = await Reservation.find_all().to_list()
+            for reservation in reservations:
+                if reservation.accommodation.id == item.accommodation.id:
+                    if ReservationHelper.dateIntersection(
+                            reservation.beginning_date, reservation.ending_date,
+                            item.beginning_date, item.ending_date
+                    ) and reservation.status == ReservationStatus.PENDING:
+                        reservation.status = ReservationStatus.REJECTED
+                        await reservation.replace()
 
         return ReservationHelper.convertToDto(item)
 
