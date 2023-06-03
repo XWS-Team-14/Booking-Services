@@ -117,7 +117,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         await guest.replace()
         await item.delete()
         logger.success('reservation succesfully deleted')
-        return reservation_crud_pb2.ReservationResult(status="Success")
+        return ReservationHelper.convertToDto(item)
 
     async def DeleteGuest(self, request, context):
         logger.success('Request for deletion of Guest accepted')
@@ -262,7 +262,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def GetById(self, request, context):
         logger.success('Request for fetch reservation accepted')
         try:
-            item = await Reservation.get(uuid.UUID(request.id))
+            item = await Reservation.find_one(Reservation.id == uuid.UUID(request.id))
         except (ValueError, DocumentNotFound):
             logger.info('Fetch failed, document with given id not found')
             return reservation_crud_pb2.ReservationDto()

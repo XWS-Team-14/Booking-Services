@@ -4,7 +4,7 @@ service ReservationCrud {
   rpc GetAll (NoParameter) returns (ReservationDtos);
   rpc GetById (ReservationId) returns (ReservationDto);
   rpc Create (CreateReservationDto) returns (ReservationResult);
-  rpc Delete (ReservationId) returns (ReservationResult);
+  rpc Delete (ReservationId) returns (ReservationDto);
   rpc Update (ReservationDto) returns (ReservationResult);
   rpc GetByHost(HostId) returns (ReservationDtos);
   rpc GetByGuest(GuestId) returns (ReservationDtos);

@@ -151,6 +151,25 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
             logger.success('Succesfully updated intervals')
             return availability_crud_pb2.Result(status="Success")
 
+    async def RemoveOccupiedInterval(self, request, context):
+        logger.success('Request for interval update accepted')
+        try:
+            item = await Availability.find_one(Availability.accomodation_id == uuid.UUID(request.id))
+        except (ValueError, DocumentNotFound):
+            logger.exception('Fetch failed, document with given id not found')
+            return availability_crud_pb2.Result(status="Failed, not found")
+        if not item:
+            logger.info('fetched nothing')
+            return availability_crud_pb2.Result(status="Failed, not found")
+        else:
+            logger.success('Successfully fetched')
+            requested_interval = AvailabilityHelper.convertDateInterval(request.interval)
+            if requested_interval in item.occupied_intervals:
+                item.occupied_intervals.remove(requested_interval)
+                await item.replace()
+            logger.success('Succesfully updated intervals')
+            return availability_crud_pb2.Result(status="Success")
+
     async def GetPrice(self, request, context):
         logger.success("Request for price calculation accepted")
         logger.info(request.interval.date_start)
