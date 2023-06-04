@@ -38,7 +38,8 @@ def get_async_mongodb_client() -> AgnosticClient:
         password = urllib.parse.quote_plus(get_mongodb_config().get("password"))
         async_mongodb_client = AsyncIOMotorClient(
             f"mongodb://{username}:{password}@{ip}:{port}",
-            serverSelectionTimeoutMS=10000
+            serverSelectionTimeoutMS=10000,
+            uuidRepresentation='standard'
         )
     return async_mongodb_client
 

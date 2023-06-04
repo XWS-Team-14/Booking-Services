@@ -124,12 +124,11 @@ async def save_accommodation(
                 accommodation_pb2.Accommodation(),
             )
         )
-
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         await stub.CreateAccommodation(
             reservation_crud_pb2.AccommodationResDto(
-                id=str(accommodation.id), automaticAccept=bool(auto_accept_flag)
+                id=str(accommodation.id), automaticAccept=True if auto_accept_flag == 'true' else False
             )
         )
     return Response(
@@ -212,19 +211,7 @@ async def getAll():
 
 
 @router.get("/id/{item_id}")
-async def GetById(item_id, access_token: Annotated[str | None, Cookie()] = None):
-    try:
-        get_id_from_token(access_token)
-        get_role_from_token(access_token)
-    except ExpiredSignatureError:
-        return Response(
-            status_code=401, media_type="text/html", content="Token expired."
-        )
-    except InvalidTokenError:
-        return Response(
-            status_code=401, media_type="text/html", content="Invalid token."
-        )
-
+async def GetById(item_id):
     accommodation_server = get_server("accommodation_server")
 
     async with grpc.aio.insecure_channel(accommodation_server) as channel:

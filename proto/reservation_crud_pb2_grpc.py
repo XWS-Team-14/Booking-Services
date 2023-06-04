@@ -32,7 +32,7 @@ class ReservationCrudStub(object):
         self.Delete = channel.unary_unary(
                 '/ReservationCrud/Delete',
                 request_serializer=reservation__crud__pb2.ReservationId.SerializeToString,
-                response_deserializer=reservation__crud__pb2.ReservationResult.FromString,
+                response_deserializer=reservation__crud__pb2.ReservationDto.FromString,
                 )
         self.Update = channel.unary_unary(
                 '/ReservationCrud/Update',
@@ -54,10 +54,10 @@ class ReservationCrudStub(object):
                 request_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
                 response_deserializer=reservation__crud__pb2.ReservationDtos.FromString,
                 )
-        self.AcceptReservation = channel.unary_unary(
-                '/ReservationCrud/AcceptReservation',
-                request_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
-                response_deserializer=reservation__crud__pb2.ReservationResult.FromString,
+        self.UpdateReservationStatus = channel.unary_unary(
+                '/ReservationCrud/UpdateReservationStatus',
+                request_serializer=reservation__crud__pb2.ReservationIdStatus.SerializeToString,
+                response_deserializer=reservation__crud__pb2.ReservationDto.FromString,
                 )
         self.GetPendingReservationsByHost = channel.unary_unary(
                 '/ReservationCrud/GetPendingReservationsByHost',
@@ -177,7 +177,7 @@ class ReservationCrudServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def AcceptReservation(self, request, context):
+    def UpdateReservationStatus(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -282,7 +282,7 @@ def add_ReservationCrudServicer_to_server(servicer, server):
             'Delete': grpc.unary_unary_rpc_method_handler(
                     servicer.Delete,
                     request_deserializer=reservation__crud__pb2.ReservationId.FromString,
-                    response_serializer=reservation__crud__pb2.ReservationResult.SerializeToString,
+                    response_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
             ),
             'Update': grpc.unary_unary_rpc_method_handler(
                     servicer.Update,
@@ -304,10 +304,10 @@ def add_ReservationCrudServicer_to_server(servicer, server):
                     request_deserializer=reservation__crud__pb2.ReservationDto.FromString,
                     response_serializer=reservation__crud__pb2.ReservationDtos.SerializeToString,
             ),
-            'AcceptReservation': grpc.unary_unary_rpc_method_handler(
-                    servicer.AcceptReservation,
-                    request_deserializer=reservation__crud__pb2.ReservationDto.FromString,
-                    response_serializer=reservation__crud__pb2.ReservationResult.SerializeToString,
+            'UpdateReservationStatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateReservationStatus,
+                    request_deserializer=reservation__crud__pb2.ReservationIdStatus.FromString,
+                    response_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
             ),
             'GetPendingReservationsByHost': grpc.unary_unary_rpc_method_handler(
                     servicer.GetPendingReservationsByHost,
@@ -448,7 +448,7 @@ class ReservationCrud(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/Delete',
             reservation__crud__pb2.ReservationId.SerializeToString,
-            reservation__crud__pb2.ReservationResult.FromString,
+            reservation__crud__pb2.ReservationDto.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -521,7 +521,7 @@ class ReservationCrud(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def AcceptReservation(request,
+    def UpdateReservationStatus(request,
             target,
             options=(),
             channel_credentials=None,
@@ -531,9 +531,9 @@ class ReservationCrud(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ReservationCrud/AcceptReservation',
-            reservation__crud__pb2.ReservationDto.SerializeToString,
-            reservation__crud__pb2.ReservationResult.FromString,
+        return grpc.experimental.unary_unary(request, target, '/ReservationCrud/UpdateReservationStatus',
+            reservation__crud__pb2.ReservationIdStatus.SerializeToString,
+            reservation__crud__pb2.ReservationDto.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

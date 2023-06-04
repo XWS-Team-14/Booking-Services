@@ -1,7 +1,7 @@
-import uuid
 from datetime import datetime, date
 
 from proto import reservation_crud_pb2
+
 from ..models.accommodation import Accommodation
 from ..models.guest import Guest
 from ..models.reservation import Reservation
@@ -21,11 +21,12 @@ class ReservationHelper():
         return datetime.isoformat().split('T')[0]
 
     def convertGuestDto(request):
-        return Guest(id = request.id,
-                     canceledReservations = request.canceledReservations)
+        return Guest(id=request.id,
+                     canceledReservations=request.canceledReservations)
+
     def convertAccommodationDto(request):
-        return Accommodation(id = request.id,
-                     automaticAccept = request.automaticAccept)
+        return Accommodation(id=request.id,
+                             automaticAccept=request.automaticAccept)
 
     def convertDto(request):
         beginning = ReservationHelper.convertDate(request.beginning_date)
@@ -35,8 +36,9 @@ class ReservationHelper():
             status = ReservationStatus.ACCEPTED
         elif request.status == 1:
             status = ReservationStatus.REJECTED
-        guest = Guest(id = request.guest.id, canceledReservations = request.guest.canceledReservations)
-        accommodation = Accommodation(id = request.accommodation.id, automaticAccept = request.accommodation.automaticAccept)
+        guest = Guest(id=request.guest.id, canceledReservations=request.guest.canceledReservations)
+        accommodation = Accommodation(id=request.accommodation.id,
+                                      automaticAccept=request.accommodation.automaticAccept)
         return Reservation(
             id=request.reservation_id,
             accommodation=accommodation,
@@ -78,3 +80,6 @@ class ReservationHelper():
 
     def validateDates(start, end):
         return date.today() < start.date() < end.date()
+
+    def dateIntersection(start_a: datetime, end_a: datetime, start_b: datetime, end_b: datetime):
+        return (start_a.date() <= start_b.date() <= end_a.date()) or (start_b.date() <= start_a.date() <= end_b.date())

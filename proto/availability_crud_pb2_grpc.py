@@ -49,6 +49,11 @@ class AvailabilityCrudStub(object):
                 request_serializer=availability__crud__pb2.UpdateIntervalDto.SerializeToString,
                 response_deserializer=availability__crud__pb2.Result.FromString,
                 )
+        self.RemoveOccupiedInterval = channel.unary_unary(
+                '/AvailabilityCrud/RemoveOccupiedInterval',
+                request_serializer=availability__crud__pb2.UpdateIntervalDto.SerializeToString,
+                response_deserializer=availability__crud__pb2.Result.FromString,
+                )
         self.GetByAccommodationId = channel.unary_unary(
                 '/AvailabilityCrud/GetByAccommodationId',
                 request_serializer=availability__crud__pb2.AvailabilityId.SerializeToString,
@@ -106,6 +111,12 @@ class AvailabilityCrudServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def RemoveOccupiedInterval(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetByAccommodationId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -153,6 +164,11 @@ def add_AvailabilityCrudServicer_to_server(servicer, server):
             ),
             'AddOccupiedInterval': grpc.unary_unary_rpc_method_handler(
                     servicer.AddOccupiedInterval,
+                    request_deserializer=availability__crud__pb2.UpdateIntervalDto.FromString,
+                    response_serializer=availability__crud__pb2.Result.SerializeToString,
+            ),
+            'RemoveOccupiedInterval': grpc.unary_unary_rpc_method_handler(
+                    servicer.RemoveOccupiedInterval,
                     request_deserializer=availability__crud__pb2.UpdateIntervalDto.FromString,
                     response_serializer=availability__crud__pb2.Result.SerializeToString,
             ),
@@ -290,6 +306,23 @@ class AvailabilityCrud(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/AddOccupiedInterval',
+            availability__crud__pb2.UpdateIntervalDto.SerializeToString,
+            availability__crud__pb2.Result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RemoveOccupiedInterval(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AvailabilityCrud/RemoveOccupiedInterval',
             availability__crud__pb2.UpdateIntervalDto.SerializeToString,
             availability__crud__pb2.Result.FromString,
             options, channel_credentials,
