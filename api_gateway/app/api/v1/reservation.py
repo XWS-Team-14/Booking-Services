@@ -1,3 +1,4 @@
+import uuid
 from typing import Annotated
 
 import grpc
@@ -536,19 +537,25 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
 
     reservation_server = get_server("reservation_server")
     availability_server = get_server("availability_server")
+    error = False
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.Delete(reservation_crud_pb2.ReservationId(id=item_id))
+        try:
+            uuid.UUID(str(data.reservation_id))
+        except ValueError:
+            error = True
         print(data)
-    async with grpc.aio.insecure_channel(availability_server) as availability_channel:
-        availability_stub = availability_crud_pb2_grpc.AvailabilityCrudStub(availability_channel)
-        a_response = await availability_stub.RemoveOccupiedInterval(availability_crud_pb2.UpdateIntervalDto(
-            id=data.accommodation.id,
-            interval=availability_crud_pb2.Interval(
-                date_start=data.beginning_date,
-                date_end=data.ending_date)))
+    if not error:
+        async with grpc.aio.insecure_channel(availability_server) as availability_channel:
+            availability_stub = availability_crud_pb2_grpc.AvailabilityCrudStub(availability_channel)
+            a_response = await availability_stub.RemoveOccupiedInterval(availability_crud_pb2.UpdateIntervalDto(
+                id=data.accommodation.id,
+                interval=availability_crud_pb2.Interval(
+                    date_start=data.beginning_date,
+                    date_end=data.ending_date)))
     return Response(
-        status_code=200, media_type="application/json", content=str(data.status)
+        status_code=200, media_type="application/json", content=("Error" if error else "Success")
     )
 
 

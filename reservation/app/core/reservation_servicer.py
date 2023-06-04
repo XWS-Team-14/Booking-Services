@@ -103,10 +103,10 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
             item = await Reservation.get(uuid.UUID(request.id), fetch_links=True)
             if not item:
                 logger.info('Delete failed, document with given id not found')
-                return reservation_crud_pb2.ReservationResult(status="Failed, not found")
+                return reservation_crud_pb2.ReservationDto()
         except (ValueError, DocumentNotFound):
             logger.info('Delete failed, document with given id not found')
-            return reservation_crud_pb2.ReservationResult(status="Failed, not found")
+            return reservation_crud_pb2.ReservationDto()
         if item.beginning_date <= (datetime.today() + timedelta(days=1)):
             return reservation_crud_pb2.ReservationResult(
                 status="You cannot cancel a reservation that is less than one day from now")
@@ -246,7 +246,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def UpdateReservationStatus(self, request, context):
         logger.info('Request for update reservation status accepted')
         try:
-            item = await Reservation.find_one(Reservation.id == uuid.UUID(request.id))
+            item = await Reservation.find_one(Reservation.id == uuid.UUID(request.id), fetch_links=True)
         except (ValueError, DocumentNotFound):
             logger.info('Fetch failed, document with given id not found')
             return reservation_crud_pb2.ReservationDto()
@@ -273,7 +273,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def GetById(self, request, context):
         logger.success('Request for fetch reservation accepted')
         try:
-            item = await Reservation.find_one(Reservation.id == uuid.UUID(request.id))
+            item = await Reservation.find_one(Reservation.id == uuid.UUID(request.id), fetch_links=True)
         except (ValueError, DocumentNotFound):
             logger.info('Fetch failed, document with given id not found')
             return reservation_crud_pb2.ReservationDto()
@@ -287,7 +287,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def GetGuestById(self, request, context):
         logger.success('Request for fetch reservation accepted')
         try:
-            item = await Guest.find_one(Guest.id == uuid.UUID(request.id))
+            item = await Guest.find_one(Guest.id == uuid.UUID(request.id), fetch_links=True)
         except (ValueError, DocumentNotFound):
             logger.info('Fetch failed, document with given id not found')
             return reservation_crud_pb2.Guest()
