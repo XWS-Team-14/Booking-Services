@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../proto/availability_crud_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/availability_crud_pb2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/availability_crud_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/availability_crud_pb2_grpc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/accommodation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/accommodation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../reservation/app/core/reservation_servicer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../reservation/app/core/reservation_servicer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../reservation/app/models/accommodation.py" beforeDir="false" afterPath="$PROJECT_DIR$/../reservation/app/models/accommodation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

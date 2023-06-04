@@ -17,7 +17,9 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def Create(self, request, context):
         logger.success('Request for creation of reservation accepted')
         guest = await Guest.find_one(Guest.id == uuid.UUID(request.guest_id))
+        print(request)
         accommodation = await Accommodation.find_one(Accommodation.id == uuid.UUID(request.accommodation_id))
+        print(accommodation)
         status = ReservationStatus.ACCEPTED if accommodation.automaticAccept else ReservationStatus.PENDING
         reservation = Reservation(
             id=uuid.uuid4(),
@@ -39,14 +41,14 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         guest = ReservationHelper.convertGuestDto(request)
         await guest.insert()
         logger.success('guest succesfully saved')
-        return reservation_crud_pb2.ReservationResult(status="Success");
+        return reservation_crud_pb2.ReservationResult(status="Success")
 
     async def CreateAccommodation(self, request, context):
         logger.success('Request for creation of accommodation accepted')
         accommodation = ReservationHelper.convertAccommodationDto(request)
         await accommodation.insert()
         logger.success('guest succesfully saved')
-        return reservation_crud_pb2.ReservationResult(status="Success");
+        return reservation_crud_pb2.ReservationResult(status="Success")
 
     async def Update(self, request, context):
         logger.success('Request for update of reservation accepted')
