@@ -12,3 +12,4 @@ class Host(Document):
     cancellation_rate: float = 0.0
     reservation_days: int = 0
     reservation_count: int = 0
+    is_featured: bool = False

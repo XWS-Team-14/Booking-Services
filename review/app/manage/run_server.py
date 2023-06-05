@@ -6,11 +6,12 @@ from app.core.review_servicer import ReviewServicer
 _cleanup_coroutines = []
 from proto import review_pb2_grpc, review_pb2
 
+
 async def serve(port):
     server = grpc.aio.server()
     # Add services
     review_pb2_grpc.add_ReviewServiceServicer_to_server(ReviewServicer(), server)
-    server.add_insecure_port('[::]:'+port)
+    server.add_insecure_port('[::]:' + port)
     logger.info('Starting GRPC server')
     await server.start()
     logger.success(f'GRPC server has started on port {port}, waiting for termination')
