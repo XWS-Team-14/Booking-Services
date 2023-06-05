@@ -1,0 +1,7 @@
+grpcio
+grpcio-tools
+loguru
+PyYAML
+firebase-admin
+pydantic
+kafka-python
