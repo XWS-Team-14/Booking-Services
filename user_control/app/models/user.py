@@ -10,4 +10,3 @@ class User(Document):
     last_name: str
     home_address: str
     gender: Gender
-    is_featured: bool = False
