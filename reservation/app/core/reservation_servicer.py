@@ -1,3 +1,4 @@
+import json
 import uuid
 from datetime import datetime
 
@@ -8,11 +9,11 @@ from proto import reservation_crud_pb2_grpc, reservation_crud_pb2
 from pydantic.datetime_parse import timedelta
 
 from .reservation_helper import ReservationHelper
+from ..constants import kafka_server
 from ..models.accommodation import Accommodation
 from ..models.guest import Guest
 from ..models.reservation import Reservation
 from ..models.reservation_status import ReservationStatus
-
 
 class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def Create(self, request, context):
@@ -98,7 +99,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         return reservation_crud_pb2.ReservationResult(status="Success")
 
     async def Delete(self, request, context):
-        logger.success('Request for deletion of Reservation accepted')
+        logger.success('Request for cancellation of Reservation accepted')
         try:
             item = await Reservation.get(uuid.UUID(request.id), fetch_links=True)
             if not item:
@@ -113,8 +114,11 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         guest = ReservationHelper.convertGuestDto(item.guest)
         if item.status == ReservationStatus.ACCEPTED:
             guest.canceledReservations = guest.canceledReservations + 1
-        await guest.replace(link_rule=WriteRules.WRITE)
-        await item.delete()
+            item.status = ReservationStatus.CANCELLED
+            await item.replace(link_rule=WriteRules.WRITE)
+            await guest.replace(link_rule=WriteRules.WRITE)
+        else:
+            await item.delete()
         logger.success('reservation succesfully deleted')
         return ReservationHelper.convertToDto(item)
 
