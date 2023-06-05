@@ -1,0 +1,11 @@
+syntax = "proto3";
+package review;
+
+service ReviewService {
+  rpc Send (Empty) returns (Empty);
+}
+
+message Empty {
+  optional string error_message = 1;
+  optional int32 error_code = 2;
+}
