@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/../availability/.idea/availability.iml" filepath="$PROJECT_DIR$/../availability/.idea/availability.iml" />
       <module fileurl="file://$PROJECT_DIR$/../notification/.idea/notification.iml" filepath="$PROJECT_DIR$/../notification/.idea/notification.iml" />
       <module fileurl="file://$PROJECT_DIR$/../reservation/.idea/reservation.iml" filepath="$PROJECT_DIR$/../reservation/.idea/reservation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../review/.idea/review.iml" filepath="$PROJECT_DIR$/../review/.idea/review.iml" />
       <module fileurl="file://$PROJECT_DIR$/../user_control/.idea/user_control.iml" filepath="$PROJECT_DIR$/../user_control/.idea/user_control.iml" />
     </modules>
   </component>
