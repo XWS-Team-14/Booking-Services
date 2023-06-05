@@ -4,6 +4,7 @@ from datetime import datetime
 
 from beanie import WriteRules
 from beanie.exceptions import DocumentNotFound
+from kafka import KafkaProducer
 from loguru import logger
 from proto import reservation_crud_pb2_grpc, reservation_crud_pb2
 from pydantic.datetime_parse import timedelta
@@ -14,6 +15,7 @@ from ..models.accommodation import Accommodation
 from ..models.guest import Guest
 from ..models.reservation import Reservation
 from ..models.reservation_status import ReservationStatus
+
 
 class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
     async def Create(self, request, context):
@@ -34,6 +36,17 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         )
         await reservation.insert()
         logger.success('reservation successfully saved')
+
+        producer = KafkaProducer(bootstrap_servers=[kafka_server],
+                                 value_serializer=lambda m: json.dumps(m).encode('ascii'))
+        producer.send('reservations',
+                      {'id': str(reservation.id),
+                       'event': 'create',
+                       'host': str(reservation.host_id),
+                       'accommodation': str(reservation.accommodation.id),
+                       'days': ReservationHelper.calculate_days(reservation.beginning_date, reservation.ending_date)
+                       }
+                      )
         return reservation_crud_pb2.ReservationResult(status=str(reservation.status))
 
     async def CreateGuest(self, request, context):

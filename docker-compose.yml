@@ -143,6 +143,8 @@ services:
     command: "python main.py runserver 50058"
     volumes:
       - ./proto:/app/proto
+    depends_on:
+      - mongo-review
 
   api_gateway:
     build: ./api_gateway

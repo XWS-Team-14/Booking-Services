@@ -12,6 +12,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from ..config import get_yaml_config
 from ..models.accommodation import Accommodation
 from ..models.host import Host
+from ..models.review import Review
 
 async_mongodb_client = None
 
@@ -77,7 +78,8 @@ async def start_async_mongodb() -> None:
             database=async_mongodb_database,
             document_models=[
                 Host,
-                Accommodation
+                Accommodation,
+                Review
             ],
         )
         logger.success("Started mongodb connection")

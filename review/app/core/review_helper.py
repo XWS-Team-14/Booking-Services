@@ -6,7 +6,7 @@ from app.constants import kafka_server
 
 
 class ReviewHelper:
-    async def listen_to_reservations(self, request, context):
+    def listen_to_reservations(self):
         consumer = KafkaConsumer('reservations',
                                  group_id='reservations',
                                  bootstrap_servers=[kafka_server],

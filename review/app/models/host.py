@@ -13,3 +13,4 @@ class Host(Document):
     reservation_days: int = 0
     reservation_count: int = 0
     is_featured: bool = False
+
