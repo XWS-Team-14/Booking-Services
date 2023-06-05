@@ -6,24 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/accommodation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/accommodation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/availability.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/availability.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/notification.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/notification.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/reservation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/reservation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/search.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/search.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/api/v1/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/constants/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/constants/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/user.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/user.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/user_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/user_pb2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proto/user_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/../proto/user_pb2_grpc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../user_control/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/../user_control/app/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../user_control/proto/user.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../user_control/proto/user.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../user_control/proto/user_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../user_control/proto/user_pb2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../user_control/proto/user_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/../user_control/proto/user_pb2_grpc.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

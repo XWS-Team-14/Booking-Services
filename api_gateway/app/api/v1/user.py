@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import json
 from typing import Annotated
 
 import grpc
@@ -10,6 +11,8 @@ from websockets.exceptions import ConnectionClosedError
 from fastapi.responses import JSONResponse
 from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
+from kafka import KafkaProducer
+from kafka.errors import KafkaError
 from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
 from proto import (
@@ -25,7 +28,7 @@ from proto import (
 from starlette.responses import Response
 
 from app import schemas
-from app.constants import user_server, reservation_server, auth_server, accommodation_server
+from app.constants import user_server, reservation_server, auth_server, accommodation_server, kafka_server
 from app.utils import get_server
 from app.utils.jwt import get_id_from_token, get_role_from_token
 
@@ -36,8 +39,13 @@ router = APIRouter()
 class User:
     @router.websocket("/status")
     async def websocket_endpoint(self, websocket: WebSocket):
+        producer = KafkaProducer(bootstrap_servers=[kafka_server],
+                                 value_serializer=lambda m: json.dumps(m).encode('ascii'))
+        producer.send('json-topic', {'key': 'value'})
+
         await websocket.accept()
         while True:
+
             t = datetime.datetime.utcnow().time()
             try:
                 if t.second % 5 == 0:
