@@ -1,8 +1,12 @@
+import asyncio
+import datetime
 from typing import Annotated
 
 import grpc
 from fastapi import APIRouter, status, Cookie, Response
 from fastapi.encoders import jsonable_encoder
+from fastapi import WebSocket
+from websockets.exceptions import ConnectionClosedError
 from fastapi.responses import JSONResponse
 from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
@@ -21,6 +25,7 @@ from proto import (
 from starlette.responses import Response
 
 from app import schemas
+from app.constants import user_server, reservation_server, auth_server, accommodation_server
 from app.utils import get_server
 from app.utils.jwt import get_id_from_token, get_role_from_token
 
@@ -29,6 +34,19 @@ router = APIRouter()
 
 @cbv(router)
 class User:
+    @router.websocket("/status")
+    async def websocket_endpoint(self, websocket: WebSocket):
+        await websocket.accept()
+        while True:
+            t = datetime.datetime.utcnow().time()
+            try:
+                if t.second % 5 == 0:
+                    print("Sending the time!")
+                    await websocket.send_text(str(t))
+                    await asyncio.sleep(1)
+            except ConnectionClosedError:
+                print("Client disconnected.")
+                break
     @router.get(
         "/active",
         response_class=JSONResponse,
@@ -49,7 +67,6 @@ class User:
                 status_code=401, media_type="text/html", content="Invalid token."
             )
         logger.info(f"Tested delete user {user_id}")
-        user_server = get_server("user_server")
         async with grpc.aio.insecure_channel(user_server) as channel:
             stub_user = user_pb2_grpc.UserServiceStub(channel)
             grpc_user_response = await stub_user.GetById(
@@ -79,7 +96,6 @@ class User:
     )
     async def get_by_id(self, user_id) -> Response:
         logger.info(f"Tested get user by id {user_id}")
-        user_server = get_server("user_server")
         async with grpc.aio.insecure_channel(user_server) as channel:
             stub_user = user_pb2_grpc.UserServiceStub(channel)
             grpc_user_response = await stub_user.GetById(
@@ -122,7 +138,6 @@ class User:
                 status_code=401, media_type="text/html", content="Invalid token."
             )
         logger.info(f"Tested update user details {user_id}")
-        user_server = get_server("user_server")
         async with grpc.aio.insecure_channel(user_server) as channel:
             stub = user_pb2_grpc.UserServiceStub(channel)
             grpc_response = await stub.Update(
@@ -164,10 +179,6 @@ class User:
                 status_code=401, media_type="text/html", content="Invalid token."
             )
         logger.info(f"Tested delete user {user_id}")
-        user_server = get_server("user_server")
-        auth_server = get_server("auth_server")
-        accommodation_server = get_server("accommodation_server")
-        reservation_server = get_server("reservation_server")
 
         if user_role == "host":
             async with grpc.aio.insecure_channel(reservation_server) as channel:

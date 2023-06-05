@@ -5,6 +5,10 @@ app:
   api_prefix: "v1"
   static_prefix: "static"
 
+kafka_server:
+  ip: "kafka"
+  port: "9092"
+
 accommodation_server:
   ip: "accommodation"
   port: "50051"
