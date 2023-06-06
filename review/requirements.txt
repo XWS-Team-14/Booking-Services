@@ -5,3 +5,4 @@ PyYAML
 firebase-admin
 pydantic
 kafka-python
+beanie

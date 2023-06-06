@@ -1,10 +1,14 @@
+import asyncio
+
 from loguru import logger
 import grpc
 
+from app.core import listen_to_reservations
 from app.core.review_servicer import ReviewServicer
 
 _cleanup_coroutines = []
 from proto import review_pb2_grpc, review_pb2
+from app.core import listen_to_reservations
 
 
 async def serve(port):
@@ -24,4 +28,5 @@ async def serve(port):
         await server.stop(5)
 
     _cleanup_coroutines.append(server_graceful_shutdown())
+
     await server.wait_for_termination()

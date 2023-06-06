@@ -10,9 +10,10 @@ from motor.core import AgnosticDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from ..config import get_yaml_config
-from ..models.accommodation import Accommodation
-from ..models.host import Host
-from ..models.review import Review
+from app.models.accommodation import Accommodation
+from app.models.message import Message
+from app.models.review import Review
+from app.models.host import Host
 
 async_mongodb_client = None
 
@@ -79,7 +80,8 @@ async def start_async_mongodb() -> None:
             document_models=[
                 Host,
                 Accommodation,
-                Review
+                Review,
+                Message
             ],
         )
         logger.success("Started mongodb connection")

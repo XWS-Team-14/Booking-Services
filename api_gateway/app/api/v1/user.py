@@ -39,19 +39,15 @@ router = APIRouter()
 class User:
     @router.websocket("/status")
     async def websocket_endpoint(self, websocket: WebSocket):
-        producer = KafkaProducer(bootstrap_servers=[kafka_server],
-                                 value_serializer=lambda m: json.dumps(m).encode('ascii'))
-        producer.send('json-topic', {'key': 'value'})
+
 
         await websocket.accept()
         while True:
 
             t = datetime.datetime.utcnow().time()
             try:
-                if t.second % 5 == 0:
-                    print("Sending the time!")
-                    await websocket.send_text(str(t))
-                    await asyncio.sleep(1)
+                #await websocket.send_text(str(t))
+                await asyncio.sleep(1)
             except ConnectionClosedError:
                 print("Client disconnected.")
                 break

@@ -67,6 +67,7 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-accommodation
+      - kafka
     #ports:
     #- 50051:50051
     
@@ -79,6 +80,7 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-auth
+      - kafka
     #ports:
     #- 50052:50052 
  
@@ -91,6 +93,7 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-availability
+      - kafka
     #ports:
     #- 50053:50053
 
@@ -103,6 +106,7 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-reservation
+      - kafka
     #ports:
     #- 50054:50054
   
@@ -113,6 +117,7 @@ services:
     command: "python main.py runserver 50055"
     volumes:
       - ./proto:/app/proto
+      - kafka
     #ports:
     #- 50055:50055
 
@@ -125,6 +130,7 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-user_control
+      - kafka
     #ports:
     #- 50056:50056
 
@@ -135,6 +141,7 @@ services:
     command: "python main.py runserver 50057"
     volumes:
       - ./proto:/app/proto
+      - kafka
 
   review:
     build: ./review
@@ -145,6 +152,7 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-review
+      - kafka
 
   api_gateway:
     build: ./api_gateway
@@ -155,6 +163,8 @@ services:
       - ./proto:/app/proto
     ports:
       - 8000:8000
+    depends_on:
+      - kafka
   
   cdn:
     build: ./cdn
@@ -169,6 +179,7 @@ services:
     container_name: zookeeper
     ports:
       - "2181:2181"
+
   kafka:
     image: wurstmeister/kafka
     container_name: kafka
@@ -182,6 +193,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
     depends_on:
       - zookeeper
+  
   kafdrop:
     container_name: kafdrop
     image: obsidiandynamics/kafdrop
