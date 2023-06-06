@@ -1,6 +1,6 @@
 import json
 
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, KafkaProducer
 
 from app.config import get_yaml_config
 
@@ -10,3 +10,5 @@ kafka_consumer = KafkaConsumer('reservations',
                                bootstrap_servers=[kafka_server],
                                value_deserializer=lambda m: json.loads(m.decode('ascii'))
                                )
+kafka_producer = KafkaProducer(bootstrap_servers=[kafka_server],
+                               value_serializer=lambda m: json.dumps(m).encode('ascii'))

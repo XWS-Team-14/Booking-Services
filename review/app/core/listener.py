@@ -3,7 +3,7 @@ import uuid
 
 from loguru import logger
 
-from app.constants import kafka_consumer
+from app.constants import kafka_consumer, kafka_producer
 from app.models.accommodation import Accommodation
 from app.models.host import Host
 from app.models.message import Message
@@ -47,8 +47,11 @@ async def handle_new_reservation(message):
     print(original_status, new_status)
 
     if original_status != new_status:
-        # send message to status channel
-        logger.info('Status changed')
+        kafka_producer.send('status', {
+            'host': str(host.id),
+            'featured': new_status,
+            'timestamp': str(datetime.datetime.utcnow())
+        })
 
     await host.save()
     await accommodation.save()
@@ -57,14 +60,16 @@ async def handle_new_reservation(message):
 async def handle_cancelled_reservation(message):
     host = await Host.find_one(Host.id == uuid.UUID(message['host']))
     original_status = host.is_featured()
-    host.decrease_reservation_count()
     host.decrease_reservation_days(message['days'])
 
     new_status = host.is_featured()
     print(original_status, new_status)
 
     if original_status != new_status:
-        # send message to status channel
-        logger.info('Status changed')
+        kafka_producer.send('status', {
+            'host': str(host.id),
+            'featured': new_status,
+            'timestamp': str(datetime.datetime.utcnow())
+        })
 
     await host.save()

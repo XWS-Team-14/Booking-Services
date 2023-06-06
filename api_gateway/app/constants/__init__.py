@@ -1,6 +1,6 @@
 import json
 
-from kafka import KafkaProducer
+from kafka import KafkaProducer, KafkaConsumer
 
 from app.utils import get_server
 
@@ -17,4 +17,4 @@ search_server = get_server("search_server")
 notification_server = get_server("notification_server")
 
 kafka_producer = KafkaProducer(bootstrap_servers=[kafka_server], value_serializer=lambda m: json.dumps(m).encode('ascii'))
-
+kafka_consumer = KafkaConsumer('status', group_id='status', bootstrap_servers=[kafka_server], value_deserializer=lambda m: json.loads(m.decode('ascii')))

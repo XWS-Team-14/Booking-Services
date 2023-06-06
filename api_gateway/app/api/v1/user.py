@@ -4,6 +4,7 @@ import json
 from typing import Annotated
 
 import grpc
+from aiokafka import AIOKafkaConsumer
 from fastapi import APIRouter, status, Cookie, Response
 from fastapi.encoders import jsonable_encoder
 from fastapi import WebSocket
@@ -39,18 +40,27 @@ router = APIRouter()
 class User:
     @router.websocket("/status")
     async def websocket_endpoint(self, websocket: WebSocket):
-
-
         await websocket.accept()
-        while True:
 
-            t = datetime.datetime.utcnow().time()
+        loop = asyncio.get_event_loop()
+        consumer = AIOKafkaConsumer("status", loop=loop,
+                                    bootstrap_servers=kafka_server,
+                                    value_deserializer=lambda m: json.loads(m.decode('ascii')))
+
+        await consumer.start()
+
+        while True:
             try:
-                #await websocket.send_text(str(t))
-                await asyncio.sleep(1)
+                async for msg in consumer:
+                    message = msg.value
+                    featured = message['featured']
+                    await websocket.send_text(f'Featured: {str(featured)}')
+                    await asyncio.sleep(1)
             except ConnectionClosedError:
                 print("Client disconnected.")
                 break
+            finally:
+                await consumer.stop()
     @router.get(
         "/active",
         response_class=JSONResponse,
