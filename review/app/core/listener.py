@@ -1,9 +1,12 @@
+import asyncio
 import datetime
+import json
 import uuid
 
+from aiokafka import AIOKafkaConsumer
 from loguru import logger
 
-from app.constants import kafka_consumer, kafka_producer
+from app.constants import kafka_consumer, kafka_producer, kafka_server
 from app.models.accommodation import Accommodation
 from app.models.host import Host
 from app.models.message import Message
@@ -12,22 +15,32 @@ from app.models.message_status import MessageStatus
 
 async def listen_to_reservations():
     logger.info('Listening for reservation updates')
-    for message in kafka_consumer:
-        update = message.value
-        message_id = uuid.UUID(update['id'])
-        existing_message = await Message.get(message_id)
-        new_message = Message(id=message_id, status=0, timestamp=datetime.datetime.utcnow())
-        if existing_message is None or existing_message.status == 0:
-            await new_message.save()
-            if update['event'] == 'create':
-                await handle_new_reservation(update)
-                new_message.status = 1
-            elif update['event'] == 'cancel':
-                await handle_cancelled_reservation(update)
-                new_message.status = 1
-            else:
-                logger.info(f"Unknown event type for message ID {str(message_id)}")
-            await new_message.replace()
+    loop = asyncio.get_event_loop()
+    consumer = AIOKafkaConsumer("reservations", loop=loop,
+                                bootstrap_servers=kafka_server,
+                                value_deserializer=lambda m: json.loads(m.decode('ascii')))
+
+    await consumer.start()
+
+    try:
+        async for message in consumer:
+            update = message.value
+            message_id = uuid.UUID(update['id'])
+            existing_message = await Message.get(message_id)
+            new_message = Message(id=message_id, status=0, timestamp=datetime.datetime.utcnow())
+            if existing_message is None or existing_message.status == 0:
+                await new_message.save()
+                if update['event'] == 'create':
+                    await handle_new_reservation(update)
+                    new_message.status = 1
+                elif update['event'] == 'cancel':
+                    await handle_cancelled_reservation(update)
+                    new_message.status = 1
+                else:
+                    logger.info(f"Unknown event type for message ID {str(message_id)}")
+                await new_message.replace()
+    finally:
+        await consumer.stop()
 
 
 async def handle_new_reservation(message):
