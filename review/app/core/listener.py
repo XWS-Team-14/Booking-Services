@@ -13,8 +13,8 @@ async def listen_to_reservations():
     for message in kafka_consumer:
         update = message.value
         message_id = uuid.UUID(update['id'])
-        #existing_message = await Message.find_one(Message.id == message_id)
-        #print(existing_message)
+        existing_message = await Message.find_one(Message.id == message_id)
+        print(existing_message)
         # new_message = Message(id=message_id, status=MessageStatus.NOT_PROCESSED, timestamp=datetime.datetime.utcnow())
         # if existing_message is None or existing_message.status == MessageStatus.NOT_PROCESSED:
         #    await new_message.save()

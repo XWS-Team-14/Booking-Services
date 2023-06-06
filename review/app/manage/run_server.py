@@ -5,6 +5,7 @@ import grpc
 
 from app.core import listen_to_reservations
 from app.core.review_servicer import ReviewServicer
+from app.db.mongodb import start_async_mongodb
 
 _cleanup_coroutines = []
 from proto import review_pb2_grpc, review_pb2
@@ -16,6 +17,8 @@ async def serve(port):
     # Add services
     review_pb2_grpc.add_ReviewServiceServicer_to_server(ReviewServicer(), server)
     server.add_insecure_port('[::]:' + port)
+    logger.info('Connecting to the database')
+    await start_async_mongodb()
     logger.info('Starting GRPC server')
     await server.start()
     logger.success(f'GRPC server has started on port {port}, waiting for termination')

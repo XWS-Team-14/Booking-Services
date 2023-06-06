@@ -1,8 +1,7 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from beanie import Document
-from pydantic import Field
 
 from app.models.message_status import MessageStatus
 

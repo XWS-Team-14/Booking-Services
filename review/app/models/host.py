@@ -1,8 +1,7 @@
-import uuid
-
 from uuid import UUID, uuid4
-from pydantic import BaseModel, Field
-from beanie import Document, Link, WriteRules, init_beanie
+
+from beanie import Document
+from pydantic import Field
 
 
 class Host(Document):

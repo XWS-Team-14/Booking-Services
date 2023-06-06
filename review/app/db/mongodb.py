@@ -8,12 +8,12 @@ from motor.core import AgnosticClient
 from motor.core import AgnosticCollection
 from motor.core import AgnosticDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
+from app.config import get_yaml_config
 
-from ..config import get_yaml_config
 from app.models.accommodation import Accommodation
+from app.models.host import Host
 from app.models.message import Message
 from app.models.review import Review
-from app.models.host import Host
 
 async_mongodb_client = None
 
