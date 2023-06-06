@@ -28,5 +28,6 @@ async def serve(port):
         await server.stop(5)
 
     _cleanup_coroutines.append(server_graceful_shutdown())
+    asyncio.create_task(listen_to_reservations())
 
     await server.wait_for_termination()
