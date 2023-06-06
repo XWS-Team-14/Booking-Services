@@ -6,11 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="7b2fba43-5766-4156-b5fe-1a124775a679" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../review/app/core/listener.py" beforeDir="false" afterPath="$PROJECT_DIR$/../review/app/core/listener.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../review/app/db/mongodb.py" beforeDir="false" afterPath="$PROJECT_DIR$/../review/app/db/mongodb.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../review/app/manage/run_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/../review/app/manage/run_server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../review/app/models/review.py" beforeDir="false" afterPath="$PROJECT_DIR$/../review/app/models/review.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../review/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../review/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../review/app/models/host.py" beforeDir="false" afterPath="$PROJECT_DIR$/../review/app/models/host.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../review/app/models/message_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/../review/app/models/message_status.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

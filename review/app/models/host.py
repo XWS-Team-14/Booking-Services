@@ -31,10 +31,10 @@ class Host(Document):
         self.reservation_days -= days
 
     def get_cancellation_rate(self):
-        return (self.cancelled_count / self.reservation_count) * 100
+        return (self.cancelled_count / self.reservation_count) * 100 if self.reservation_count else 0
 
     def get_average_rating(self):
-        return self.rating_sum / self.review_count
+        return self.rating_sum / self.review_count if self.review_count else 0
 
     def is_featured(self):
         return self.get_average_rating() > 4.7 \

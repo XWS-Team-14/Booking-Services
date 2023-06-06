@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import Enum, IntEnum
 
 
-class MessageStatus(Enum):
+class MessageStatus(IntEnum):
     NOT_PROCESSED = 0,
     PROCESSED = 1
