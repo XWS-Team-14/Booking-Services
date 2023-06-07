@@ -6,7 +6,7 @@ import uuid
 from aiokafka import AIOKafkaConsumer
 from loguru import logger
 
-from app.constants import kafka_consumer, kafka_producer, kafka_server
+from app.constants import kafka_producer, kafka_server
 from app.models.accommodation import Accommodation
 from app.models.host import Host
 from app.models.message import Message

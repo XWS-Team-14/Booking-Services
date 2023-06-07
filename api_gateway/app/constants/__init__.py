@@ -18,4 +18,3 @@ notification_server = get_server("notification_server")
 review_server = get_server("review_server")
 
 kafka_producer = KafkaProducer(bootstrap_servers=[kafka_server], value_serializer=lambda m: json.dumps(m).encode('ascii'))
-kafka_consumer = KafkaConsumer('status', group_id='status', bootstrap_servers=[kafka_server], value_deserializer=lambda m: json.loads(m.decode('ascii')))
