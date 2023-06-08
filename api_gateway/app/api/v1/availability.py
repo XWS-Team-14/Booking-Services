@@ -1,4 +1,3 @@
-from ...constants import availability_server, accommodation_server
 from ...schemas.availability import AvailabilityDto
 from ...config import get_yaml_config
 from fastapi import APIRouter, status, Cookie
@@ -33,6 +32,11 @@ router = APIRouter(
 )
 async def get_all():
     logger.info("Gateway processing getAll Availability request")
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         logger.info("Gateway processing getAll Availability data")
@@ -48,6 +52,11 @@ async def get_all():
 )
 async def get_by_id(item_id):
     logger.info("Gateway processing getById Availability request")
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         data = await stub.GetById(availability_crud_pb2.AvailabilityId(id=item_id))
@@ -80,6 +89,18 @@ async def get_by_user(access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
+    accommodation_server = (
+        get_yaml_config().get("accommodation_server").get("ip")
+        + ":"
+        + get_yaml_config().get("accommodation_server").get("port")
+    )
+
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
+
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         availability_data = await stub.GetAll({})
@@ -107,6 +128,11 @@ async def get_by_user(access_token: Annotated[str | None, Cookie()] = None):
     description="Get one availability by accommodation id",
 )
 async def get_by_accommodation(item_id):
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         availability_data = await stub.GetByAccommodationId(
@@ -133,6 +159,11 @@ async def create(
         role = get_role_from_token(access_token)
     except ExpiredSignatureError:
         return Response(status_code=401, media_type="text/html", content="Invalid role")
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
 
@@ -171,7 +202,11 @@ async def update(
         role = get_role_from_token(access_token)
     except ExpiredSignatureError:
         return Response(status_code=401, media_type="text/html", content="Invalid role")
-
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
 
@@ -206,6 +241,11 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
         role = get_role_from_token(access_token)
     except ExpiredSignatureError:
         return Response(status_code=401, media_type="text/html", content="Invalid role")
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         data = await stub.Delete(availability_crud_pb2.AvailabilityId(id=item_id))
@@ -223,6 +263,11 @@ async def get_price(
     guests: int | None = 0,
     accommodation_id: str | None = "",
 ):
+    availability_server = (
+        get_yaml_config().get("availability_server").get("ip")
+        + ":"
+        + get_yaml_config().get("availability_server").get("port")
+    )
     price_lookup = availability_crud_pb2.PriceLookup(
         accommodation_id=accommodation_id,
         guests=guests,
@@ -230,10 +275,13 @@ async def get_price(
             date_start=date_start, date_end=date_end
         ),
     )
+    logger.info("price lookup dto", price_lookup)
     async with grpc.aio.insecure_channel(availability_server) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         availability_data = await stub.GetPrice(price_lookup)
+    logger.info(availability_data)
     json = json_format.MessageToJson(
         availability_data, preserving_proto_field_name=True
     )
+    logger.info(json)
     return Response(status_code=200, media_type="application/json", content=json)

@@ -8,15 +8,12 @@ from loguru import logger
 import grpc
 from starlette.responses import Response
 from typing import Annotated
-
-from app.constants import auth_server, user_server, reservation_server
 from app.utils.jwt import get_id_from_token
 
 from fastapi.responses import JSONResponse
 from app import schemas
 from app.config import get_yaml_config
-from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2, reservation_crud_pb2, \
-    reservation_crud_pb2_grpc
+from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2, reservation_crud_pb2, reservation_crud_pb2_grpc
 
 from app.utils import get_server
 
@@ -31,6 +28,9 @@ class Auth:
     )
     async def register(self, payload: schemas.Register) -> Response:
         logger.info(f"Tested register {payload.email}")
+        auth_server = get_server("auth_server")
+        user_server = get_server("user_server")
+        reservation_server = get_server("reservation_server")
         user_id = uuid.uuid4()
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
@@ -49,7 +49,7 @@ class Auth:
             async with grpc.aio.insecure_channel(reservation_server) as channel:
                 stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
                 await stub.CreateGuest(reservation_crud_pb2.Guest(
-                    id=str(user_id), canceledReservations=0))
+                    id=str(user_id), canceledReservations = 0))
         return Response(
             status_code=200, media_type="text/html", content="User registered."
         )
@@ -61,6 +61,7 @@ class Auth:
     )
     async def login(self, payload: schemas.Login) -> Response:
         logger.info(f"Tested login {payload.email}")
+        auth_server = get_server("auth_server")
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.Login(credential_pb2.Credential(email=payload.email, password=payload.password))
@@ -83,6 +84,7 @@ class Auth:
     )
     async def logout(self, access_token: Annotated[str | None, Cookie()] = None) -> Response:
         logger.info(f"Tested logout {access_token}")
+        auth_server = get_server("auth_server")
         try:
             user_id = get_id_from_token(access_token)
         except ExpiredSignatureError:
@@ -104,6 +106,7 @@ class Auth:
     async def refresh_token(self, refresh_token: Annotated[str | None, Cookie()] = None) -> Response:
         user_id = get_id_from_token(refresh_token, "refresh")
         logger.info(f"Tested refresh token for user {user_id}")
+        auth_server = get_server("auth_server")
         async with grpc.aio.insecure_channel(auth_server) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.RefreshToken(credential_pb2.TokenRefresh(
@@ -128,6 +131,7 @@ class Auth:
     async def update_password(self, payload: schemas.PasswordUpdate,
                               access_token: Annotated[str | None, Cookie()] = None) -> Response:
         logger.info(f"Tested password update {access_token}")
+        auth_server = get_server("auth_server")
         try:
             user_id = get_id_from_token(access_token)
         except ExpiredSignatureError:
@@ -153,6 +157,7 @@ class Auth:
     async def update_email(self, payload: schemas.EmailUpdate,
                            access_token: Annotated[str | None, Cookie()] = None) -> Response:
         logger.info(f"Tested email update {access_token}")
+        auth_server = get_server("auth_server")
         try:
             user_id = get_id_from_token(access_token)
         except ExpiredSignatureError:

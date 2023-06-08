@@ -83,6 +83,3 @@ class ReservationHelper():
 
     def dateIntersection(start_a: datetime, end_a: datetime, start_b: datetime, end_b: datetime):
         return (start_a.date() <= start_b.date() <= end_a.date()) or (start_b.date() <= start_a.date() <= end_b.date())
-
-    def calculate_days(start: datetime, end: datetime):
-        return (end.date() - start.date()).days

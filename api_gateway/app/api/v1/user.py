@@ -1,19 +1,11 @@
-import asyncio
-import datetime
-import json
 from typing import Annotated
 
 import grpc
-from aiokafka import AIOKafkaConsumer
 from fastapi import APIRouter, status, Cookie, Response
 from fastapi.encoders import jsonable_encoder
-from fastapi import WebSocket
-from websockets.exceptions import ConnectionClosedError
 from fastapi.responses import JSONResponse
 from fastapi_utils.cbv import cbv
 from google.protobuf import json_format
-from kafka import KafkaProducer
-from kafka.errors import KafkaError
 from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
 from proto import (
@@ -25,14 +17,10 @@ from proto import (
     accommodation_pb2,
     reservation_crud_pb2_grpc,
     reservation_crud_pb2,
-    review_pb2_grpc,
-    review_pb2
 )
 from starlette.responses import Response
 
 from app import schemas
-from app.constants import user_server, reservation_server, auth_server, accommodation_server, kafka_server, \
-    review_server
 from app.utils import get_server
 from app.utils.jwt import get_id_from_token, get_role_from_token
 
@@ -41,32 +29,6 @@ router = APIRouter()
 
 @cbv(router)
 class User:
-    @router.websocket("/status/{host_id}")
-    async def websocket_endpoint(self, host_id, websocket: WebSocket):
-        await websocket.accept()
-
-        loop = asyncio.get_event_loop()
-        consumer = AIOKafkaConsumer("status", loop=loop,
-                                    bootstrap_servers=kafka_server,
-                                    value_deserializer=lambda m: json.loads(m.decode('ascii')))
-
-        await consumer.start()
-
-        while True:
-            try:
-                async for msg in consumer:
-                    message = msg.value
-                    featured = message['featured']
-                    user_id = message['host']
-                    print(user_id)
-                    if user_id == host_id:
-                        await websocket.send_text(f'Featured: {str(featured)}')
-                    await asyncio.sleep(1)
-            except ConnectionClosedError:
-                print("Client disconnected.")
-                break
-            finally:
-                await consumer.stop()
     @router.get(
         "/active",
         response_class=JSONResponse,
@@ -78,7 +40,6 @@ class User:
     ) -> Response:
         try:
             user_id = get_id_from_token(access_token)
-            user_role = get_role_from_token(access_token)
         except ExpiredSignatureError:
             return Response(
                 status_code=401, media_type="text/html", content="Token expired."
@@ -87,7 +48,8 @@ class User:
             return Response(
                 status_code=401, media_type="text/html", content="Invalid token."
             )
-        logger.info(f"Tested get active user {user_id}")
+        logger.info(f"Tested delete user {user_id}")
+        user_server = get_server("user_server")
         async with grpc.aio.insecure_channel(user_server) as channel:
             stub_user = user_pb2_grpc.UserServiceStub(channel)
             grpc_user_response = await stub_user.GetById(
@@ -99,24 +61,12 @@ class User:
                     media_type="text/html",
                     content=grpc_user_response.error_message,
                 )
-        if user_role == 'host':
-            async with grpc.aio.insecure_channel(review_server) as channel_review:
-                stub_review = review_pb2_grpc.ReviewServiceStub(channel_review)
-                grpc_review_response = await stub_review.GetHostStatus(review_pb2.HostId(id=str(user_id)))
-                print(grpc_review_response)
-                if grpc_review_response.error_message:
-                    return Response(
-                        status_code=grpc_review_response.error_code,
-                        media_type="text/html",
-                        content=grpc_review_response.error_message,
-                    )
         user = {
             'id': user_id,
             'first_name': grpc_user_response.first_name,
             'last_name': grpc_user_response.last_name,
             'gender': grpc_user_response.gender,
-            'home_address': grpc_user_response.home_address,
-            'is_featured': grpc_review_response.status if user_role == 'host' else False
+            'home_address': grpc_user_response.home_address
         }
         return JSONResponse(
             status_code=200, media_type="text/html", content=jsonable_encoder(user)
@@ -129,6 +79,7 @@ class User:
     )
     async def get_by_id(self, user_id) -> Response:
         logger.info(f"Tested get user by id {user_id}")
+        user_server = get_server("user_server")
         async with grpc.aio.insecure_channel(user_server) as channel:
             stub_user = user_pb2_grpc.UserServiceStub(channel)
             grpc_user_response = await stub_user.GetById(
@@ -171,6 +122,7 @@ class User:
                 status_code=401, media_type="text/html", content="Invalid token."
             )
         logger.info(f"Tested update user details {user_id}")
+        user_server = get_server("user_server")
         async with grpc.aio.insecure_channel(user_server) as channel:
             stub = user_pb2_grpc.UserServiceStub(channel)
             grpc_response = await stub.Update(
@@ -212,6 +164,10 @@ class User:
                 status_code=401, media_type="text/html", content="Invalid token."
             )
         logger.info(f"Tested delete user {user_id}")
+        user_server = get_server("user_server")
+        auth_server = get_server("auth_server")
+        accommodation_server = get_server("accommodation_server")
+        reservation_server = get_server("reservation_server")
 
         if user_role == "host":
             async with grpc.aio.insecure_channel(reservation_server) as channel:

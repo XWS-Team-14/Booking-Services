@@ -1,24 +1,12 @@
-import asyncio
-
 from loguru import logger
 import grpc
-
-from app.core import listen_to_reservations
-from app.core.review_servicer import ReviewServicer
-from app.db.mongodb import start_async_mongodb
-
 _cleanup_coroutines = []
-from proto import review_pb2_grpc, review_pb2
-from app.core import listen_to_reservations
 
 
 async def serve(port):
     server = grpc.aio.server()
     # Add services
-    review_pb2_grpc.add_ReviewServiceServicer_to_server(ReviewServicer(), server)
-    server.add_insecure_port('[::]:' + port)
-    logger.info('Connecting to the database')
-    await start_async_mongodb()
+    server.add_insecure_port('[::]:'+port)
     logger.info('Starting GRPC server')
     await server.start()
     logger.success(f'GRPC server has started on port {port}, waiting for termination')
@@ -31,6 +19,4 @@ async def serve(port):
         await server.stop(5)
 
     _cleanup_coroutines.append(server_graceful_shutdown())
-    asyncio.create_task(listen_to_reservations())
-
     await server.wait_for_termination()

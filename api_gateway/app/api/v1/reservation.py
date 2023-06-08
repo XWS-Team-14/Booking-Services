@@ -11,7 +11,6 @@ from loguru import logger
 
 from proto import reservation_crud_pb2_grpc, reservation_crud_pb2, availability_crud_pb2_grpc, availability_crud_pb2
 from ...config import get_yaml_config
-from ...constants import reservation_server, availability_server
 from ...schemas.reservation import ReservationDto, Guest, CreateReservationDto, UpdateReservationStatusDto
 from ...utils.get_server import get_server
 from ...utils.jwt import get_id_from_token, get_role_from_token
@@ -28,6 +27,11 @@ router = APIRouter(
 )
 async def getAll():
     logger.info("Gateway processing getAll reservations")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         logger.info("Gateway processing getAll reservation data")
@@ -45,6 +49,11 @@ async def getAll():
 )
 async def getAllGuests():
     logger.info("Gateway processing getAll guests")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         logger.info("Gateway processing getAll reservation data")
@@ -62,6 +71,11 @@ async def getAllGuests():
 )
 async def getById(item_id):
     logger.info("Gateway processing getById Reservation request")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetById(reservation_crud_pb2.ReservationId(id=item_id))
@@ -96,6 +110,11 @@ async def getByHost(access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetByHost(reservation_crud_pb2.HostId(id=host_id))
@@ -126,6 +145,11 @@ async def getGuestById(access_token: Annotated[str | None, Cookie()] = None):
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
     logger.info("Gateway processing getGuestById  request")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetGuestById(reservation_crud_pb2.GuestId(id=guest_id))
@@ -146,6 +170,11 @@ async def getGuestById(access_token: Annotated[str | None, Cookie()] = None):
 )
 async def getReservationsByAccommodation(item_id):
     logger.info("Gateway processing get reservations by accommodation  request")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetReservationsByAccommodation(reservation_crud_pb2.AccommodationResId(id=item_id))
@@ -177,6 +206,11 @@ async def getPendingByHost(access_token: Annotated[str | None, Cookie()] = None)
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetPendingReservationsByHost(reservation_crud_pb2.HostId(id=host_id))
@@ -206,6 +240,11 @@ async def getActiveByHost(access_token: Annotated[str | None, Cookie()] = None):
         )
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetActiveByHost(reservation_crud_pb2.HostId(id=host_id))
@@ -236,6 +275,11 @@ async def getActiveByGuest(access_token: Annotated[str | None, Cookie()] = None)
     if user_role != "guest":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetActiveByGuest(reservation_crud_pb2.GuestId(id=guest_id))
@@ -266,6 +310,11 @@ async def getByGuest(access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "guest":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetByGuest(reservation_crud_pb2.GuestId(id=guest_id))
@@ -295,6 +344,9 @@ async def create(item: CreateReservationDto, access_token: Annotated[str | None,
         )
     if user_role != 'guest':
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
+
+    availability_server = get_server("availability_server")
+    reservation_server = get_server("reservation_server")
 
     price_lookup = availability_crud_pb2.PriceLookup(
         accommodation_id=item.accommodation_id,
@@ -345,6 +397,11 @@ async def create(item: CreateReservationDto, access_token: Annotated[str | None,
 async def createGuest(item: Guest):
     logger.info("Gateway processing create Availability request")
 
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
 
@@ -364,6 +421,11 @@ async def createGuest(item: Guest):
 )
 async def update(item: ReservationDto):
     logger.info("Gateway processing update reservation request")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
 
@@ -393,6 +455,11 @@ async def update(item: ReservationDto):
 )
 async def updateGuest(item: Guest):
     logger.info("Gateway processing update reservation request")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
 
@@ -425,6 +492,10 @@ async def UpdateReservationStatus(item_id, item: UpdateReservationStatusDto, acc
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
     logger.info("Gateway processing accept reservation request")
+    print(item_id, item.status)
+    availability_server = get_server("availability_server")
+    reservation_server = get_server("reservation_server")
+
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         reservation = reservation_crud_pb2.ReservationIdStatus(id=item_id, status=item.status)
@@ -464,6 +535,8 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "guest":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
+    reservation_server = get_server("reservation_server")
+    availability_server = get_server("availability_server")
     error = False
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
@@ -493,6 +566,11 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
 )
 async def deleteGuest(item_id):
     logger.info("Gateway processing delete guest request")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.DeleteGuest(reservation_crud_pb2.Guest(id=item_id))
@@ -508,6 +586,11 @@ async def deleteGuest(item_id):
 )
 async def getAccommodationById(item_id):
     logger.info("Gateway processing getById Reservation request")
+    reservation_server = (
+            get_yaml_config().get("reservation_server").get("ip")
+            + ":"
+            + get_yaml_config().get("reservation_server").get("port")
+    )
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         data = await stub.GetAccommodationById(reservation_crud_pb2.AccommodationResId(id=item_id))

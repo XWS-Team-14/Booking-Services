@@ -171,6 +171,7 @@ class AvailabilityHelper:
                         requested_interval_date.date_end.date()
                         - requested_interval_date.date_start.date()
                     ).days
+                    + 1
                 )
                 * availability.base_price
                 * guest_mul
@@ -183,6 +184,7 @@ class AvailabilityHelper:
                     requested_interval_date.date_end.date()
                     - requested_interval_date.date_start.date()
                 ).days
+                + 1
             ):
                 curr_date = requested_interval_date.date_start.date() + timedelta(
                     day_num

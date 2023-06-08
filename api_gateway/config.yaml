@@ -5,10 +5,6 @@ app:
   api_prefix: "v1"
   static_prefix: "static"
 
-kafka_server:
-  ip: "kafka"
-  port: "9092"
-
 accommodation_server:
   ip: "accommodation"
   port: "50051"
@@ -36,10 +32,6 @@ user_server:
 notification_server:
   ip: "notification"
   port: "50057"
-
-review_server:
-  ip: "review"
-  port: "50058"
 
 static_server:
   url: "http://cdn:8001/api/resources/images/"

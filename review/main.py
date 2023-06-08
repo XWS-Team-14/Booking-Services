@@ -3,8 +3,6 @@
 import asyncio
 import sys
 import signal
-
-from app.core import listen_to_reservations
 from app.manage.run_server import serve, _cleanup_coroutines
 from loguru import logger
 

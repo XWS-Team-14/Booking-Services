@@ -1,4 +1,3 @@
-beanie
 grpcio
 grpcio-tools
 loguru
@@ -6,5 +5,3 @@ PyYAML
 firebase-admin
 pydantic
 kafka-python
-motor
-aiokafka

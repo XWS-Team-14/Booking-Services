@@ -4,4 +4,3 @@ mongodb:
   username: "root"
   password: "root"
   db: "user_control"
-

@@ -26,7 +26,6 @@ from proto import (
 )
 
 from ...config import get_yaml_config
-from ...constants import accommodation_server, reservation_server
 from ...utils.get_server import get_server
 from ...utils.jwt import get_id_from_token, get_role_from_token
 
@@ -66,6 +65,7 @@ async def save_accommodation(
         )
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
+    reservation_server = get_server("reservation_server")
     image_uris = []
     async with httpx.AsyncClient() as client:
         tasks = []
@@ -88,6 +88,7 @@ async def save_accommodation(
             # Might be good to check if every image was saved properly
             await asyncio.gather(*tasks)
     # Send grpc request to save accommodation data
+    accommodation_server = get_server("accommodation_server")
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
 
@@ -153,6 +154,8 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
+    accommodation_server = get_server("accommodation_server")
+
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
         dto = accommodation_pb2.InputId(
@@ -182,6 +185,7 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
 @router.get("/all")
 async def getAll():
     logger.info("Gateway processing getAll reservations")
+    accommodation_server = get_server("accommodation_server")
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
         logger.info("Gateway processing getAll reservation data")
@@ -208,6 +212,7 @@ async def getAll():
 
 @router.get("/id/{item_id}")
 async def GetById(item_id):
+    accommodation_server = get_server("accommodation_server")
 
     async with grpc.aio.insecure_channel(accommodation_server) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)

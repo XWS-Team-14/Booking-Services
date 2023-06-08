@@ -1,8 +1,6 @@
 import json
 
 import grpc
-
-from app.constants import search_server
 from app.schemas.search import DateInterval, Location, SearchParams, SearchResults
 from app.utils.get_server import get_server
 from fastapi import APIRouter
@@ -29,6 +27,7 @@ async def search(
     date_start: str | None = "",
     date_end: str | None = "",
 ):
+    search_server = get_server("search_server")
     params = SearchParams(
         location=Location(country=country, city=city, address=address),
         guests=guests,

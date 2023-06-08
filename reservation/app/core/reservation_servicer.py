@@ -8,7 +8,6 @@ from proto import reservation_crud_pb2_grpc, reservation_crud_pb2
 from pydantic.datetime_parse import timedelta
 
 from .reservation_helper import ReservationHelper
-from ..constants import kafka_producer
 from ..models.accommodation import Accommodation
 from ..models.guest import Guest
 from ..models.reservation import Reservation
@@ -34,19 +33,6 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         )
         await reservation.insert()
         logger.success('reservation successfully saved')
-
-        kafka_producer.send('reservations',
-                            {
-                                'id': str(uuid.uuid4()),
-                                'reservation_id': str(reservation.id),
-                                'event': 'create',
-                                'host': str(reservation.host_id),
-                                'accommodation': str(reservation.accommodation.id),
-                                'days': ReservationHelper.calculate_days(reservation.beginning_date,
-                                                                         reservation.ending_date),
-                                'timestamp': str(datetime.utcnow())
-                             }
-                            )
         return reservation_crud_pb2.ReservationResult(status=str(reservation.status))
 
     async def CreateGuest(self, request, context):
@@ -112,7 +98,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         return reservation_crud_pb2.ReservationResult(status="Success")
 
     async def Delete(self, request, context):
-        logger.success('Request for cancellation of Reservation accepted')
+        logger.success('Request for deletion of Reservation accepted')
         try:
             item = await Reservation.get(uuid.UUID(request.id), fetch_links=True)
             if not item:
@@ -127,23 +113,8 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
         guest = ReservationHelper.convertGuestDto(item.guest)
         if item.status == ReservationStatus.ACCEPTED:
             guest.canceledReservations = guest.canceledReservations + 1
-            item.status = ReservationStatus.CANCELLED
-            await item.replace(link_rule=WriteRules.WRITE)
-            await guest.replace(link_rule=WriteRules.WRITE)
-            kafka_producer.send('reservations',
-                                {
-                                    'id': str(uuid.uuid4()),
-                                    'reservation_id': str(item.id),
-                                    'event': 'cancel',
-                                    'host': str(item.host_id),
-                                    'accommodation': str(item.accommodation.id),
-                                    'days': ReservationHelper.calculate_days(item.beginning_date,
-                                                                             item.ending_date),
-                                    'timestamp': str(datetime.utcnow())
-                                }
-                                )
-        else:
-            await item.delete()
+        await guest.replace(link_rule=WriteRules.WRITE)
+        await item.delete()
         logger.success('reservation succesfully deleted')
         return ReservationHelper.convertToDto(item)
 
