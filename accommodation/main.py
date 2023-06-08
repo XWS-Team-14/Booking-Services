@@ -3,21 +3,28 @@
 import asyncio
 import sys
 import signal
+import http.client
 from app.manage.run_server import serve, _cleanup_coroutines
 from loguru import logger
 import logging_loki
 
+try:
+    conn = http.client.HTTPConnection('loki:3100')
+    conn.request("GET", "/ready")
+    r2 = conn.getresponse()
+except Exception as e:
+    logger.info(f"{e}")
+else:
+    handler = logging_loki.LokiHandler(
+        url="http://loki:3100/loki/api/v1/push",
+        tags={"application": "accommodation-service"},
+        version="1",
+    )
+    logger.add(
+        handler,
+        format="{level} | {message}",
+    )
 
-handler = logging_loki.LokiHandler(
-    url="http://loki:3100/loki/api/v1/push", 
-    tags={"application": "my-app"},
-    version="1",
-)
-
-logger.add(
-    handler,
-    format="{level} {message}",
-)
 
 def main():
     """Run administrative tasks."""
@@ -56,8 +63,8 @@ def start(port):
     except (
         KeyboardInterrupt,
         SystemExit,
-    ) as e:
-        logger.critical(f"Received signal = {e}")
+    ):
+        logger.critical(f"Received exit signal")
         loop.run_until_complete(*_cleanup_coroutines)
     finally:
         loop.close()
