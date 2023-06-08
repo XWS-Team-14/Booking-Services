@@ -13,3 +13,6 @@ email-validator
 pyjwt
 python-multipart
 protobuf
+websockets
+kafka-python
+aiokafka

@@ -15,22 +15,22 @@ class UserServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Register = channel.unary_unary(
-                '/UserService/Register',
+                '/user.UserService/Register',
                 request_serializer=user__pb2.User.SerializeToString,
                 response_deserializer=user__pb2.EmptyMessage.FromString,
                 )
         self.GetById = channel.unary_unary(
-                '/UserService/GetById',
+                '/user.UserService/GetById',
                 request_serializer=user__pb2.UserId.SerializeToString,
                 response_deserializer=user__pb2.UserResponse.FromString,
                 )
         self.Update = channel.unary_unary(
-                '/UserService/Update',
+                '/user.UserService/Update',
                 request_serializer=user__pb2.User.SerializeToString,
                 response_deserializer=user__pb2.EmptyMessage.FromString,
                 )
         self.Delete = channel.unary_unary(
-                '/UserService/Delete',
+                '/user.UserService/Delete',
                 request_serializer=user__pb2.UserId.SerializeToString,
                 response_deserializer=user__pb2.EmptyMessage.FromString,
                 )
@@ -88,7 +88,7 @@ def add_UserServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'UserService', rpc_method_handlers)
+            'user.UserService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -107,7 +107,7 @@ class UserService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UserService/Register',
+        return grpc.experimental.unary_unary(request, target, '/user.UserService/Register',
             user__pb2.User.SerializeToString,
             user__pb2.EmptyMessage.FromString,
             options, channel_credentials,
@@ -124,7 +124,7 @@ class UserService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UserService/GetById',
+        return grpc.experimental.unary_unary(request, target, '/user.UserService/GetById',
             user__pb2.UserId.SerializeToString,
             user__pb2.UserResponse.FromString,
             options, channel_credentials,
@@ -141,7 +141,7 @@ class UserService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UserService/Update',
+        return grpc.experimental.unary_unary(request, target, '/user.UserService/Update',
             user__pb2.User.SerializeToString,
             user__pb2.EmptyMessage.FromString,
             options, channel_credentials,
@@ -158,7 +158,7 @@ class UserService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UserService/Delete',
+        return grpc.experimental.unary_unary(request, target, '/user.UserService/Delete',
             user__pb2.UserId.SerializeToString,
             user__pb2.EmptyMessage.FromString,
             options, channel_credentials,
