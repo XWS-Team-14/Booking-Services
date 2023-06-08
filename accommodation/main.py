@@ -6,18 +6,23 @@ import signal
 import http.client
 from app.manage.run_server import serve, _cleanup_coroutines
 from loguru import logger
+from app.config import get_yaml_config
 import logging_loki
 
+config = get_yaml_config().get("loki")
+url = config.get("url")
+service = config.get("service")
+
 try:
-    conn = http.client.HTTPConnection('loki:3100')
+    conn = http.client.HTTPConnection(url)
     conn.request("GET", "/ready")
     r2 = conn.getresponse()
 except Exception as e:
     logger.info(f"{e}")
 else:
     handler = logging_loki.LokiHandler(
-        url="http://loki:3100/loki/api/v1/push",
-        tags={"application": "accommodation-service"},
+        url="http://" + url + "/loki/api/v1/push",
+        tags={"service": service},
         version="1",
     )
     logger.add(
