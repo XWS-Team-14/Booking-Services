@@ -5,7 +5,19 @@ import sys
 import signal
 from app.manage.run_server import serve, _cleanup_coroutines
 from loguru import logger
+import logging_loki
 
+
+handler = logging_loki.LokiHandler(
+    url="http://loki:3100/loki/api/v1/push", 
+    tags={"application": "my-app"},
+    version="1",
+)
+
+logger.add(
+    handler,
+    format="{level} {message}",
+)
 
 def main():
     """Run administrative tasks."""

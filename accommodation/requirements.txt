@@ -3,4 +3,5 @@ grpcio-tools
 motor
 beanie
 loguru
+python-logging-loki
 PyYAML
