@@ -67,8 +67,8 @@ def start(port):
     except (
         KeyboardInterrupt,
         SystemExit,
-    ) as e:
-        logger.critical(f"Received signal = {e}")
+    ):
+        logger.critical("Received exit signal")
         loop.run_until_complete(*_cleanup_coroutines)
     finally:
         loop.close()
