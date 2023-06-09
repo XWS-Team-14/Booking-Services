@@ -6,3 +6,6 @@ availability_server:
   ip: "availability"
   port: "50053"
 
+loki:
+  url: "loki:3100"
+  service: "search-service"

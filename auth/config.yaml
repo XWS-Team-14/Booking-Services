@@ -4,3 +4,8 @@ mongodb:
   username: "root"
   password: "root"
   db: "auth"
+
+
+loki:
+  url: "loki:3100"
+  service: "auth-service"

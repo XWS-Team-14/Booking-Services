@@ -1,0 +1,3 @@
+loki:
+  url: "loki:3100"
+  service: "notification-service"
