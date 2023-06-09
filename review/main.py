@@ -27,7 +27,7 @@ else:
     )
     logger.add(
         handler,
-        format="{level} | {message}",
+        format="{time} | {level} | {message}",
     )
 
 

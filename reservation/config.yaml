@@ -7,4 +7,4 @@ mongodb:
 
 loki:
   url: "loki:3100"
-  service: "accommodation-service"
+  service: "reservation-service"
