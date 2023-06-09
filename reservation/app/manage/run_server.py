@@ -5,7 +5,6 @@ import grpc
 
 from ..core.reservation_servicer import ReservationServicer
 from ..db.mongodb import start_async_mongodb
-from app.core
 
 
 _cleanup_coroutines = []
@@ -31,6 +30,4 @@ async def serve(port):
         await server.stop(5)
 
     _cleanup_coroutines.append(server_graceful_shutdown())
-
-    listen_to_reservations()
     await server.wait_for_termination()
