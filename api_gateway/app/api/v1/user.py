@@ -103,20 +103,15 @@ class User:
             async with grpc.aio.insecure_channel(review_server) as channel_review:
                 stub_review = review_pb2_grpc.ReviewServiceStub(channel_review)
                 grpc_review_response = await stub_review.GetHostStatus(review_pb2.HostId(id=str(user_id)))
-                print(grpc_review_response)
                 if grpc_review_response.error_message:
-                    return Response(
-                        status_code=grpc_review_response.error_code,
-                        media_type="text/html",
-                        content=grpc_review_response.error_message,
-                    )
+                    logger.info(f"{grpc_review_response.error_code}: {grpc_review_response.error_message}")
         user = {
             'id': user_id,
             'first_name': grpc_user_response.first_name,
             'last_name': grpc_user_response.last_name,
             'gender': grpc_user_response.gender,
             'home_address': grpc_user_response.home_address,
-            'is_featured': grpc_review_response.status if user_role == 'host' else False
+            'is_featured': grpc_review_response.status if (user_role == 'host' and not grpc_review_response.error_code) else False
         }
         return JSONResponse(
             status_code=200, media_type="text/html", content=jsonable_encoder(user)
