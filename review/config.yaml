@@ -10,5 +10,5 @@ kafka_server:
   port: "9092"
 
 loki:
-url: "loki:3100"
-service: "review-service"
+  url: "loki:3100"
+  service: "review-service"
