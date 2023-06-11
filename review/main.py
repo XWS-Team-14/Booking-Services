@@ -4,6 +4,7 @@ import asyncio
 import sys
 import signal
 import http.client
+from app.core import listen_to_reservations
 from app.manage.run_server import serve, _cleanup_coroutines
 from loguru import logger
 from app.config import get_yaml_config

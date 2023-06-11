@@ -1,5 +1,5 @@
 syntax = "proto3";
-
+package user;
 service UserService {
   rpc Register(User) returns (EmptyMessage);
   rpc GetById(UserId) returns (UserResponse);
