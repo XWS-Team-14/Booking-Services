@@ -37,3 +37,6 @@ static_server:
   url: "http://cdn:8001/api/resources/images/"
   image_file_type: ".png"
 
+loki:
+  url: "loki:3100"
+  service: "api-gateway"
