@@ -4,3 +4,7 @@ mongodb:
   username: "root"
   password: "root"
   db: "reservation"
+
+kafka_server:
+  ip: "kafka"
+  port: "9092"
