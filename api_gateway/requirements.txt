@@ -12,6 +12,7 @@ passlib[bcrypt]
 email-validator
 pyjwt
 python-multipart
+python-logging-loki
 protobuf
 websockets
 kafka-python

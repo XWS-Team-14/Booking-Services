@@ -4,3 +4,7 @@ mongodb:
   username: "root"
   password: "root"
   db: "accommodation"
+
+loki:
+  url: "loki:3100"
+  service: "accommodation-service"

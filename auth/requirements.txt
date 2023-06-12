@@ -7,3 +7,4 @@ PyYAML
 passlib[bcrypt]
 email-validator
 pyjwt
+python-logging-loki

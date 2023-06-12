@@ -6,5 +6,6 @@ PyYAML
 firebase-admin
 pydantic
 kafka-python
+python-logging-loki
 motor
 aiokafka
