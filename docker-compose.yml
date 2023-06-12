@@ -56,7 +56,7 @@ services:
     #ports:
     #- 27017:27017
 
-  # Services, expose ports when you want to test your grpc service manudefaulty
+  # Services, expose ports when you want to test your grpc service manuall
   # Running ports are not that important, but it can be easier to differentiate between services
   accommodation:
     build: ./accommodation
