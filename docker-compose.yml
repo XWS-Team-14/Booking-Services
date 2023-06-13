@@ -55,6 +55,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
+    
   mongo-orchestrator:
     image: mongo
     restart: always
@@ -164,7 +165,7 @@ services:
       - mongo-review
       - kafka
 
-  review:
+  orchestrator:
     build: ./orchestrator
     image: orchestrator:latest
     container_name: orchestrator
@@ -172,7 +173,7 @@ services:
     volumes:
       - ./proto:/app/proto
     depends_on:
-      - mongo-review
+      - mongo-orchestrator
       - kafka
 
   api_gateway:

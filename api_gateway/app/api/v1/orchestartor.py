@@ -2,9 +2,9 @@ import grpc
 from fastapi import APIRouter, status, Cookie
 from fastapi.responses import Response
 import uuid
-from api_gateway.app.schemas.orchestrator import UserId
 from proto import orchestrator_pb2,orchestrator_pb2_grpc
 from ...constants import orchestrator_server
+from loguru import logger
 
 router = APIRouter(
     tags=["Orchestrator"],
@@ -18,6 +18,9 @@ router = APIRouter(
 async def deleteUser(user_id):
     logger.info("Gateway processing delete user via saga request")
     async with grpc.aio.insecure_channel(orchestrator_server) as channel:
-        stub = orchestrator_pb2_grpc.OrchestratorCrudStub(channel)
-        data = await stub.Delete(orchestrator_pb2.UserId(user_id=user_id))
-    return Response(status_code=data.error_message, media_type="application/json", content=data.error_code)
+        stub = orchestrator_pb2_grpc.OrchestratorStub(channel)
+        data = await stub.DeleteUser(orchestrator_pb2.UserId(id=user_id))
+        logger.info(data)
+        logger.info(data.error_message)
+        logger.info(data.error_code)
+    return Response(status_code=data.error_code, media_type="text/html", content=data.error_message)

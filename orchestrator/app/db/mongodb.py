@@ -9,7 +9,7 @@ from motor.core import AgnosticCollection
 from motor.core import AgnosticDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.config import get_yaml_config
-from app.models.test import Question
+from app.models.log import Log
 
 async_mongodb_client = None
 
@@ -73,7 +73,7 @@ async def start_async_mongodb() -> None:
         await init_beanie(
             database=async_mongodb_database,
             document_models=[
-                Question
+                Log
             ],
         )
         logger.success("Started mongodb connection")
