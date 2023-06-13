@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="accommodation" />
     <orderEntry type="module" module-name="notification" />
     <orderEntry type="module" module-name="review" />
+    <orderEntry type="module" module-name="search" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />

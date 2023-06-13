@@ -19,6 +19,8 @@ from proto import (
     availability_crud_pb2_grpc,
     search_pb2,
     search_pb2_grpc,
+    review_pb2,
+    review_pb2_grpc
 )
 
 
@@ -26,6 +28,7 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
     async def Search(self, request, context):
         availability_server = get_server("availability_server")
         accommodation_server = get_server("accommodation_server")
+        review_server = get_server("review_server")
 
         parsed_request = SearchParams.parse_obj(
             MessageToDict(request, preserving_proto_field_name=True)
@@ -46,6 +49,14 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
                 availability_crud_pb2.SearchDetails(),
             )
             avvs = await stub2.GetAllSearch(data)
+
+        if parsed_request['must_be_featured_host']:
+            async with grpc.aio.insecure_channel(review_server) as channel:
+                stub_review = review_pb2_grpc.ReviewServiceStub(channel)
+                grpc_review_response = await stub_review.GetAllAccommodationsWithFeaturedHost(review_pb2.Empty())
+                if grpc_review_response.error_message:
+                    logger.info(f"{grpc_review_response.error_code}: {grpc_review_response.error_message}")
+                
 
         parsed_accs = ResponseAccommodations.parse_obj(
             MessageToDict(accs, preserving_proto_field_name=True)

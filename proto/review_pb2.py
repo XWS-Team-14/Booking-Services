@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0creview.proto\x12\x06review\"]\n\x05\x45mpty\x12\x1a\n\rerror_message\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x02 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"\x14\n\x06HostId\x12\n\n\x02id\x18\x01 \x01(\t\"~\n\nHostStatus\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\x08\x12\x1a\n\rerror_message\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x04 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code2j\n\rReviewService\x12$\n\x04Send\x12\r.review.Empty\x1a\r.review.Empty\x12\x33\n\rGetHostStatus\x12\x0e.review.HostId\x1a\x12.review.HostStatusb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0creview.proto\x12\x06review\"]\n\x05\x45mpty\x12\x1a\n\rerror_message\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x02 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"\x14\n\x06HostId\x12\n\n\x02id\x18\x01 \x01(\t\"~\n\nHostStatus\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\x08\x12\x1a\n\rerror_message\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x04 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"*\n\x0e\x41\x63\x63ommodations\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x01 \x03(\t2\xb9\x01\n\rReviewService\x12$\n\x04Send\x12\r.review.Empty\x1a\r.review.Empty\x12\x33\n\rGetHostStatus\x12\x0e.review.HostId\x1a\x12.review.HostStatus\x12M\n$GetAllAccommodationsWithFeaturedHost\x12\r.review.Empty\x1a\x16.review.Accommodationsb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'review_pb2', globals())
@@ -26,6 +26,8 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _HOSTID._serialized_end=139
   _HOSTSTATUS._serialized_start=141
   _HOSTSTATUS._serialized_end=267
-  _REVIEWSERVICE._serialized_start=269
-  _REVIEWSERVICE._serialized_end=375
+  _ACCOMMODATIONS._serialized_start=269
+  _ACCOMMODATIONS._serialized_end=311
+  _REVIEWSERVICE._serialized_start=314
+  _REVIEWSERVICE._serialized_end=499
 # @@protoc_insertion_point(module_scope)

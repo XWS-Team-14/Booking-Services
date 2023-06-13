@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0csearch.proto\x12\x06search\"7\n\x08Response\x12\x16\n\x0emessage_string\x18\x01 \x01(\t\x12\x13\n\x0bstatus_code\x18\x02 \x01(\x05\":\n\x08Location\x12\x0f\n\x07\x63ountry\x18\x01 \x01(\t\x12\x0c\n\x04\x63ity\x18\x02 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x03 \x01(\t\"f\n\x0cSearchParams\x12\"\n\x08location\x18\x01 \x01(\x0b\x32\x10.search.Location\x12\x0e\n\x06guests\x18\x02 \x01(\x05\x12\"\n\x08interval\x18\x03 \x01(\x0b\x32\x10.search.Interval\"X\n\rSearchResults\x12\"\n\x08response\x18\x01 \x01(\x0b\x32\x10.search.Response\x12#\n\x05items\x18\x02 \x03(\x0b\x32\x14.search.SearchResult\"\xfc\x01\n\x0cSearchResult\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x01 \x01(\t\x12\x0f\n\x07host_id\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\"\n\x08location\x18\x04 \x01(\x0b\x32\x10.search.Location\x12\x10\n\x08\x66\x65\x61tures\x18\x05 \x03(\t\x12\x12\n\nimage_urls\x18\x06 \x03(\t\x12\x12\n\nmin_guests\x18\x07 \x01(\x05\x12\x12\n\nmax_guests\x18\x08 \x01(\x05\x12\x12\n\nbase_price\x18\t \x01(\x01\x12\x13\n\x0btotal_price\x18\n \x01(\x01\x12\x18\n\x10\x61uto_accept_flag\x18\x0b \x01(\x08\"0\n\x08Interval\x12\x12\n\ndate_start\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61te_end\x18\x02 \x01(\t2?\n\x06Search\x12\x35\n\x06Search\x12\x14.search.SearchParams\x1a\x15.search.SearchResultsb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0csearch.proto\x12\x06search\"7\n\x08Response\x12\x16\n\x0emessage_string\x18\x01 \x01(\t\x12\x13\n\x0bstatus_code\x18\x02 \x01(\x05\":\n\x08Location\x12\x0f\n\x07\x63ountry\x18\x01 \x01(\t\x12\x0c\n\x04\x63ity\x18\x02 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x03 \x01(\t\"\xbe\x01\n\x0cSearchParams\x12\"\n\x08location\x18\x01 \x01(\x0b\x32\x10.search.Location\x12\x0e\n\x06guests\x18\x02 \x01(\x05\x12\"\n\x08interval\x18\x03 \x01(\x0b\x32\x10.search.Interval\x12\x11\n\tamenities\x18\x04 \x03(\t\x12\x11\n\tprice_min\x18\x05 \x01(\x05\x12\x11\n\tprice_max\x18\x06 \x01(\x05\x12\x1d\n\x15must_be_featured_host\x18\x07 \x01(\x08\"X\n\rSearchResults\x12\"\n\x08response\x18\x01 \x01(\x0b\x32\x10.search.Response\x12#\n\x05items\x18\x02 \x03(\x0b\x32\x14.search.SearchResult\"\xfc\x01\n\x0cSearchResult\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x01 \x01(\t\x12\x0f\n\x07host_id\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\"\n\x08location\x18\x04 \x01(\x0b\x32\x10.search.Location\x12\x10\n\x08\x66\x65\x61tures\x18\x05 \x03(\t\x12\x12\n\nimage_urls\x18\x06 \x03(\t\x12\x12\n\nmin_guests\x18\x07 \x01(\x05\x12\x12\n\nmax_guests\x18\x08 \x01(\x05\x12\x12\n\nbase_price\x18\t \x01(\x01\x12\x13\n\x0btotal_price\x18\n \x01(\x01\x12\x18\n\x10\x61uto_accept_flag\x18\x0b \x01(\x08\"0\n\x08Interval\x12\x12\n\ndate_start\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61te_end\x18\x02 \x01(\t2?\n\x06Search\x12\x35\n\x06Search\x12\x14.search.SearchParams\x1a\x15.search.SearchResultsb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'search_pb2', globals())
@@ -24,14 +24,14 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _RESPONSE._serialized_end=79
   _LOCATION._serialized_start=81
   _LOCATION._serialized_end=139
-  _SEARCHPARAMS._serialized_start=141
-  _SEARCHPARAMS._serialized_end=243
-  _SEARCHRESULTS._serialized_start=245
-  _SEARCHRESULTS._serialized_end=333
-  _SEARCHRESULT._serialized_start=336
-  _SEARCHRESULT._serialized_end=588
-  _INTERVAL._serialized_start=590
-  _INTERVAL._serialized_end=638
-  _SEARCH._serialized_start=640
-  _SEARCH._serialized_end=703
+  _SEARCHPARAMS._serialized_start=142
+  _SEARCHPARAMS._serialized_end=332
+  _SEARCHRESULTS._serialized_start=334
+  _SEARCHRESULTS._serialized_end=422
+  _SEARCHRESULT._serialized_start=425
+  _SEARCHRESULT._serialized_end=677
+  _INTERVAL._serialized_start=679
+  _INTERVAL._serialized_end=727
+  _SEARCH._serialized_start=729
+  _SEARCH._serialized_end=792
 # @@protoc_insertion_point(module_scope)
