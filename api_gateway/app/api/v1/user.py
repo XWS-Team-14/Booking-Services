@@ -35,6 +35,7 @@ from app.constants import user_server, reservation_server, auth_server, accommod
     review_server
 from app.utils import get_server
 from app.utils.jwt import get_id_from_token, get_role_from_token
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 
 router = APIRouter()
 
@@ -88,7 +89,7 @@ class User:
                 status_code=401, media_type="text/html", content="Invalid token."
             )
         logger.info(f"Tested get active user {user_id}")
-        async with grpc.aio.insecure_channel(user_server) as channel:
+        async with grpc.aio.insecure_channel(user_server, interceptors=aio_client_interceptors()) as channel:
             stub_user = user_pb2_grpc.UserServiceStub(channel)
             grpc_user_response = await stub_user.GetById(
                 user_pb2.UserId(id=str(user_id))
@@ -100,7 +101,7 @@ class User:
                     content=grpc_user_response.error_message,
                 )
         if user_role == 'host':
-            async with grpc.aio.insecure_channel(review_server) as channel_review:
+            async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel_review:
                 stub_review = review_pb2_grpc.ReviewServiceStub(channel_review)
                 grpc_review_response = await stub_review.GetHostStatus(review_pb2.HostId(id=str(user_id)))
                 if grpc_review_response.error_message:
@@ -124,7 +125,7 @@ class User:
     )
     async def get_by_id(self, user_id) -> Response:
         logger.info(f"Tested get user by id {user_id}")
-        async with grpc.aio.insecure_channel(user_server) as channel:
+        async with grpc.aio.insecure_channel(user_server, interceptors=aio_client_interceptors()) as channel:
             stub_user = user_pb2_grpc.UserServiceStub(channel)
             grpc_user_response = await stub_user.GetById(
                 user_pb2.UserId(id=str(user_id))
@@ -166,7 +167,7 @@ class User:
                 status_code=401, media_type="text/html", content="Invalid token."
             )
         logger.info(f"Tested update user details {user_id}")
-        async with grpc.aio.insecure_channel(user_server) as channel:
+        async with grpc.aio.insecure_channel(user_server, interceptors=aio_client_interceptors()) as channel:
             stub = user_pb2_grpc.UserServiceStub(channel)
             grpc_response = await stub.Update(
                 user_pb2.User(
@@ -209,7 +210,7 @@ class User:
         logger.info(f"Tested delete user {user_id}")
 
         if user_role == "host":
-            async with grpc.aio.insecure_channel(reservation_server) as channel:
+            async with grpc.aio.insecure_channel(reservation_server, interceptors=aio_client_interceptors()) as channel:
                 stub_reservation = reservation_crud_pb2_grpc.ReservationCrudStub(
                     channel
                 )
@@ -230,7 +231,7 @@ class User:
                         content="User has active reservations.",
                     )
         else:
-            async with grpc.aio.insecure_channel(reservation_server) as channel:
+            async with grpc.aio.insecure_channel(reservation_server, interceptors=aio_client_interceptors()) as channel:
                 stub_reservation = reservation_crud_pb2_grpc.ReservationCrudStub(
                     channel
                 )
@@ -251,7 +252,7 @@ class User:
                         content="User has active reservations.",
                     )
 
-        async with grpc.aio.insecure_channel(auth_server) as channel:
+        async with grpc.aio.insecure_channel(auth_server, interceptors=aio_client_interceptors()) as channel:
             stub_auth = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_auth_response = await stub_auth.Delete(
                 credential_pb2.CredentialId(id=user_id)
@@ -263,7 +264,7 @@ class User:
                     content=grpc_auth_response.error_message,
                 )
 
-        async with grpc.aio.insecure_channel(user_server) as channel:
+        async with grpc.aio.insecure_channel(user_server, interceptors=aio_client_interceptors()) as channel:
             stub_user = user_pb2_grpc.UserServiceStub(channel)
             grpc_user_response = await stub_user.Delete(
                 user_pb2.UserId(id=str(user_id))
@@ -276,7 +277,7 @@ class User:
                 )
 
         if user_role == "host":
-            async with grpc.aio.insecure_channel(accommodation_server) as channel:
+            async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
                 stub_accommodation = accommodation_pb2_grpc.AccommodationServiceStub(
                     channel
                 )

@@ -7,6 +7,7 @@ from starlette.responses import HTMLResponse, Response
 from app import schemas
 from app.constants import notification_server
 from app.utils import get_server
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 
 router = APIRouter()
 
@@ -25,7 +26,7 @@ class Notification:
                                                      sender=sender, receiver=receiver, status=payload.status,
                                                      accommodation=accommodation,
                                                      timestamp=payload.timestamp)
-        async with grpc.aio.insecure_channel(notification_server) as channel:
+        async with grpc.aio.insecure_channel(notification_server, interceptors=aio_client_interceptors()) as channel:
             stub = notification_pb2_grpc.NotificationServiceStub(channel)
             await stub.Send(notification)
         return Response(

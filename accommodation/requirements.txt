@@ -5,3 +5,6 @@ beanie
 loguru
 python-logging-loki
 PyYAML
+opentelemetry-distro
+opentelemetry-exporter-jaeger-thrift
+opentelemetry-instrumentation-grpc
