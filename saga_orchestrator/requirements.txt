@@ -1,0 +1,6 @@
+motor
+beanie
+loguru
+PyYAML
+kafka-python
+aiokafka

@@ -1,0 +1,10 @@
+mongodb:
+  ip: "mongo-orchestrator"
+  port: "27017"
+  username: "root"
+  password: "root"
+  db: "orchestration-logs"
+
+kafka_server:
+  ip: "kafka"
+  port: "9092"

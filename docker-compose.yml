@@ -55,6 +55,14 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
+  mongo-orchestrator:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    #ports:
+    #- 27017:27017
   
   # Services, expose ports when you want to test your grpc service manually
   # Running ports are not that important, but it can be easier to differentiate between services
@@ -150,6 +158,17 @@ services:
     image: review:latest
     container_name: review
     command: "python main.py runserver 50058"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      - mongo-review
+      - kafka
+
+  review:
+    build: ./orchestrator
+    image: orchestrator:latest
+    container_name: orchestrator
+    command: "python main.py runserver 50059"
     volumes:
       - ./proto:/app/proto
     depends_on:
