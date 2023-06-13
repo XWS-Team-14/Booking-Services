@@ -1,7 +1,7 @@
-version: "3.9"
+version: '3.9'
 
 services:
-  # Databases, uncomment ports if you want to check data in a given database 
+  # Databases, uncomment ports if you want to check data in a given database
   mongo-accommodation:
     image: mongo
     restart: always
@@ -10,7 +10,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
-  
+
   mongo-auth:
     image: mongo
     restart: always
@@ -28,7 +28,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
-  
+
   mongo-reservation:
     image: mongo
     restart: always
@@ -37,7 +37,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
-  
+
   mongo-user_control:
     image: mongo
     restart: always
@@ -55,14 +55,14 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
-  
-  # Services, expose ports when you want to test your grpc service manually
+
+  # Services, expose ports when you want to test your grpc service manuall
   # Running ports are not that important, but it can be easier to differentiate between services
   accommodation:
     build: ./accommodation
     image: accommodation:latest
     container_name: accommodation
-    command: "python main.py runserver 50051"
+    command: 'python main.py runserver 50051'
     volumes:
       - ./proto:/app/proto
     depends_on:
@@ -70,25 +70,25 @@ services:
       - kafka
     #ports:
     #- 50051:50051
-    
+
   auth:
     build: ./auth
     image: auth:latest
     container_name: auth
-    command: "python main.py runserver 50052"
+    command: 'python main.py runserver 50052'
     volumes:
       - ./proto:/app/proto
     depends_on:
       - mongo-auth
       - kafka
     #ports:
-    #- 50052:50052 
- 
+    #- 50052:50052
+
   availability:
     build: ./availability
     image: availability:latest
     container_name: availability
-    command: "python main.py runserver 50053"
+    command: 'python main.py runserver 50053'
     volumes:
       - ./proto:/app/proto
     depends_on:
@@ -101,7 +101,7 @@ services:
     build: ./reservation
     image: reservation:latest
     container_name: reservation
-    command: "python main.py runserver 50054"
+    command: 'python main.py runserver 50054'
     volumes:
       - ./proto:/app/proto
     depends_on:
@@ -109,12 +109,12 @@ services:
       - kafka
     #ports:
     #- 50054:50054
-  
+
   search:
     build: ./search
     image: search:latest
     container_name: search
-    command: "python main.py runserver 50055"
+    command: 'python main.py runserver 50055'
     volumes:
       - ./proto:/app/proto
     depends_on:
@@ -126,7 +126,7 @@ services:
     build: ./user_control
     image: user_control:latest
     container_name: user_control
-    command: "python main.py runserver 50056"
+    command: 'python main.py runserver 50056'
     volumes:
       - ./proto:/app/proto
     depends_on:
@@ -139,7 +139,7 @@ services:
     build: ./notification
     image: notification:latest
     container_name: notification
-    command: "python main.py runserver 50057"
+    command: 'python main.py runserver 50057'
     volumes:
       - ./proto:/app/proto
     depends_on:
@@ -149,7 +149,7 @@ services:
     build: ./review
     image: review:latest
     container_name: review
-    command: "python main.py runserver 50058"
+    command: 'python main.py runserver 50058'
     volumes:
       - ./proto:/app/proto
     depends_on:
@@ -160,22 +160,22 @@ services:
     build: ./api_gateway
     image: api_gateway:latest
     container_name: api_gateway
-    command: "uvicorn main:app --host 0.0.0.0 --port 8000"
+    command: 'uvicorn main:app --host 0.0.0.0 --port 8000'
     volumes:
       - ./proto:/app/proto
     ports:
       - 8000:8000
     depends_on:
       - kafka
-  
+
   cdn:
     build: ./cdn
-    image: cdn 
-    container_name: cdn 
-    command: "uvicorn main:app --host 0.0.0.0 --port 8001"
+    image: cdn
+    container_name: cdn
+    command: 'uvicorn main:app --host 0.0.0.0 --port 8001'
     #ports:
     #  - 8001:8001
-  
+
   grafana:
     image: grafana/grafana-enterprise
     container_name: grafana
@@ -183,8 +183,8 @@ services:
     volumes:
       - ./grafana:/var/lib/grafana/
     ports:
-     - 3001:3000
-  
+      - 3001:3000
+
   loki:
     image: grafana/loki
     container_name: loki
@@ -198,7 +198,7 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "2181:2181"
+      - '2181:2181'
 
   kafka:
     image: wurstmeister/kafka
@@ -213,14 +213,49 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
     depends_on:
       - zookeeper
-  
+
   kafdrop:
     container_name: kafdrop
     image: obsidiandynamics/kafdrop
     ports:
-      - "9000:9000"
+      - '9000:9000'
     environment:
-      KAFKA_BROKERCONNECT: "kafka:9092"
+      KAFKA_BROKERCONNECT: 'kafka:9092'
     depends_on:
       - kafka
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
