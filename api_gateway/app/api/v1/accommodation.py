@@ -29,6 +29,7 @@ from ...config import get_yaml_config
 from ...constants import accommodation_server, reservation_server
 from ...utils.get_server import get_server
 from ...utils.jwt import get_id_from_token, get_role_from_token
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 
 router = APIRouter()
 
@@ -88,7 +89,7 @@ async def save_accommodation(
             # Might be good to check if every image was saved properly
             await asyncio.gather(*tasks)
     # Send grpc request to save accommodation data
-    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+    async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
 
         location = Location(
@@ -123,7 +124,7 @@ async def save_accommodation(
                 accommodation_pb2.Accommodation(),
             )
         )
-    async with grpc.aio.insecure_channel(reservation_server) as channel:
+    async with grpc.aio.insecure_channel(reservation_server, interceptors=aio_client_interceptors()) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         await stub.CreateAccommodation(
             reservation_crud_pb2.AccommodationResDto(
@@ -153,7 +154,7 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
-    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+    async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
         dto = accommodation_pb2.InputId(
             id=user_id,
@@ -182,7 +183,7 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
 @router.get("/all")
 async def getAll():
     logger.info("Gateway processing getAll reservations")
-    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+    async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
         logger.info("Gateway processing getAll reservation data")
         data = await stub.GetAll({})
@@ -209,7 +210,7 @@ async def getAll():
 @router.get("/id/{item_id}")
 async def GetById(item_id):
 
-    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+    async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
 
         response = await stub.GetById(accommodation_pb2.InputId(id=item_id))

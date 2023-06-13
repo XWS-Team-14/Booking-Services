@@ -9,3 +9,6 @@ kafka-python
 python-logging-loki
 motor
 aiokafka
+opentelemetry-distro
+opentelemetry-exporter-jaeger-thrift
+opentelemetry-instrumentation-grpc

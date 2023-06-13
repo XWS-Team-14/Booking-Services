@@ -20,6 +20,7 @@ from app.config import get_yaml_config
 from app.schemas.availability import AvailabilityDto
 from app.utils.jwt import get_role_from_token, get_id_from_token
 import uuid
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 
 router = APIRouter(
     tags=["Availability"],
@@ -33,7 +34,7 @@ router = APIRouter(
 )
 async def get_all():
     logger.info("Gateway processing getAll Availability request")
-    async with grpc.aio.insecure_channel(availability_server) as channel:
+    async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         logger.info("Gateway processing getAll Availability data")
         data = await stub.GetAll({})
@@ -48,7 +49,7 @@ async def get_all():
 )
 async def get_by_id(item_id):
     logger.info("Gateway processing getById Availability request")
-    async with grpc.aio.insecure_channel(availability_server) as channel:
+    async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         data = await stub.GetById(availability_crud_pb2.AvailabilityId(id=item_id))
         if data.availability_id == "":
@@ -80,11 +81,11 @@ async def get_by_user(access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "host":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
-    async with grpc.aio.insecure_channel(availability_server) as channel:
+    async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         availability_data = await stub.GetAll({})
     logger.info("Gateway fetched Availability data")
-    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+    async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
         dto = accommodation_pb2.InputId(
             id=user_id,
@@ -107,7 +108,7 @@ async def get_by_user(access_token: Annotated[str | None, Cookie()] = None):
     description="Get one availability by accommodation id",
 )
 async def get_by_accommodation(item_id):
-    async with grpc.aio.insecure_channel(availability_server) as channel:
+    async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         availability_data = await stub.GetByAccommodationId(
             availability_crud_pb2.AvailabilityId(id=item_id)
@@ -133,7 +134,7 @@ async def create(
         role = get_role_from_token(access_token)
     except ExpiredSignatureError:
         return Response(status_code=401, media_type="text/html", content="Invalid role")
-    async with grpc.aio.insecure_channel(availability_server) as channel:
+    async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
 
         availability = availability_crud_pb2.AvailabilityDto()
@@ -172,7 +173,7 @@ async def update(
     except ExpiredSignatureError:
         return Response(status_code=401, media_type="text/html", content="Invalid role")
 
-    async with grpc.aio.insecure_channel(availability_server) as channel:
+    async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
 
         availability = availability_crud_pb2.AvailabilityDto()
@@ -206,7 +207,7 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
         role = get_role_from_token(access_token)
     except ExpiredSignatureError:
         return Response(status_code=401, media_type="text/html", content="Invalid role")
-    async with grpc.aio.insecure_channel(availability_server) as channel:
+    async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         data = await stub.Delete(availability_crud_pb2.AvailabilityId(id=item_id))
     return Response(status_code=200, media_type="application/json", content=data.status)
@@ -230,7 +231,7 @@ async def get_price(
             date_start=date_start, date_end=date_end
         ),
     )
-    async with grpc.aio.insecure_channel(availability_server) as channel:
+    async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
         stub = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
         availability_data = await stub.GetPrice(price_lookup)
     json = json_format.MessageToJson(

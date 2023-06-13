@@ -20,7 +20,7 @@ from proto import (
     search_pb2,
     search_pb2_grpc,
 )
-
+from opentelemetry.instrumentation.grpc import aio_client_interceptors 
 
 class SearchServicer(search_pb2_grpc.SearchServicer):
     async def Search(self, request, context):
@@ -31,7 +31,7 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
             MessageToDict(request, preserving_proto_field_name=True)
         )
 
-        async with grpc.aio.insecure_channel(accommodation_server) as channel:
+        async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
             stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
             data = Parse(
                 json.dumps(parsed_request.dict(exclude={"interval"}), cls=UUIDEncoder),
@@ -39,7 +39,7 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
             )
             accs = await stub.GetBySearch(data)
 
-        async with grpc.aio.insecure_channel(availability_server) as channel:
+        async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
             stub2 = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
             data = Parse(
                 json.dumps(parsed_request.dict(exclude={"location"}), cls=UUIDEncoder),
