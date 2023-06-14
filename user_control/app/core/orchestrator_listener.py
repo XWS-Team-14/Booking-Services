@@ -53,7 +53,7 @@ async def listen_to_delete_messages():
                         })
             elif message.value['action'] == 'rollback':
                 logger.info("Recieved rollback message")
-                deleted_user = await DeletedUser.find(DeletedUser.transaction_id == uuid.UUID(message.value['transaction_id']))
+                deleted_user = await DeletedUser.find(DeletedUser.transaction_id == uuid.UUID(message.value['transaction_id'])).first_or_none()
                 if deleted_user:
                     logger.info("Fetched deleted user, reinserting...")
                     await User.insert(deleted_user.item)

@@ -5,7 +5,7 @@ from proto import orchestrator_pb2, orchestrator_pb2_grpc
 import grpc
 import asyncio
 from app.core.listener import listen_to_delete_messages
-
+from app.core.scheduled_rollback import no_response_rollback
 _cleanup_coroutines = []
 
 
@@ -30,4 +30,6 @@ async def serve(port):
 
     _cleanup_coroutines.append(server_graceful_shutdown())
     asyncio.create_task(listen_to_delete_messages())
+    asyncio.create_task(no_response_rollback())
+    logger.info('Started a 5min scheduled no response message check')
     await server.wait_for_termination()

@@ -77,7 +77,7 @@ async def listen_to_delete_messages():
             elif message.value['action'] == 'rollback':
                 logger.info("Recieved rollback message")
                 deleted_avails = await DeletedAvailability.find(DeletedAvailability.transaction_id == uuid.UUID(message.value['transaction_id'])).to_list()
-                if deleted_avails:
+                if len(deleted_avails)!=0:
                     logger.info("Fetched deleted availabilities, reinserting...")
                     deleted_items = []
                     for del_avail in deleted_avails:

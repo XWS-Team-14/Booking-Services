@@ -53,10 +53,13 @@ async def listen_to_delete_messages():
                             })
             elif message.value['action'] == 'rollback':
                 logger.info("Recieved rollback message")
-                deleted_accommodation = await DeletedAccommodation.find(DeletedAccommodation.transaction_id == uuid.UUID(message.value['transaction_id']))
-                if deleted_accommodation:
+                deleted_accommodations = await DeletedAccommodation.find(DeletedAccommodation.transaction_id == uuid.UUID(message.value['transaction_id'])).to_list()
+                if len(deleted_accommodations)!=0:
                     logger.info("Fetched deleted accommodation, reinserting...")
-                    await DeletedAccommodation.insert(deleted_accommodation.item)
+                    deleted_items = []
+                    for deleted in deleted_accommodations:
+                        deleted_items.append(deleted.item)
+                    await DeletedAccommodation.insert_many(deleted_items)
                     logger.info("Reinserted accommodation")
                 logger.info("Fetching failed, documents not reinserted")
             else:
