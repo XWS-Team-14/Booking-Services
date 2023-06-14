@@ -52,7 +52,7 @@ class OrchestratorServicer(orchestrator_pb2_grpc.OrchestratorServicer):
         logger.info(accomomodations)
         accomomodation_ids = []
         for item in accomomodations.items:
-            accomomodation_ids.append(str(item.host_id))
+            accomomodation_ids.append(str(item.id))
         
         logger.info(accomomodation_ids)
         #send out kafka messages

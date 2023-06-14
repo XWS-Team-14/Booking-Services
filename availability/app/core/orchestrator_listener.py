@@ -5,6 +5,7 @@ from app.models.deleted_availabilities import DeletedAvailability
 from loguru import logger
 from datetime import datetime
 import json
+import uuid
 
 from app.constants import kafka_server,kafka_producer
 
@@ -19,48 +20,63 @@ async def listen_to_delete_messages():
 
     try:
         async for message in consumer:
-            if message.value.command == 'commit':
+            logger.info(message.value)
+            if message.value['action'] == 'commit':
                 logger.info("Recieved deletion message")
-                if message.value.items:
-                    for avail_id in message.value.items:
-                        item = await Availability.get(avail_id)
-                        logger.info(item)
-                        if not item:
-                            logger.info("Delete failed, document with given id not found")
-                            #produce fail message
-                            kafka_producer.send('orchestrator-responces', {
-                                'transaction_id': str(message.value.transaction_id),
-                                'source':'availability',
-                                'status': 'fail'                                  
-                            })
-                        if item.occupied_intervals:
-                            logger.info("Delete failed, availability has reservations")
-                            #produce fail message
-                            kafka_producer.send('orchestrator-responces', {
-                                'transaction_id': str(message.value.transaction_id),
-                                'source':'availability',
-                                'status': 'fail'                                  
-                            })
+                if message.value['items']:
+                    fail_flag = False
+                    for accommodation_id in message.value['items']:
+                        if(fail_flag):
+                            break
+                        items = await Availability.find( Availability.accommodation_id == uuid.UUID(accommodation_id)).to_list()
+                        if len(items) == 0:
+                            logger.info("No documments for accomodation id found, none deleted")
                         else:
-                            logger.info("Delete is possible, deleting")
-                            await item.delete()
-                            #store it in seperate collection
-                            deleted = DeletedAvailability(
-                                item = item,
-                                transaction_id = message.value.transaction_id,
-                                timestamp = datetime.utcnow()
-                            )
-                            await deleted.insert()
-                            logger.success("Deleted Availability succesfully saved")
-                            #produce success message
-                            kafka_producer.send('orchestrator-responces', {
-                                'transaction_id': str(message.value.transaction_id),
+                            for item in items:
+                                if item.occupied_intervals:
+                                    logger.info("Delete failed, availability has reservations")
+                                    #produce fail message
+                                    kafka_producer.send('orchestrator-responces', {
+                                        'transaction_id': str(message.value['transaction_id']),
+                                        'source':'availability',
+                                        'status': 'fail'                                  
+                                    })
+                                else:
+                                    logger.info("Delete is possible, deleting")
+                                    await item.delete()
+                                    #store it in seperate collection
+                                    deleted = DeletedAvailability(
+                                        item = item,
+                                        transaction_id = message.value['transaction_id'],
+                                        timestamp = datetime.utcnow()
+                                    )
+                                    await deleted.insert()
+                                    logger.success("Deleted Availability succesfully saved")
+                                    #produce success message
+                                    kafka_producer.send('orchestrator-responces', {
+                                        'transaction_id': str(message.value['transaction_id']),
+                                        'source':'availability',
+                                        'status': 'success'                                  
+                                    })
+                                    fail_flag = True
+                                    break
+                    if not fail_flag:
+                        #produce success message
+                        kafka_producer.send('orchestrator-responces', {
+                            'transaction_id': str(message.value['transaction_id']),
+                            'source':'availability',
+                            'status': 'success'                                  
+                        })   
+                else:
+                    logger.info("Accomodation id's contents are empty, deleted nothing, responding success ")
+                    kafka_producer.send('orchestrator-responces', {
+                                'transaction_id': str(message.value['transaction_id']),
                                 'source':'availability',
                                 'status': 'success'                                  
-                            })
-            elif message.value.command == 'rollback':
+                            })                      
+            elif message.value['action'] == 'rollback':
                 logger.info("Recieved rollback message")
-                deleted_avails = await DeletedAvailability.find(DeletedAvailability.transaction_id == message.value.transaction_id).to_list()
+                deleted_avails = await DeletedAvailability.find(DeletedAvailability.transaction_id == uuid.UUID(message.value['transaction_id'])).to_list()
                 if deleted_avails:
                     logger.info("Fetched deleted availabilities, reinserting...")
                     deleted_items = []

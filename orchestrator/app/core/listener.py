@@ -18,21 +18,21 @@ async def listen_to_delete_messages():
         async for message in consumer:
             logger.info("Recieved deletion message")
             logger.info(message)
-            if message.value.status =='fail':
+            if message.value['status'] =='fail':
                 logger.info("Failiure message, sending out rollback message")
-                if message.value.source != 'user_control':
+                if message.value['source'] != 'user_control':
                     kafka_producer.send('user-delete', {
-                        'transaction_id': str(message.value.transaction_id),
+                        'transaction_id': str(message.value['transaction_id']),
                         'action': 'rollback' 
                     })
-                if message.value.source != 'accommodation':
+                if message.value['source'] != 'accommodation':
                     kafka_producer.send('accommodation-delete', {
-                        'transaction_id': str(message.value.transaction_id),
+                        'transaction_id': str(message.value['transaction_id']),
                         'action': 'rollback' 
                     })
-                if message.value.source != 'availability':
+                if message.value['source'] != 'availability':
                     kafka_producer.send('availability-delete', {
-                        'transaction_id': str(message.value.transaction_id)   ,
+                        'transaction_id': str(message.value['transaction_id'])   ,
                         'action': 'rollback'                                  
                     })
     finally:

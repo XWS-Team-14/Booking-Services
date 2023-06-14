@@ -1,6 +1,7 @@
 import asyncio
 from aiokafka import AIOKafkaConsumer
 from loguru import logger
+import uuid
 from app.models.user import User
 from app.models.deleted_user import DeletedUser
 import json
@@ -19,19 +20,19 @@ async def listen_to_delete_messages():
 
     try:
         async for message in consumer:
-            if message.value.command == 'commit':
+            logger.info(message.value)
+            if message.value['action'] == 'commit':
                 logger.info("Recieved deletion message")
-                logger.info(message.value)
-                if message.value.item:
-                    item = await User.get(message.value.item)
+                if message.value['item']:
+                    item = await User.find(User.id == uuid.UUID(message.value['item'])).first_or_none()
                     logger.info(item)
                     if not item:  
-                        logger.info("Delete failed, document with given id not found")
-                        #produce fail message
+                        logger.info("Document with given id not found, non deleted")
+                        #produce success message
                         kafka_producer.send('orchestrator-responces', {
-                            'transaction_id': str(message.value.transaction_id),
+                            'transaction_id': str(message.value['transaction_id']),
                             'source':'user_control',
-                            'status': 'fail'                                  
+                            'status': 'success'                                  
                         })
                     else:
                         logger.info("Delete is possible, deleting")
@@ -39,20 +40,20 @@ async def listen_to_delete_messages():
                         #store it in seperate collection
                         deleted = DeletedUser(
                             item = item,
-                            transaction_id = message.value.transaction_id,
+                            transaction_id = message.value['transaction_id'],
                             timestamp = datetime.utcnow()
                         )
                         await deleted.insert()
                         logger.success("Deleted User succesfully saved")
                         #produce success message
                         kafka_producer.send('orchestrator-responces', {
-                            'transaction_id': str(message.value.transaction_id),
+                            'transaction_id': str(message.value['transaction_id']),
                             'source':'user_control',
                             'status': 'success'                                  
                         })
-            elif message.value.command == 'rollback':
+            elif message.value['action'] == 'rollback':
                 logger.info("Recieved rollback message")
-                deleted_user = await DeletedUser.get(message.value.item)
+                deleted_user = await DeletedUser.find(DeletedUser.transaction_id == uuid.UUID(message.value['transaction_id']))
                 if deleted_user:
                     logger.info("Fetched deleted user, reinserting...")
                     await User.insert(deleted_user.item)
