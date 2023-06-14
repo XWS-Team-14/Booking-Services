@@ -14,7 +14,8 @@ async def no_response_rollback():
         logs = list(filter(lambda log: (log.timestamp + timedelta(minutes=5)) <= datetime.now() , logs))
         if len(logs) == 0: 
             logger.info("0 no response transactions found.")
-            return
+            await asyncio.sleep(5*60,loop=loop)
+            continue
         for log in logs:
             log.status = StatusEnum.fail
             logger.info("Setting transaction log status to fail and sending rollback")
@@ -31,5 +32,5 @@ async def no_response_rollback():
                 'action': 'rollback'                                  
             })
             log.replace()
-        await asyncio.sleep(5,loop=loop)
+        await asyncio.sleep(5*60,loop=loop)
     
