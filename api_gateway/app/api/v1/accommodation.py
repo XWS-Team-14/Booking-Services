@@ -14,7 +14,7 @@ from app.schemas.accommodation import (
 from app.utils.json_encoder import UUIDEncoder
 from fastapi import APIRouter, Cookie, Form, UploadFile
 from fastapi.responses import HTMLResponse, ORJSONResponse, Response
-from google.protobuf.json_format import MessageToDict, Parse
+from google.protobuf.json_format import MessageToDict, Parse, MessageToJson
 from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
 
@@ -235,3 +235,12 @@ async def GetById(item_id):
         status_code=parsed_response.response.status_code,
         content=parsed_response.dict(),
     )
+
+@router.get("/amenities")
+async def get_all_amenities():
+    async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
+        stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
+
+        response = await stub.GetAllAmenities()
+
+    return Response(status_code=200, content=MessageToJson(response))

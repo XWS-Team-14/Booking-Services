@@ -222,3 +222,13 @@ class AccommodationServicer(accommodation_pb2_grpc.AccommodationServiceServicer)
             json.dumps(response.dict(), cls=UUIDEncoder),
             accommodation_pb2.ResponseAccommodations(),
         )
+
+    async def GetAllAmenities(self, request, context):
+        accommodations = await Accommodation.find_all()
+        amenities = []
+        for accommodation in accommodations:
+            for amenity in accommodation.features:
+                if amenity not in amenities:
+                    amenities.append(amenity)
+
+        return accommodation_pb2.Amenities(amenities)

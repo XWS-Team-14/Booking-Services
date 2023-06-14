@@ -10,6 +10,7 @@ service AccommodationService {
   rpc GetBySearch (SearchParams) returns (ResponseAccommodations);
   rpc DeleteByUser (InputId) returns (Response);
   rpc GetByUser (InputId) returns (ResponseAccommodations);
+  rpc GetAllAmenities (Empty) returns (Amenities);
 }
 
 message Empty {
@@ -57,4 +58,8 @@ message InputId {
 message SearchParams {
   Location location = 1;
   int32 guests = 2;
+}
+
+message Amenities {
+  repeated string amenity = 1;
 }
