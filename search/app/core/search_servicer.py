@@ -55,7 +55,6 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         parsed_avvs = ExpandedAvailabilityDtos.parse_obj(
             MessageToDict(avvs, preserving_proto_field_name=True)
         )
-
         if parsed_request.must_be_featured_host:
             async with grpc.aio.insecure_channel(review_server) as channel:
                 stub_review = review_pb2_grpc.ReviewServiceStub(channel)
@@ -91,7 +90,9 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
                 can_be_added = False
 
             if can_be_added:
-                result.items.append(SearchResult.construct().create(item, availability))
+                item = SearchResult.construct().create(item, availability)
+                item.total_price = price
+                result.items.append(item)
         else:
             result.response.message_string = "Success!"
             result.response.status_code = 200

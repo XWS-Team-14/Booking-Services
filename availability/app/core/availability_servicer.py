@@ -128,11 +128,13 @@ class AvailabilityServicer(availability_crud_pb2_grpc.AvailabilityCrudServicer):
         holidays = await Holiday.find_all().to_list()
         for item in realList:
             retVal.items.append(AvailabilityHelper.convert_to_expanded_dto(item))
+            print(AvailabilityHelper.calculate_price(
+                request.interval, request.guests, item, holidays
+            ))
             retVal.items[-1].total_price = AvailabilityHelper.calculate_price(
                 request.interval, request.guests, item, holidays
             )
         logger.success("Succesfully fetched")
-
         return retVal
 
     async def AddOccupiedInterval(self, request, context):
