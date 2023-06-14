@@ -43,7 +43,7 @@ async def listen_to_delete_messages():
                             })
                         else:
                             logger.info("Delete is possible, deleting")
-                            #await item.delete()
+                            await item.delete()
                             #store it in seperate collection
                             deleted = DeletedAvailability(
                                 item = item,
