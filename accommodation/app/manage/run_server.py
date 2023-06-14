@@ -3,7 +3,8 @@ from app.core.accommodation_servicer import AccommodationServicer
 from app.db.mongodb import start_async_mongodb
 from proto import accommodation_pb2_grpc
 import grpc
-
+import asyncio
+from app.core.orchestrator_listener import listen_to_delete_messages
 _cleanup_coroutines = []
 
 
@@ -29,4 +30,6 @@ async def serve(port):
         await server.stop(5)
 
     _cleanup_coroutines.append(server_graceful_shutdown())
+
+    asyncio.create_task(listen_to_delete_messages())
     await server.wait_for_termination()
