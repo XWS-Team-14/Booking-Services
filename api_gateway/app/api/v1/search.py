@@ -37,6 +37,7 @@ async def search(
 ):
     print(amenities)
     amenities = [] if amenities is None else amenities
+    price_max = -1 if price_max is None else price_max
     params = SearchParams(
         location=Location(country=country, city=city, address=address),
         guests=guests,

@@ -29,34 +29,35 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         availability_server = get_server("availability_server")
         accommodation_server = get_server("accommodation_server")
         review_server = get_server("review_server")
-
+        print('1')
         parsed_request = SearchParams.parse_obj(
             MessageToDict(request, preserving_proto_field_name=True)
         )
+        print('2')
 
         async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
             stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
             data = Parse(
-                json.dumps(parsed_request.dict(exclude={"interval"}), cls=UUIDEncoder),
+                json.dumps(parsed_request.dict(exclude={"interval", "price_min", "price_max", "must_be_featured_host"}), cls=UUIDEncoder),
                 accommodation_pb2.SearchParams(),
             )
             accs = await stub.GetBySearch(data)
-
+        print('3')
         async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
             stub2 = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
             data = Parse(
-                json.dumps(parsed_request.dict(exclude={"location"}), cls=UUIDEncoder),
+                json.dumps(parsed_request.dict(exclude={"location", "amenities", "must_be_featured_host"}), cls=UUIDEncoder),
                 availability_crud_pb2.SearchDetails(),
             )
             avvs = await stub2.GetAllSearch(data)
-
-        if parsed_request['must_be_featured_host']:
+        print('4')
+        if parsed_request.must_be_featured_host:
             async with grpc.aio.insecure_channel(review_server) as channel:
                 stub_review = review_pb2_grpc.ReviewServiceStub(channel)
                 grpc_review_response = await stub_review.GetAllAccommodationsWithFeaturedHost(review_pb2.Empty())
                 if grpc_review_response.error_message:
                     logger.info(f"{grpc_review_response.error_code}: {grpc_review_response.error_message}")
-                
+        print('5')
 
         parsed_accs = ResponseAccommodations.parse_obj(
             MessageToDict(accs, preserving_proto_field_name=True)
