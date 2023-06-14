@@ -57,16 +57,19 @@ class OrchestratorServicer(orchestrator_pb2_grpc.OrchestratorServicer):
         logger.info(accomomodation_ids)
         #send out kafka messages
         kafka_producer.send('user-delete', {
-            'user': str(request.id),
-            'transaction_id': str(log.transaction_id)
+            'item': str(request.id),
+            'transaction_id': str(log.transaction_id),
+            'action': 'commit' 
         })
         kafka_producer.send('accommodation-delete', {
-            'user': str(request.id),
-            'transaction_id': str(log.transaction_id)
+            'item': str(request.id),
+            'transaction_id': str(log.transaction_id),
+            'action': 'commit' 
         })
         kafka_producer.send('availability-delete', {
             'items' : accomomodation_ids,
-            'transaction_id': str(log.transaction_id)                                            
+            'transaction_id': str(log.transaction_id)   ,
+            'action': 'commit'                                  
         })
         logger.info(f'Sent out messages for deletion of user {request.id}')
         return orchestrator_pb2.EmptyMessage(error_message = 'Accepted', error_code = 202 )
