@@ -58,6 +58,7 @@ message InputId {
 message SearchParams {
   Location location = 1;
   int32 guests = 2;
+  repeated string amenities = 3;
 }
 
 message Amenities {

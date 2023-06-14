@@ -224,11 +224,13 @@ class AccommodationServicer(accommodation_pb2_grpc.AccommodationServiceServicer)
         )
 
     async def GetAllAmenities(self, request, context):
-        accommodations = await Accommodation.find_all()
+        print("hi")
+        accommodations = await Accommodation.find_all().to_list()
         amenities = []
         for accommodation in accommodations:
             for amenity in accommodation.features:
                 if amenity not in amenities:
                     amenities.append(amenity)
 
-        return accommodation_pb2.Amenities(amenities)
+        print(amenities)
+        return accommodation_pb2.Amenities(amenity=amenities)

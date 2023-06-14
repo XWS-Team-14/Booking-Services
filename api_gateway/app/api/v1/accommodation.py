@@ -209,7 +209,6 @@ async def getAll():
 
 @router.get("/id/{item_id}")
 async def GetById(item_id):
-
     async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
 
@@ -236,11 +235,12 @@ async def GetById(item_id):
         content=parsed_response.dict(),
     )
 
+
 @router.get("/amenities")
 async def get_all_amenities():
     async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
+        logger.info("Gateway processing get all amenities")
+        data = await stub.GetAllAmenities({})
 
-        response = await stub.GetAllAmenities()
-
-    return Response(status_code=200, content=MessageToJson(response))
+    return Response(status_code=200, content=MessageToJson(data))
