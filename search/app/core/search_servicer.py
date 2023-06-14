@@ -29,11 +29,9 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         availability_server = get_server("availability_server")
         accommodation_server = get_server("accommodation_server")
         review_server = get_server("review_server")
-        print('1')
         parsed_request = SearchParams.parse_obj(
             MessageToDict(request, preserving_proto_field_name=True)
         )
-        print('2')
 
         async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
             stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
@@ -42,7 +40,6 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
                 accommodation_pb2.SearchParams(),
             )
             accs = await stub.GetBySearch(data)
-        print('3')
         async with grpc.aio.insecure_channel(availability_server, interceptors=aio_client_interceptors()) as channel:
             stub2 = availability_crud_pb2_grpc.AvailabilityCrudStub(channel)
             data = Parse(
@@ -50,8 +47,6 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
                 availability_crud_pb2.SearchDetails(),
             )
             avvs = await stub2.GetAllSearch(data)
-        print('4')
-        print('5')
 
         parsed_accs = ResponseAccommodations.parse_obj(
             MessageToDict(accs, preserving_proto_field_name=True)
@@ -79,28 +74,21 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
 
         acc_dct = {parsed_accs.items[i].id: parsed_accs.items[i] for i in range(0, len(parsed_accs.items))}
         avv_dct = {parsed_avvs.items[i].accommodation_id: parsed_avvs.items[i] for i in range(0, len(parsed_avvs.items))}
-        # if parsed_avvs.response.status_code != 200:
-        #    result.response.status_code = parsed_avvs.response.status_code
-        #    result.response.message_string = parsed_avvs.response.message_string
-        #    return Parse(
-        #        json.dumps(result.dict(), cls=UUIDEncoder), search_pb2.SearchResults()
-        #    )
         for item_id in acc_dct:
             item = acc_dct[item_id]
             availability = avv_dct[item_id]
             amenities = item.features
             price = availability.total_price
+            price_min = parsed_request.price_min
+            price_max = float('inf') if parsed_request.price_max == -1 else parsed_request.price_max
             can_be_added = True
             for amenity in parsed_request.amenities:
                 if amenity not in amenities:
                     can_be_added = False
                     break
 
-            if not (parsed_request.price_min <= price <= parsed_request.price_max):
+            if not (price_min <= price <= price_max):
                 can_be_added = False
-
-            if parsed_request.must_be_featured_host:
-
 
             if can_be_added:
                 result.items.append(SearchResult.construct().create(item, availability))
