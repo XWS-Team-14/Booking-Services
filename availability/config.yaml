@@ -8,3 +8,7 @@ mongodb:
 loki:
   url: "loki:3100"
   service: "availability-service"
+
+kafka_server:
+  ip: "kafka"
+  port: "9092"

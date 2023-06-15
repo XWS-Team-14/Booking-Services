@@ -1,0 +1,9 @@
+motor
+beanie
+loguru
+PyYAML
+kafka-python
+aiokafka
+grpcio
+grpcio-tools
+asyncio

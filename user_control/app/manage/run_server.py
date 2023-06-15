@@ -5,6 +5,8 @@ from app.db.mongodb import start_async_mongodb
 import grpc
 
 from proto import user_pb2_grpc
+import asyncio
+from app.core.orchestrator_listener import listen_to_delete_messages
 
 # Telemetry
 from opentelemetry import trace
@@ -50,4 +52,6 @@ async def serve(port):
         await server.stop(5)
 
     _cleanup_coroutines.append(server_graceful_shutdown())
+
+    asyncio.create_task(listen_to_delete_messages())
     await server.wait_for_termination()
