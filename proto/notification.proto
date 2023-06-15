@@ -3,6 +3,9 @@ package notification;
 
 service NotificationService {
   rpc Send (Notification) returns (Empty);
+  rpc Initialize (Receiver) returns (Empty);
+  rpc GetUserPreferences (Receiver) returns (UserPreferences);
+  rpc UpdateUserPreference (Preference) returns (Empty);
 }
 
 message Empty {
@@ -18,6 +21,7 @@ message Sender {
 
 message Receiver {
   string id = 1;
+  optional string role = 2;
 }
 
 message Accommodation {
@@ -33,4 +37,15 @@ message Notification {
   Accommodation accommodation = 5;
   string status = 6;
   string timestamp = 7;
+}
+
+message Preference {
+  string id = 1;
+  string type = 2;
+  string user_id = 3;
+  bool enabled = 4;
+}
+
+message UserPreferences {
+  repeated Preference preference = 1;
 }

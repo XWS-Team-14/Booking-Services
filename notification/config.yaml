@@ -1,3 +1,10 @@
+mongodb:
+  ip: "mongo-notification"
+  port: "27017"
+  username: "root"
+  password: "root"
+  db: "notification"
+
 loki:
   url: "loki:3100"
   service: "notification-service"

@@ -8,3 +8,4 @@ pydantic
 opentelemetry-distro
 opentelemetry-exporter-jaeger-thrift
 opentelemetry-instrumentation-grpc
+beanie
