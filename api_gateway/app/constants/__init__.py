@@ -17,5 +17,6 @@ search_server = get_server("search_server")
 notification_server = get_server("notification_server")
 review_server = get_server("review_server")
 orchestrator_server = get_server("orchestrator_server")
+accommodation_recomender_server = get_server("recomdender_server")
 
 kafka_producer = KafkaProducer(bootstrap_servers=[kafka_server], value_serializer=lambda m: json.dumps(m).encode('ascii'))

@@ -16,6 +16,6 @@ def start_neomodel():
     username = get_neo4j_config().get("username")
     password = get_neo4j_config().get("password")
     db = get_neo4j_config().get("db")
-    config.DATABASE_URL = (f'bolt://{username}:{password}@{ip}:{port}/{db}')
+    config.DATABASE_URL = (f'bolt://{username}:{password}@{ip}:{port}')
     logger.info(f"Set neomodel config database_url {config.DATABASE_URL}")
     

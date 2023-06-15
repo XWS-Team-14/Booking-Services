@@ -65,7 +65,7 @@ services:
     #ports:
     #- 27017:27017
   
-  neo4j-recomender:
+  neo4j_recomender:
     image: neo4j:latest
     restart: always
     environment:
@@ -186,15 +186,15 @@ services:
       - mongo-orchestrator
       - kafka
   
-  accommodation-recomender:
-    build: ./accommodation-recomender
-    image: accommodation-recomender:latest
-    container_name: accommodation-recomender
+  accommodation_recomender:
+    build: ./accommodation_recomender
+    image: accommodation_recomender:latest
+    container_name: accommodation_recomender
     command: "python main.py runserver 50060"
     volumes:
       - ./proto:/app/proto
     depends_on:
-      - neo4j-recomender
+      - neo4j_recomender
       - kafka
 
   api_gateway:
