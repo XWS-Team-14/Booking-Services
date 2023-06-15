@@ -24,6 +24,11 @@ class ReviewServiceStub(object):
                 request_serializer=review__pb2.HostId.SerializeToString,
                 response_deserializer=review__pb2.HostStatus.FromString,
                 )
+        self.GetAllAccommodationsWithFeaturedHost = channel.unary_unary(
+                '/review.ReviewService/GetAllAccommodationsWithFeaturedHost',
+                request_serializer=review__pb2.Empty.SerializeToString,
+                response_deserializer=review__pb2.Accommodations.FromString,
+                )
 
 
 class ReviewServiceServicer(object):
@@ -41,6 +46,12 @@ class ReviewServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetAllAccommodationsWithFeaturedHost(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ReviewServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +64,11 @@ def add_ReviewServiceServicer_to_server(servicer, server):
                     servicer.GetHostStatus,
                     request_deserializer=review__pb2.HostId.FromString,
                     response_serializer=review__pb2.HostStatus.SerializeToString,
+            ),
+            'GetAllAccommodationsWithFeaturedHost': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllAccommodationsWithFeaturedHost,
+                    request_deserializer=review__pb2.Empty.FromString,
+                    response_serializer=review__pb2.Accommodations.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +111,22 @@ class ReviewService(object):
         return grpc.experimental.unary_unary(request, target, '/review.ReviewService/GetHostStatus',
             review__pb2.HostId.SerializeToString,
             review__pb2.HostStatus.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAllAccommodationsWithFeaturedHost(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/review.ReviewService/GetAllAccommodationsWithFeaturedHost',
+            review__pb2.Empty.SerializeToString,
+            review__pb2.Accommodations.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

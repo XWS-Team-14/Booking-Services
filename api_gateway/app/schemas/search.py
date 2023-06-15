@@ -16,6 +16,11 @@ class SearchParams(BaseModel):
     interval: DateInterval
     location: Location
     guests: int
+    amenities: list[str] = []
+    price_min: float = 0
+    price_max: float = float('inf')
+    must_be_featured_host: bool = False
+
 
 
 class SearchResult(BaseModel):

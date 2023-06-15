@@ -21,6 +21,8 @@ message Result {
 message SearchDetails {
     Interval interval = 1;
     int32 guests = 2;
+    float price_min = 3;
+    float price_max = 4;
 }
 message UpdateIntervalDto {
     string id = 1;
