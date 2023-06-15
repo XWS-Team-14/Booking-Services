@@ -8,6 +8,8 @@ passlib[bcrypt]
 email-validator
 pyjwt
 python-logging-loki
+aiokafka
+asyncio
 opentelemetry-distro
 opentelemetry-exporter-jaeger-thrift
 opentelemetry-instrumentation-grpc

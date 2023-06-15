@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+service Orchestrator {
+  rpc DeleteUser (UserId) returns (EmptyMessage);
+}
+
+message EmptyMessage {
+  optional string error_message = 1;
+  optional int32 error_code = 2;
+}
+
+message UserId {
+  string id = 1;
+}
