@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+service AccommodationRecomender {
+  rpc GetRecomended (User_id) returns (Accommodation_ids);
+}
+
+message User_id {
+  string id = 1;
+}
+
+message Accommodation_ids {
+  repeated string ids = 1;
+}
+

@@ -65,6 +65,16 @@ services:
     #ports:
     #- 27017:27017
   
+  neo4j-recomender:
+    image: neo4j:latest
+    restart: always
+    environment:
+      - NEO4J_AUTH=neo4j/root
+      - NEO4J_dbms_security_auth__minimum__password__length=4
+    #ports:
+    #  - 7474:7474
+    #  - 7687:7687
+  
   # Services, expose ports when you want to test your grpc service manually
   # Running ports are not that important, but it can be easier to differentiate between services
   accommodation:
@@ -174,6 +184,17 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-orchestrator
+      - kafka
+  
+  accommodation-recomender:
+    build: ./accommodation-recomender
+    image: accommodation-recomender:latest
+    container_name: accommodation-recomender
+    command: "python main.py runserver 50060"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      - neo4j-recomender
       - kafka
 
   api_gateway:
