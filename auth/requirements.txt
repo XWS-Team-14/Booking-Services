@@ -9,3 +9,6 @@ email-validator
 pyjwt
 python-logging-loki
 aiokafka
+opentelemetry-distro
+opentelemetry-exporter-jaeger-thrift
+opentelemetry-instrumentation-grpc

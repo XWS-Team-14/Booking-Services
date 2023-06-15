@@ -17,3 +17,6 @@ protobuf
 websockets
 kafka-python
 aiokafka
+opentelemetry-distro
+opentelemetry-exporter-jaeger-thrift
+opentelemetry-instrumentation-grpc

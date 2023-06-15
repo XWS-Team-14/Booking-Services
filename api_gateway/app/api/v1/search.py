@@ -11,6 +11,7 @@ from google.protobuf.json_format import MessageToDict, Parse
 from loguru import logger
 
 from proto import search_pb2, search_pb2_grpc
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 
 router = APIRouter(
     tags=["Search"],
@@ -34,7 +35,7 @@ async def search(
         guests=guests,
         interval=DateInterval(date_start=date_start, date_end=date_end),
     )
-    async with grpc.aio.insecure_channel(search_server) as channel:
+    async with grpc.aio.insecure_channel(search_server, interceptors=aio_client_interceptors()) as channel:
         stub = search_pb2_grpc.SearchStub(channel)
         data = await stub.Search(
             Parse(json.dumps(params.dict()), search_pb2.SearchParams())
