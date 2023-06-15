@@ -61,6 +61,11 @@ class OrchestratorServicer(orchestrator_pb2_grpc.OrchestratorServicer):
             'transaction_id': str(log.transaction_id),
             'action': 'commit' 
         })
+        kafka_producer.send('auth-delete', {
+            'item': str(request.id),
+            'transaction_id': str(log.transaction_id),
+            'action': 'commit' 
+        })
         kafka_producer.send('accommodation-delete', {
             'item': str(request.id),
             'transaction_id': str(log.transaction_id),

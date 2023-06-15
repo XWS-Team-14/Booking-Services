@@ -35,5 +35,10 @@ async def listen_to_delete_messages():
                         'transaction_id': str(message.value['transaction_id'])   ,
                         'action': 'rollback'                                  
                     })
+                if message.value['source'] != 'auth':
+                    kafka_producer.send('auth-delete', {
+                        'transaction_id': str(message.value['transaction_id'])   ,
+                        'action': 'rollback'                                  
+                    })
     finally:
         await consumer.stop()

@@ -31,6 +31,10 @@ async def no_response_rollback():
                 'transaction_id': str(log.transaction_id),
                 'action': 'rollback'                                  
             })
+            kafka_producer.send('auth-delete', {
+                'transaction_id': str(log.transaction_id)   ,
+                'action': 'rollback'                                  
+            })
             log.replace()
         await asyncio.sleep(5*60,loop=loop)
     

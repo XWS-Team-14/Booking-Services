@@ -3,6 +3,8 @@ from app.core.credentials_servicer import CredentialServicer
 from app.db.mongodb import start_async_mongodb
 from proto import credential_pb2_grpc
 import grpc
+import asyncio
+from app.core.orchestrator_listener import listen_to_delete_messages
 
 # Telemetry
 from opentelemetry import trace
@@ -46,5 +48,6 @@ async def serve(port):
         # existing RPCs to continue within the grace period.
         await server.stop(5)
 
+    asyncio.create_task(listen_to_delete_messages())
     _cleanup_coroutines.append(server_graceful_shutdown())
     await server.wait_for_termination()
