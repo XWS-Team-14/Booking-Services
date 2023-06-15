@@ -17,6 +17,7 @@ class Log(Document):
     target: str
     status: StatusEnum
     objects: Any
+    confirmations: int = 0
 
     class Settings:
         indexes = [
