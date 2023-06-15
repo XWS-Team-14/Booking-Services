@@ -110,19 +110,19 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         logger.success('Reservation succesfully updated')
         return review_pb2.ReservationResult(review=ReviewHelper.convertReviewToDto(item),message="Success", code=200)
 
-    async def Delete(self, request, context):
+    async def DeleteReview(self, request, context):
         logger.success('Request for cancellation of Reservation accepted')
         try:
-            item = await Reservation.get(uuid.UUID(request.id), fetch_links=True)
+            item = await Review.get(uuid.UUID(request.id), fetch_links=True)
             if not item:
                 logger.info('Delete failed, document with given id not found')
                 return review_pb2.Reservation()
         except (ValueError, DocumentNotFound):
             logger.info('Delete failed, document with given id not found')
             return review_pb2.Reservation()
-        item.host.decrease_rating_count()
+        item.host.review_count -= 1
         item.host.increase_rating_sum(-item.host_rating)
-        item.accommodation.rating_count -= 1
+        item.accommodation.review_count -= 1
         item.accommodation.rating_sum -= item.accommodation_rating
         await item.host.replace()
         await item.accommodation.replace()

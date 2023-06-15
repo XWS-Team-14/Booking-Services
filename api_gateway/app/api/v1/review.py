@@ -194,7 +194,7 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
 
     async with grpc.aio.insecure_channel(review_server) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
-        data = await stub.Delete(reservation_crud_pb2.ReservationId(id=item_id))
+        data = await stub.DeleteReview(reservation_crud_pb2.ReservationId(id=item_id))
     return Response(
         status_code=200, media_type="application/json", content=data
     )
