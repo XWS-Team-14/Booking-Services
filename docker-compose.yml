@@ -71,9 +71,9 @@ services:
     environment:
       - NEO4J_AUTH=neo4j/root
       - NEO4J_dbms_security_auth__minimum__password__length=4
-    #ports:
-    #  - 7474:7474
-    #  - 7687:7687
+    ports:
+      - 7474:7474
+      - 7687:7687
   
   # Services, expose ports when you want to test your grpc service manually
   # Running ports are not that important, but it can be easier to differentiate between services

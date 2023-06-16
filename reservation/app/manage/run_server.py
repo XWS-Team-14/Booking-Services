@@ -5,6 +5,8 @@ import grpc
 
 from ..core.reservation_servicer import ReservationServicer
 from ..db.mongodb import start_async_mongodb
+import asyncio
+from app.core.data_migrator import start_data_migrator
 
 # Telemetry
 from opentelemetry import trace
@@ -49,5 +51,6 @@ async def serve(port):
         # existing RPCs to continue within the grace period.
         await server.stop(5)
 
+    asyncio.create_task(start_data_migrator())
     _cleanup_coroutines.append(server_graceful_shutdown())
     await server.wait_for_termination()

@@ -1,22 +1,19 @@
-from neomodel import (StructuredNode, StringProperty,Relationship,ArrayProperty,IntegerProperty,BooleanProperty)
+from neomodel import (StructuredNode,StructuredRel,DateTimeProperty, StringProperty,Relationship,ArrayProperty,IntegerProperty,BooleanProperty)
+from datetime import datetime
 
-
+class ReviewRel(StructuredRel):
+    timestamp = DateTimeProperty(
+        index=True
+    )
+    grade = IntegerProperty()
+    
 class User(StructuredNode):
     user_id = StringProperty(unique_index=True, required=True)
-    first_name=StringProperty()
-    last_name= StringProperty()
-    home_address= StringProperty()
-    gender= StringProperty()
     reserved = Relationship('Accommodation', 'RESERVED')
+    reviewed = Relationship('Accommodation', 'REVIEWED', model=ReviewRel)
 
 class Accommodation(StructuredNode):
     accomodation_id= StringProperty(required=True)
-    host_id= StringProperty()
-    name= StringProperty()
-    location= StringProperty()
-    features=ArrayProperty(StringProperty())
-    image_urls= ArrayProperty(StringProperty())
-    min_guests= IntegerProperty()
-    max_guests= IntegerProperty()
-    auto_accept_flag= BooleanProperty()
     is_reserved = Relationship('User', 'RESERVED_BY')
+    is_reviewed = Relationship('User', 'IS_REVIEWED', model=ReviewRel)
+    
