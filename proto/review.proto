@@ -8,15 +8,18 @@ service ReviewService {
   rpc GetAllReviews(Empty) returns (ReviewDtos);
   rpc GetReviewById(ReviewId) returns (Review);
   rpc GetReviewsByHost(HostId) returns (ReviewDtos);
-  rpc UpdateReview(UpdateReviewDto) returns (ReviewResponse);
+  rpc UpdateReview(UpdateReviewDto) returns (Review);
   rpc DeleteReview(ReviewId) returns (Empty);
+  rpc GetReviewsByPoster(Poster) returns (ReviewDtos);
 }
 
 message Empty {
   optional string error_message = 1;
   optional int32 error_code = 2;
 }
-
+message Poster{
+  string id = 1;
+}
 message HostId {
   string id = 1;
 }

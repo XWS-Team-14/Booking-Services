@@ -84,6 +84,21 @@ async def getByHost(host_id):
         status_code=200, media_type="application/json", content=json
     )
 
+@router.get(
+    "/poster/{guest_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get all reviews by guest id",
+)
+async def getByPoster(guest_id):
+    logger.info("Gateway processing getByPoster Review request")
+
+    async with grpc.aio.insecure_channel(review_server) as channel:
+        stub = review_pb2_grpc.ReviewServiceStub(channel)
+        data = await stub.GetReviewsByPoster(review_pb2.Poster(id=guest_id))
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
 
 @router.post("/", response_class=HTMLResponse)
 async def create_review(
@@ -115,14 +130,15 @@ async def create_review(
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        reservations = await stub.GetByGuest(user_id)
-        if reservations == None:
+        reservations = await stub.GetByGuest(reservation_crud_pb2.GuestId(id =user_id))
+        if not reservations.items:
             return Response(
                 status_code=400, media_type="text/html", content="reservations is null"
             )
-        has_reservations_at_accommodation = True
+        has_reservations_at_accommodation = False
         for reservation in reservations.items:
-            if str(reservation.guest.id) == str(user_id):
+            logger.info("i'm in for")
+            if reservation.accommodation.id:
                 has_reservations_at_accommodation = True
                 logger.info('found reservation ')
 
@@ -148,7 +164,7 @@ async def create_review(
         )
     else:
         return Response(
-            status_code=400, media_type="text/html", content="guest hsa no reservation at accommodation"
+            status_code=400, media_type="text/html", content="eservations.items"
         )
 
 
@@ -157,16 +173,28 @@ async def create_review(
     status_code=status.HTTP_204_NO_CONTENT,
     description="Update reservation",
 )
-async def update(item: UpdateReviewDto):
+async def update(item: UpdateReviewDto, access_token: Annotated[str | None, Cookie()]):
+    try:
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+    if user_role != "guest":
+        return Response(status_code=401, media_type="text/html", content="Unauthorized")
     logger.info("Gateway processing update reservation request")
     async with grpc.aio.insecure_channel(review_server) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
 
-        review = reservation_crud_pb2.UpdateReviewDto()
+        review = review_pb2.UpdateReviewDto()
         review.id = str(item.id)
         review.accommodation_rating = item.accommodation_rating
         review.host_rating = item.host_rating
-        response = await stub.UpdateReview(reservation)
+        response = await stub.UpdateReview(review)
     return Response(
         status_code=200, media_type="application/json", content=response
     )
@@ -194,7 +222,7 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
 
     async with grpc.aio.insecure_channel(review_server) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
-        data = await stub.DeleteReview(reservation_crud_pb2.ReservationId(id=item_id))
+        data = await stub.DeleteReview(review_pb2.ReviewId(id=item_id))
     return Response(
-        status_code=200, media_type="application/json", content=data
+        status_code=200, media_type="application/json", content=data.error_message
     )
