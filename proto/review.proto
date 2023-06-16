@@ -4,14 +4,24 @@ package review;
 service ReviewService {
   rpc Send (Empty) returns (Empty);
   rpc GetHostStatus(HostId) returns (HostStatus);
+  rpc CreateReview(Review) returns (ReviewResponse);
+  rpc GetAllReviews(Empty) returns (ReviewDtos);
+  rpc GetReviewById(ReviewId) returns (Review);
+  rpc GetReviewsByHost(HostId) returns (ReviewDtos);
+  rpc UpdateReview(UpdateReviewDto) returns (Review);
+  rpc DeleteReview(ReviewId) returns (Empty);
+  rpc GetReviewsByPoster(Poster) returns (ReviewDtos);
   rpc GetAllAccommodationsWithFeaturedHost(Empty) returns (Accommodations);
+
 }
 
 message Empty {
   optional string error_message = 1;
   optional int32 error_code = 2;
 }
-
+message Poster{
+  string id = 1;
+}
 message HostId {
   string id = 1;
 }
@@ -21,6 +31,39 @@ message HostStatus {
   bool status = 2;
   optional string error_message = 3;
   optional int32 error_code = 4;
+}
+message ReviewId{
+  string  id = 1;
+}
+message UpdateReviewDto{
+  string id = 1;
+  int32 host_rating= 2;
+  int32 accommodation_rating= 3;
+}
+message CreateReview{
+  string id = 1;
+  string host_id= 2;
+  string accommodation_id= 3;
+  string poster = 4;
+  int32 host_rating= 5;
+  int32 accommodation_rating= 6;
+}
+message Review{
+  string id = 1;
+  string host_id= 2;
+  string accommodation_id= 3;
+  string poster = 4;
+  int32 host_rating= 5;
+  int32 accommodation_rating= 6;
+  string timestamp=7;
+}
+message ReviewDtos{
+  repeated Review items = 1;
+}
+message ReviewResponse{
+  Review review = 1;
+  optional string message = 2;
+  int32 code = 3;
 }
 
 message Accommodations {

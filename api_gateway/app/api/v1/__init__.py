@@ -9,7 +9,7 @@ from .search import router as search_router
 from .notification import router as notification_router
 from .orchestartor import router as orchestrator_router
 from ...config import get_yaml_config
-
+from .review import  router as review_router
 
 config = get_yaml_config().get("app")
 router = APIRouter(prefix=f"/{config.get('api_prefix')}")
@@ -20,5 +20,7 @@ router.include_router(reservation_router, prefix="/reservation", tags=["Reservat
 router.include_router(search_router, prefix="/search", tags=["Search"])
 router.include_router(accommodation_router, prefix="/accommodation", tags=["Accommodation"])
 router.include_router(notification_router, prefix="/notification", tags=["Notification"])
+router.include_router(review_router, prefix="/review", tags=["Review"])
 router.include_router(orchestrator_router, prefix="/orchestrator", tags=["Orchestrator"])
+
 
