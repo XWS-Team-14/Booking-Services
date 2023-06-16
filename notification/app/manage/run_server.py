@@ -2,6 +2,7 @@ from loguru import logger
 import grpc
 
 from app.core.notification_servicer import NotificationServicer
+from app.db.mongodb import start_async_mongodb
 from proto import notification_pb2_grpc
 
 # Telemetry
@@ -33,6 +34,8 @@ async def serve(port):
     # Add services
     notification_pb2_grpc.add_NotificationServiceServicer_to_server(NotificationServicer(), server)
     server.add_insecure_port('[::]:'+port)
+    logger.info('Connecting to the database')
+    await start_async_mongodb()
     logger.info('Starting GRPC server')
     await server.start()
     logger.success(f'GRPC server has started on port {port}, waiting for termination')

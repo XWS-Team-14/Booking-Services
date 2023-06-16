@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12notification.proto\x12\x0cnotification\"]\n\x05\x45mpty\x12\x1a\n\rerror_message\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x02 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"D\n\x06Sender\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x14\n\x07picture\x18\x03 \x01(\tH\x00\x88\x01\x01\x42\n\n\x08_picture\"\x16\n\x08Receiver\x12\n\n\x02id\x18\x01 \x01(\t\")\n\rAccommodation\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\xdd\x01\n\x0cNotification\x12\x10\n\x03key\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x0c\n\x04type\x18\x02 \x01(\t\x12$\n\x06sender\x18\x03 \x01(\x0b\x32\x14.notification.Sender\x12(\n\x08receiver\x18\x04 \x01(\x0b\x32\x16.notification.Receiver\x12\x32\n\raccommodation\x18\x05 \x01(\x0b\x32\x1b.notification.Accommodation\x12\x0e\n\x06status\x18\x06 \x01(\t\x12\x11\n\ttimestamp\x18\x07 \x01(\tB\x06\n\x04_key2N\n\x13NotificationService\x12\x37\n\x04Send\x12\x1a.notification.Notification\x1a\x13.notification.Emptyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12notification.proto\x12\x0cnotification\"]\n\x05\x45mpty\x12\x1a\n\rerror_message\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x02 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"D\n\x06Sender\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x14\n\x07picture\x18\x03 \x01(\tH\x00\x88\x01\x01\x42\n\n\x08_picture\"2\n\x08Receiver\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\x04role\x18\x02 \x01(\tH\x00\x88\x01\x01\x42\x07\n\x05_role\")\n\rAccommodation\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\xdd\x01\n\x0cNotification\x12\x10\n\x03key\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x0c\n\x04type\x18\x02 \x01(\t\x12$\n\x06sender\x18\x03 \x01(\x0b\x32\x14.notification.Sender\x12(\n\x08receiver\x18\x04 \x01(\x0b\x32\x16.notification.Receiver\x12\x32\n\raccommodation\x18\x05 \x01(\x0b\x32\x1b.notification.Accommodation\x12\x0e\n\x06status\x18\x06 \x01(\t\x12\x11\n\ttimestamp\x18\x07 \x01(\tB\x06\n\x04_key\"H\n\nPreference\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x04 \x01(\x08\"?\n\x0fUserPreferences\x12,\n\npreference\x18\x01 \x03(\x0b\x32\x18.notification.Preference2\x9d\x02\n\x13NotificationService\x12\x37\n\x04Send\x12\x1a.notification.Notification\x1a\x13.notification.Empty\x12\x39\n\nInitialize\x12\x16.notification.Receiver\x1a\x13.notification.Empty\x12K\n\x12GetUserPreferences\x12\x16.notification.Receiver\x1a\x1d.notification.UserPreferences\x12\x45\n\x14UpdateUserPreference\x12\x18.notification.Preference\x1a\x13.notification.Emptyb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'notification_pb2', globals())
@@ -25,11 +25,15 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _SENDER._serialized_start=131
   _SENDER._serialized_end=199
   _RECEIVER._serialized_start=201
-  _RECEIVER._serialized_end=223
-  _ACCOMMODATION._serialized_start=225
-  _ACCOMMODATION._serialized_end=266
-  _NOTIFICATION._serialized_start=269
-  _NOTIFICATION._serialized_end=490
-  _NOTIFICATIONSERVICE._serialized_start=492
-  _NOTIFICATIONSERVICE._serialized_end=570
+  _RECEIVER._serialized_end=251
+  _ACCOMMODATION._serialized_start=253
+  _ACCOMMODATION._serialized_end=294
+  _NOTIFICATION._serialized_start=297
+  _NOTIFICATION._serialized_end=518
+  _PREFERENCE._serialized_start=520
+  _PREFERENCE._serialized_end=592
+  _USERPREFERENCES._serialized_start=594
+  _USERPREFERENCES._serialized_end=657
+  _NOTIFICATIONSERVICE._serialized_start=660
+  _NOTIFICATIONSERVICE._serialized_end=945
 # @@protoc_insertion_point(module_scope)
