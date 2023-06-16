@@ -3,6 +3,8 @@ import uuid
 from loguru import logger
 from proto import review_pb2_grpc, review_pb2
 from datetime import datetime
+
+from app.models.accommodation import Accommodation
 from app.models.host import Host
 from app.models.accommodation import Accommodation
 from app.models.review import Review
@@ -148,3 +150,14 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
 
         logger.success('review succesfully deleted')
         return review_pb2.Empty(error_message="Success", error_code = 200)
+
+    async def GetAllAccommodationsWithFeaturedHost(self, request, context):
+        all_accommodations = await Accommodation.find_all()
+        featured_accommodations = []
+        for accommodation in all_accommodations:
+            if accommodation.host.is_featured():
+                featured_accommodations.append(accommodation)
+
+        return review_pb2.Accommodations(accommodation_id=featured_accommodations)
+
+

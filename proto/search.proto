@@ -18,12 +18,18 @@ message Location {
 message SearchParams {
   Location location = 1;
   int32 guests = 2;
-  Interval interval = 3;  
+  Interval interval = 3;
+  repeated string amenities = 4;
+  float price_min = 5;
+  float price_max = 6;
+  bool must_be_featured_host = 7;
 }
+
 message SearchResults{
   Response response = 1;
   repeated SearchResult items = 2;
 }
+
 message SearchResult {
   string accommodation_id = 1;
   string host_id = 2;
@@ -38,8 +44,7 @@ message SearchResult {
   bool auto_accept_flag = 11;
 }
 
-
-message Interval{
+message Interval {
   string date_start = 1;
   string date_end = 2;
 }

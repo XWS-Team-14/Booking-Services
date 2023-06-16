@@ -4,6 +4,7 @@ package review;
 service ReviewService {
   rpc Send (Empty) returns (Empty);
   rpc GetHostStatus(HostId) returns (HostStatus);
+  rpc GetAllAccommodationsWithFeaturedHost(Empty) returns (Accommodations);
 }
 
 message Empty {
@@ -21,3 +22,10 @@ message HostStatus {
   optional string error_message = 3;
   optional int32 error_code = 4;
 }
+<<<<<<< HEAD
+=======
+
+message Accommodations {
+  repeated string accommodation_id = 1;
+}
+>>>>>>> dev

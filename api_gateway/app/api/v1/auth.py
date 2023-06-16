@@ -9,16 +9,17 @@ import grpc
 from starlette.responses import Response
 from typing import Annotated
 
-from app.constants import auth_server, user_server, reservation_server
+from app.constants import auth_server, user_server, reservation_server, notification_server
 from app.utils.jwt import get_id_from_token
 
 from fastapi.responses import JSONResponse
 from app import schemas
 from app.config import get_yaml_config
 from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2, reservation_crud_pb2, \
-    reservation_crud_pb2_grpc
+    reservation_crud_pb2_grpc, notification_pb2, notification_pb2_grpc
 
 from app.utils import get_server
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 
 router = APIRouter()
 
@@ -32,7 +33,7 @@ class Auth:
     async def register(self, payload: schemas.Register) -> Response:
         logger.info(f"Tested register {payload.email}")
         user_id = uuid.uuid4()
-        async with grpc.aio.insecure_channel(auth_server) as channel:
+        async with grpc.aio.insecure_channel(auth_server, interceptors=aio_client_interceptors()) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.Register(credential_pb2.Credential(
                 id=str(user_id), email=payload.email, password=payload.password, role=payload.role, active=True))
@@ -40,16 +41,19 @@ class Auth:
                 return Response(status_code=grpc_response.error_code, media_type="text/html",
                                 content=grpc_response.error_message)
 
-        async with grpc.aio.insecure_channel(user_server) as channel:
+        async with grpc.aio.insecure_channel(user_server, interceptors=aio_client_interceptors()) as channel:
             stub = user_pb2_grpc.UserServiceStub(channel)
             await stub.Register(user_pb2.User(
                 id=str(user_id), first_name=payload.first_name, last_name=payload.last_name,
                 home_address=payload.home_address, gender=payload.gender))
         if payload.role == "guest":
-            async with grpc.aio.insecure_channel(reservation_server) as channel:
+            async with grpc.aio.insecure_channel(reservation_server, interceptors=aio_client_interceptors()) as channel:
                 stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
                 await stub.CreateGuest(reservation_crud_pb2.Guest(
                     id=str(user_id), canceledReservations=0))
+        async with grpc.aio.insecure_channel(notification_server, interceptors=aio_client_interceptors()) as channel:
+            stub = notification_pb2_grpc.NotificationServiceStub(channel)
+            await stub.Initialize(notification_pb2.Receiver(id=str(user_id)))
         return Response(
             status_code=200, media_type="text/html", content="User registered."
         )
@@ -61,7 +65,7 @@ class Auth:
     )
     async def login(self, payload: schemas.Login) -> Response:
         logger.info(f"Tested login {payload.email}")
-        async with grpc.aio.insecure_channel(auth_server) as channel:
+        async with grpc.aio.insecure_channel(auth_server, interceptors=aio_client_interceptors()) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.Login(credential_pb2.Credential(email=payload.email, password=payload.password))
             if grpc_response.error_message:
@@ -104,7 +108,7 @@ class Auth:
     async def refresh_token(self, refresh_token: Annotated[str | None, Cookie()] = None) -> Response:
         user_id = get_id_from_token(refresh_token, "refresh")
         logger.info(f"Tested refresh token for user {user_id}")
-        async with grpc.aio.insecure_channel(auth_server) as channel:
+        async with grpc.aio.insecure_channel(auth_server, interceptors=aio_client_interceptors()) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.RefreshToken(credential_pb2.TokenRefresh(
                 refresh_token=refresh_token))
@@ -134,7 +138,7 @@ class Auth:
             return Response(status_code=401, media_type="text/html", content="Token expired.")
         except InvalidTokenError:
             return Response(status_code=401, media_type="text/html", content="Invalid token.")
-        async with grpc.aio.insecure_channel(auth_server) as channel:
+        async with grpc.aio.insecure_channel(auth_server, interceptors=aio_client_interceptors()) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.UpdatePassword(credential_pb2.PasswordUpdate(
                 id=user_id, old_password=payload.old_password,
@@ -159,7 +163,7 @@ class Auth:
             return Response(status_code=401, media_type="text/html", content="Token expired.")
         except InvalidTokenError:
             return Response(status_code=401, media_type="text/html", content="Invalid token.")
-        async with grpc.aio.insecure_channel(auth_server) as channel:
+        async with grpc.aio.insecure_channel(auth_server, interceptors=aio_client_interceptors()) as channel:
             stub = credential_pb2_grpc.CredentialServiceStub(channel)
             grpc_response = await stub.UpdateEmail(credential_pb2.EmailUpdate(
                 id=user_id, old_email=payload.old_email,

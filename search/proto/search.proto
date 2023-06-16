@@ -1,0 +1,50 @@
+syntax = "proto3";
+package search;
+service Search {
+  rpc Search (SearchParams) returns (SearchResults);
+}
+
+message Response {
+  string message_string = 1;
+  int32 status_code = 2;
+}
+
+message Location {
+  string country = 1;
+  string city = 2;
+  string address = 3;
+}
+
+message SearchParams {
+  Location location = 1;
+  int32 guests = 2;
+  Interval interval = 3;
+  repeated string amenities = 4;
+  int32 price_min = 5;
+  int32 price_max = 6;
+  bool must_be_featured_host = 7;
+}
+
+message SearchResults{
+  Response response = 1;
+  repeated SearchResult items = 2;
+}
+
+message SearchResult {
+  string accommodation_id = 1;
+  string host_id = 2;
+  string name = 3;
+  Location location = 4;
+  repeated string features = 5;
+  repeated string image_urls = 6;
+  int32 min_guests = 7;
+  int32 max_guests = 8;
+  double base_price = 9;
+  double total_price = 10;
+  bool auto_accept_flag = 11;
+}
+
+message Interval {
+  string date_start = 1;
+  string date_end = 2;
+}

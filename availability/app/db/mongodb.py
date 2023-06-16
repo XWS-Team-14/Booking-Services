@@ -3,6 +3,7 @@ import urllib.parse
 from typing import Optional
 from app.models.availability import Availability
 from app.models.holiday import Holiday
+from app.models.deleted_availabilities import DeletedAvailability
 
 from beanie import init_beanie
 from loguru import logger
@@ -75,7 +76,8 @@ async def start_async_mongodb() -> None:
             database=async_mongodb_database,
             document_models=[
                 Holiday,
-                Availability
+                Availability,
+                DeletedAvailability
             ],
         )
         logger.success("Started mongodb connection")

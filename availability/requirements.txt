@@ -1,7 +1,12 @@
+beanie
 grpcio
 grpcio-tools
 motor
-beanie
 loguru
 python-logging-loki
 PyYAML
+aiokafka
+asyncio
+opentelemetry-distro
+opentelemetry-exporter-jaeger-thrift
+opentelemetry-instrumentation-grpc

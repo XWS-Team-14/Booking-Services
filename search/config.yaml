@@ -6,6 +6,10 @@ availability_server:
   ip: "availability"
   port: "50053"
 
+review_server:
+  ip: "review"
+  port: "50058"
+
 loki:
   url: "loki:3100"
   service: "search-service"
