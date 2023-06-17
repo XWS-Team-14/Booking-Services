@@ -62,8 +62,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-    ports:
-    - 27017:27017
+    #ports:
+    #- 27017:27017
 
   mongo-orchestrator:
     image: mongo
@@ -74,8 +74,8 @@ services:
     #ports:
     #- 27017:27017
 
-  # Services, expose ports when you want to test your grpc service manuall
-  # Running ports are not that important, but it can be easier to differentiate between services
+    # Services, expose ports when you want to test your grpc service manuall
+    # Running ports are not that important, but it can be easier to differentiate between services
   accommodation:
     build: ./accommodation
     image: accommodation:latest
@@ -179,11 +179,11 @@ services:
     build: ./api_gateway
     image: api_gateway:latest
     container_name: api_gateway
-    command: 'uvicorn main:app --host 0.0.0.0 --port 8000'
+    command: 'uvicorn main:app --host 0.0.0.0 --port 8888'
     volumes:
       - ./proto:/app/proto
     ports:
-      - 8000:8000
+      - 8888:8888
     depends_on:
       - kafka
 
@@ -278,7 +278,7 @@ services:
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-      
+
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
@@ -286,3 +286,4 @@ services:
     ports:
       - "6831:6831/udp"
       - "16686:16686"
+

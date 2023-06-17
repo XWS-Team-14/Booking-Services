@@ -165,7 +165,7 @@ async def GetByUserId(access_token: Annotated[str | None, Cookie()] = None):
         MessageToDict(response, preserving_proto_field_name=True)
     )
     # fix paths for image_urls
-    updated_url = "http://localhost:8000/api/static/images/"
+    updated_url = "http://localhost:8888/api/static/images/"
     try:
         for item in parsed_response.items:
             updated_urls = []
@@ -192,7 +192,7 @@ async def getAll():
         MessageToDict(data, preserving_proto_field_name=True)
     )
     # fix paths for image_urls
-    updated_url = "http://localhost:8000/api/static/images/"
+    updated_url = "http://localhost:8888/api/static/images/"
     try:
         for item in parsed_response.items:
             updated_urls = []
@@ -221,7 +221,7 @@ async def GetById(item_id):
         return Response(
             status_code=200, media_type="application/json", content="Invalid id"
         )
-    updated_url = "http://localhost:8000/api/static/images/"
+    updated_url = "http://localhost:8888/api/static/images/"
     try:
         updated_urls = []
         for img_url in parsed_response.item.image_urls:
