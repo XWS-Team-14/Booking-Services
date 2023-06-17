@@ -1,22 +1,11 @@
 import json
-from typing import Annotated
 
-import grpc
-from fastapi import APIRouter, Cookie
-from fastapi_utils.cbv import cbv
 import httpx
-from google.protobuf.json_format import MessageToJson
-import urllib.parse
-
-from app.utils.jwt import get_role_from_token, get_id_from_token
-from proto import notification_pb2_grpc, notification_pb2
+from fastapi import APIRouter
+from fastapi_utils.cbv import cbv
 from starlette.responses import HTMLResponse, Response
 
-from app import schemas
-from app.constants import notification_server, airline_server
-from app.utils import get_server
-from opentelemetry.instrumentation.grpc import aio_client_interceptors
-from jwt import ExpiredSignatureError, InvalidTokenError
+from app.constants import airline_server
 
 router = APIRouter()
 
