@@ -51,12 +51,12 @@ async def listen_to_migrate_messages():
             elif message.value['source'] == 'review':
                 if not stored_user.reviewed.is_connected(stored_accommodation):
                     rel = stored_user.reviewed.connect(stored_accommodation)
-                    rel.timestamp = datetime.strptime(message.value['data']['date'], "%Y-%m-%d")
-                    rel.grade = message.value['data']['grade']
+                    rel.timestamp = datetime.fromisoformat(message.value['timestamp'])
+                    rel.grade = message.value['grade']
                     rel.save()
                     back_rel = stored_accommodation.is_reviewed.connect(stored_user)
-                    back_rel.timestamp = datetime.strptime(message.value['data']['date'], "%Y-%m-%d")
-                    back_rel.grade = message.value['data']['grade']
+                    back_rel.timestamp = datetime.fromisoformat(message.value['timestamp'])
+                    back_rel.grade = message.value['grade']
                     back_rel.save()
                     logger.info('Review between user and accomodation does not exist, saving')
                 
