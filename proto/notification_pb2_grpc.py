@@ -19,6 +19,21 @@ class NotificationServiceStub(object):
                 request_serializer=notification__pb2.Notification.SerializeToString,
                 response_deserializer=notification__pb2.Empty.FromString,
                 )
+        self.Initialize = channel.unary_unary(
+                '/notification.NotificationService/Initialize',
+                request_serializer=notification__pb2.Receiver.SerializeToString,
+                response_deserializer=notification__pb2.Empty.FromString,
+                )
+        self.GetUserPreferences = channel.unary_unary(
+                '/notification.NotificationService/GetUserPreferences',
+                request_serializer=notification__pb2.Receiver.SerializeToString,
+                response_deserializer=notification__pb2.UserPreferences.FromString,
+                )
+        self.UpdateUserPreference = channel.unary_unary(
+                '/notification.NotificationService/UpdateUserPreference',
+                request_serializer=notification__pb2.Preference.SerializeToString,
+                response_deserializer=notification__pb2.Empty.FromString,
+                )
 
 
 class NotificationServiceServicer(object):
@@ -30,12 +45,45 @@ class NotificationServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Initialize(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetUserPreferences(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateUserPreference(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_NotificationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Send': grpc.unary_unary_rpc_method_handler(
                     servicer.Send,
                     request_deserializer=notification__pb2.Notification.FromString,
+                    response_serializer=notification__pb2.Empty.SerializeToString,
+            ),
+            'Initialize': grpc.unary_unary_rpc_method_handler(
+                    servicer.Initialize,
+                    request_deserializer=notification__pb2.Receiver.FromString,
+                    response_serializer=notification__pb2.Empty.SerializeToString,
+            ),
+            'GetUserPreferences': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetUserPreferences,
+                    request_deserializer=notification__pb2.Receiver.FromString,
+                    response_serializer=notification__pb2.UserPreferences.SerializeToString,
+            ),
+            'UpdateUserPreference': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateUserPreference,
+                    request_deserializer=notification__pb2.Preference.FromString,
                     response_serializer=notification__pb2.Empty.SerializeToString,
             ),
     }
@@ -61,6 +109,57 @@ class NotificationService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/notification.NotificationService/Send',
             notification__pb2.Notification.SerializeToString,
+            notification__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Initialize(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/notification.NotificationService/Initialize',
+            notification__pb2.Receiver.SerializeToString,
+            notification__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetUserPreferences(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/notification.NotificationService/GetUserPreferences',
+            notification__pb2.Receiver.SerializeToString,
+            notification__pb2.UserPreferences.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateUserPreference(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/notification.NotificationService/UpdateUserPreference',
+            notification__pb2.Preference.SerializeToString,
             notification__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

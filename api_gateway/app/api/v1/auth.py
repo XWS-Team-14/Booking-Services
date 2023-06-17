@@ -9,14 +9,14 @@ import grpc
 from starlette.responses import Response
 from typing import Annotated
 
-from app.constants import auth_server, user_server, reservation_server
+from app.constants import auth_server, user_server, reservation_server, notification_server
 from app.utils.jwt import get_id_from_token
 
 from fastapi.responses import JSONResponse
 from app import schemas
 from app.config import get_yaml_config
 from proto import credential_pb2_grpc, credential_pb2, user_pb2_grpc, user_pb2, reservation_crud_pb2, \
-    reservation_crud_pb2_grpc
+    reservation_crud_pb2_grpc, notification_pb2, notification_pb2_grpc
 
 from app.utils import get_server
 from opentelemetry.instrumentation.grpc import aio_client_interceptors
@@ -51,6 +51,9 @@ class Auth:
                 stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
                 await stub.CreateGuest(reservation_crud_pb2.Guest(
                     id=str(user_id), canceledReservations=0))
+        async with grpc.aio.insecure_channel(notification_server, interceptors=aio_client_interceptors()) as channel:
+            stub = notification_pb2_grpc.NotificationServiceStub(channel)
+            await stub.Initialize(notification_pb2.Receiver(id=str(user_id)))
         return Response(
             status_code=200, media_type="text/html", content="User registered."
         )

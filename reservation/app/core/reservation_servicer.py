@@ -224,6 +224,7 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
             reservation_dto = ReservationHelper.convertToDto(reservation)
             if reservation_dto.guest.id == request.id:
                 retVal.items.append(reservation_dto)
+                logger.info("retval.items.accommodationId: "+ reservation_dto.accommodation.id)
         return retVal
 
     async def GetActiveByGuest(self, request, context):
