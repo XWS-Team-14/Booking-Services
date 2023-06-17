@@ -32,30 +32,46 @@ class RecomenderServicer(accommodation_recomender_pb2_grpc.AccommodationRecomend
         logger.info(f'Fetching possible accommodations')
         possible_accomodations = set()
         for similar in similar_users:
-            possible_accomodations.update(similar.reviewed.exclude(grade_lt=2))  #exclude those who have gotten grade less than 2 
+            possible_accomodations.update(similar.reviewed.match(grade__gte=3))  #exclude those who have gotten grade less than 2 
+       
         if len(possible_accomodations) == 0:
             logger.info(f'Found 0 possible accomodations returning empty') 
             return accommodation_recomender_pb2.Accommodation_ids(ids=[''])
-        logger.info(f'Filtering with bad grades and attaching average grade')
-        three_months_ago = date.today() - timedelta(days =3*30)
-        three_months_ago = time.mktime(three_months_ago.timetuple())
+        
+        logger.info(f'Filtering with bad grades, visited by user and attaching average grade')
+        logger.info(possible_accomodations)
+        three_months_ago = datetime.today() - timedelta(days =3*30)
+        #three_months_ago = time.mktime(three_months_ago.timetuple())
+        
+        final_accomodations = []
         for possible_accomm in possible_accomodations:
-            count = possible_accomm.reviewed.match(Q(grade__lt=3) & Q(timestamp__gte=three_months_ago)).count()
+            if possible_accomm.is_reserved.is_connected(user):
+                continue
+            count = len(possible_accomm.is_reviewed.match(grade__lt=3,timestamp__gte=three_months_ago))
             if count > 5: 
-                possible_accomodations.discard(possible_accomm)
+                continue
             else:
-                grades = [review.grade for review in possible_accomm.review.all()]
+                logger.info('Calculating avg grade')
+                helper_users = possible_accomm.is_reviewed.all() 
+                grades = [] 
+                for h_user in helper_users:
+                    grades.append(possible_accomm.is_reviewed.relationship(h_user).grade)
                 possible_accomm.avg_grade = sum(grades) / len(grades) if grades else 1
+                final_accomodations.append(possible_accomm)
         
         logger.info(f'Sorting and slicing 10 best')  
-        logger.info(possible_accomodations)
-        if len(possible_accomodations) != 0 :      
-            sorted_accoms = list(possible_accomodations).sort(key=lambda obj: obj.avg_grade)
-            best_accoms = sorted_accoms[:10]
+        logger.info(final_accomodations)
+        if len(final_accomodations) != 0 :   
+            final_accomodations.sort(key=lambda obj: obj.avg_grade)
+            best_accoms = final_accomodations[:10]
             accom_ids = []
             for item in best_accoms:
-                accom_ids.append(item.id)
+                accom_ids.append(str(item.accomodation_id))
             logger.info(f'Returnings ids: {accom_ids}') 
+            retval = accommodation_recomender_pb2.Accommodation_ids()
+            retval.ids.extend(accom_ids)
+            return retval
         else:
             logger.info(f'Found none returning empty') 
-        return accommodation_recomender_pb2.Accommodation_ids(ids=[''])
+            return accommodation_recomender_pb2.Accommodation_ids()
+       

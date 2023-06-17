@@ -22,4 +22,4 @@ async def getRecomdendations(user_id):
         data = await stub.GetRecomended(accommodation_recomender_pb2.User_id(id=user_id))
         logger.info(data)
 
-    return Response(status_code=200, media_type="text/html", content=data.ids[0])
+    return Response(status_code=200, media_type="text/html", content=data.ids)
