@@ -36,7 +36,7 @@ async def listen_to_delete_messages():
                                 if item.occupied_intervals:
                                     logger.info("Delete failed, availability has reservations")
                                     #produce fail message
-                                    kafka_producer.send('orchestrator-responces', {
+                                    kafka_producer.send('orchestrator-responses', {
                                         'transaction_id': str(message.value['transaction_id']),
                                         'source':'availability',
                                         'status': 'fail'                                  
@@ -51,9 +51,9 @@ async def listen_to_delete_messages():
                                         timestamp = datetime.utcnow()
                                     )
                                     await deleted.insert()
-                                    logger.success("Deleted Availability succesfully saved")
+                                    logger.success("Deleted Availability successfully saved")
                                     #produce success message
-                                    kafka_producer.send('orchestrator-responces', {
+                                    kafka_producer.send('orchestrator-responses', {
                                         'transaction_id': str(message.value['transaction_id']),
                                         'source':'availability',
                                         'status': 'success'                                  
@@ -62,14 +62,14 @@ async def listen_to_delete_messages():
                                     break
                     if not fail_flag:
                         #produce success message
-                        kafka_producer.send('orchestrator-responces', {
+                        kafka_producer.send('orchestrator-responses', {
                             'transaction_id': str(message.value['transaction_id']),
                             'source':'availability',
                             'status': 'success'                                  
                         })   
                 else:
                     logger.info("Accomodation id's contents are empty, deleted nothing, responding success ")
-                    kafka_producer.send('orchestrator-responces', {
+                    kafka_producer.send('orchestrator-responses', {
                                 'transaction_id': str(message.value['transaction_id']),
                                 'source':'availability',
                                 'status': 'success'                                  

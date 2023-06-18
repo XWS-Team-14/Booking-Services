@@ -30,7 +30,7 @@ async def listen_to_delete_messages():
                     if not item:  
                         logger.info("Document with given id not found, non deleted")
                         #produce success message
-                        kafka_producer.send('orchestrator-responces', {
+                        kafka_producer.send('orchestrator-responses', {
                             'transaction_id': str(message.value['transaction_id']),
                             'source':'auth',
                             'status': 'success'                                  
@@ -47,7 +47,7 @@ async def listen_to_delete_messages():
                         await deleted.insert()
                         logger.success("Deleted Credentails succesfully saved")
                         #produce success message
-                        kafka_producer.send('orchestrator-responces', {
+                        kafka_producer.send('orchestrator-responses', {
                             'transaction_id': str(message.value['transaction_id']),
                             'source':'auth',
                             'status': 'success'                                  

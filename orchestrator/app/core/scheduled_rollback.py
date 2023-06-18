@@ -21,6 +21,9 @@ async def no_response_rollback():
         for log in logs:
             log.status = StatusEnum.fail
             logger.info("Setting transaction log status to fail and sending rollback")
+            kafka_producer.send('delete-status-update', {
+                'status': 'fail'
+            })
             kafka_producer.send('user-delete', {
                 'transaction_id': str(log.transaction_id),
                 'action': 'rollback'
