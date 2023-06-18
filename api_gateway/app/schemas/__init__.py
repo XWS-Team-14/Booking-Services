@@ -4,3 +4,4 @@ from .notification import Notification
 from .review import CreateReview, UpdateReviewDto
 from .preference import Preference
 from .flight import TicketPurchase
+
