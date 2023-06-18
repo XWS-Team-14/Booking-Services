@@ -5,6 +5,7 @@ import uuid
 from proto import orchestrator_pb2,orchestrator_pb2_grpc
 from ...constants import orchestrator_server
 from loguru import logger
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 
 router = APIRouter(
     tags=["Orchestrator"],
@@ -17,7 +18,7 @@ router = APIRouter(
 )
 async def deleteUser(user_id):
     logger.info("Gateway processing delete user via saga request")
-    async with grpc.aio.insecure_channel(orchestrator_server) as channel:
+    async with grpc.aio.insecure_channel(orchestrator_server, interceptors=aio_client_interceptors()) as channel:
         stub = orchestrator_pb2_grpc.OrchestratorStub(channel)
         data = await stub.DeleteUser(orchestrator_pb2.UserId(id=user_id))
         logger.info(data)

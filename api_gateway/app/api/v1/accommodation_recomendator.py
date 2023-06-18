@@ -18,6 +18,7 @@ from app.schemas.accommodation import (
     ResponseAccommodation,
     ResponseAccommodations,
 )
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 
 router = APIRouter(
     tags=["Accommodation_recomender"],
@@ -30,7 +31,7 @@ router = APIRouter(
 )
 async def getRecomdendations(user_id):
     logger.info("Gateway processing get accommodation recomnedations request")
-    async with grpc.aio.insecure_channel(accommodation_recomender_server) as channel:
+    async with grpc.aio.insecure_channel(accommodation_recomender_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_recomender_pb2_grpc.AccommodationRecomenderStub(channel)
         data = await stub.GetRecomended(accommodation_recomender_pb2.User_id(id=user_id))
         if data.ids[0] == '':
@@ -40,7 +41,7 @@ async def getRecomdendations(user_id):
             ) 
     retVal=[]
     logger.info("Fetched accommodation ids processing to whole objects")
-    async with grpc.aio.insecure_channel(accommodation_server) as channel:
+    async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
         stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
 
         for accommodation_id in data.ids:

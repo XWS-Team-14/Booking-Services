@@ -27,6 +27,8 @@ from ...config import get_yaml_config
 from ...constants import review_server, reservation_server
 from ...utils.get_server import get_server
 from ...utils.jwt import get_id_from_token, get_role_from_token
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
+
 
 router = APIRouter()
 
@@ -38,7 +40,7 @@ router = APIRouter()
 )
 async def getAll():
     logger.info("Gateway processing getAll reviews")
-    async with grpc.aio.insecure_channel(review_server) as channel:
+    async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
         logger.info("Gateway processing getAll review data")
         data = await stub.GetAllReviews(review_pb2.Empty())
@@ -55,7 +57,7 @@ async def getAll():
 )
 async def getById(item_id):
     logger.info("Gateway processing getById review request")
-    async with grpc.aio.insecure_channel(review_server) as channel:
+    async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
         data = await stub.GetReviewById(review_pb2.ReviewId(id=item_id))
         if data.id == "":
@@ -76,7 +78,7 @@ async def getById(item_id):
 async def getByHost(host_id):
     logger.info("Gateway processing getPendingByHostId Reservation request")
 
-    async with grpc.aio.insecure_channel(review_server) as channel:
+    async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
         data = await stub.GetReviewsByHost(review_pb2.HostId(id=host_id))
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
@@ -92,7 +94,7 @@ async def getByHost(host_id):
 async def getByPoster(guest_id):
     logger.info("Gateway processing getByPoster Review request")
 
-    async with grpc.aio.insecure_channel(review_server) as channel:
+    async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
         data = await stub.GetReviewsByPoster(review_pb2.Poster(id=guest_id))
         json = json_format.MessageToJson(data, preserving_proto_field_name=True)
@@ -128,7 +130,7 @@ async def create_review(
         )
     if user_role != "guest":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
-    async with grpc.aio.insecure_channel(reservation_server) as channel:
+    async with grpc.aio.insecure_channel(reservation_server, interceptors=aio_client_interceptors()) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
         reservations = await stub.GetByGuest(reservation_crud_pb2.GuestId(id =user_id))
         if not reservations.items:
@@ -144,7 +146,7 @@ async def create_review(
 
     if has_reservations_at_accommodation:
 
-        async with grpc.aio.insecure_channel(review_server) as channel:
+        async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel:
             stub = review_pb2_grpc.ReviewServiceStub(channel)
             review = review_pb2.Review(
                 id=str(uuid4()),
@@ -187,7 +189,7 @@ async def update(item: UpdateReviewDto, access_token: Annotated[str | None, Cook
     if user_role != "guest":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
     logger.info("Gateway processing update reservation request")
-    async with grpc.aio.insecure_channel(review_server) as channel:
+    async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
 
         review = review_pb2.UpdateReviewDto()
@@ -220,7 +222,7 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
     if user_role != "guest":
         return Response(status_code=401, media_type="text/html", content="Unauthorized")
 
-    async with grpc.aio.insecure_channel(review_server) as channel:
+    async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
         data = await stub.DeleteReview(review_pb2.ReviewId(id=item_id))
     return Response(

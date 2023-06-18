@@ -171,6 +171,7 @@ services:
     volumes:
       - ./proto:/app/proto
     depends_on:
+      - mongo-notification
       - kafka
 
   review:
