@@ -59,8 +59,7 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
             async with grpc.aio.insecure_channel(review_server) as channel:
                 stub_review = review_pb2_grpc.ReviewServiceStub(channel)
                 grpc_review_response = MessageToDict(await stub_review.GetAllAccommodationsWithFeaturedHost(review_pb2.Empty()))
-                if grpc_review_response.error_message:
-                    logger.info(f"{grpc_review_response.error_code}: {grpc_review_response.error_message}")
+                print(grpc_review_response)
 
         result = SearchResults.construct()
 
