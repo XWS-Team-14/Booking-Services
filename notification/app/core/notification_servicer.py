@@ -9,7 +9,7 @@ from app.models.notification_type import NotificationType
 from app.models.preference import Preference
 from proto import notification_pb2, notification_pb2_grpc
 
-from app.core.notification_helper import generate
+from app.core.notification_helper import generate, get_type
 from app.models.accommodation import Accommodation
 
 from app.models.notification import Notification
@@ -27,12 +27,17 @@ class NotificationServicer(notification_pb2_grpc.NotificationServiceServicer):
         sender = Sender(id=request.sender.id, name=request.sender.name)
         receiver = Receiver(id=request.receiver.id)
         accommodation = Accommodation(id=request.accommodation.id, name=request.accommodation.name)
-        notification = Notification(type=NotificationType[request.type], status=request.status,
+        notification = Notification(type=get_type(request.type), status=request.status,
                                     timestamp=request.timestamp, sender=sender, receiver=receiver,
                                     accommodation=accommodation, title='', content='')
-        notification = generate(notification)
+        notification = generate(notification, request.type)
         message = json.loads(json.dumps(notification, default=lambda o: o.__dict__))
-        ref.push(message)
+        user_preferences = await Preference.find(Preference.user.id == request.receiver.id).to_list()
+        for preference in user_preferences:
+            if preference.type == get_type(request.type):
+                print(preference.enabled)
+                if preference.enabled:
+                    ref.push(message)
         return notification_pb2.Empty()
 
     async def Initialize(self, request, context):

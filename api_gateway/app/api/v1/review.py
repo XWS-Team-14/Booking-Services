@@ -105,6 +105,7 @@ async def create_review(
         # Add additional data that needs to be here
         access_token: Annotated[str | None, Cookie()],
         item: CreateReview
+
 ):
     """Post method used to save acoommodation
 
@@ -240,3 +241,4 @@ async def getByAccommodation(accommodation_id):
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+

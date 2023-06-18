@@ -160,7 +160,6 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
 
         return review_pb2.Accommodations(accommodation_id=featured_accommodations)
 
-
     async def GetReviewsByAccommodation(self,request,context):
         logger.success('Request for fetching reviews by accommodation accepted')
         reviews = await Review.find_all(fetch_links=True).to_list()
@@ -170,3 +169,4 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
                 retVal.items.append(ReviewHelper.convertReviewToDto(review))
                 logger.info("Appended it")
         return retVal
+
