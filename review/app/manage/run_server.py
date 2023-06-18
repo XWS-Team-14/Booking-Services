@@ -16,6 +16,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.instrumentation.grpc import aio_server_interceptor
+from app.core.data_migrator import start_data_migrator
 
 resource = Resource(attributes={
     SERVICE_NAME: "review"
@@ -50,6 +51,7 @@ async def serve(port):
         # existing RPCs to continue within the grace period.
         await server.stop(5)
 
+    asyncio.create_task(start_data_migrator())
     _cleanup_coroutines.append(server_graceful_shutdown())
     asyncio.create_task(listen_to_reservations())
 

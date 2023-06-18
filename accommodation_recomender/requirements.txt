@@ -1,0 +1,8 @@
+grpcio
+grpcio-tools
+neo4j
+neomodel
+loguru
+PyYAML
+kafka-python
+aiokafka

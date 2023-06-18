@@ -55,7 +55,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
-
+    
   mongo-notification:
     image: mongo
     restart: always
@@ -64,7 +64,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
-
+    
   mongo-orchestrator:
     image: mongo
     restart: always
@@ -72,10 +72,20 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
-    #- 27017:27017
-
+    #- 27017:27017 
+  neo4j_recomender:
+    image: neo4j:latest
+    restart: always
+    environment:
+      - NEO4J_AUTH=neo4j/root
+      - NEO4J_dbms_security_auth__minimum__password__length=4
+    ports:
+      - 7474:7474
+      - 7687:7687
+      
     # Services, expose ports when you want to test your grpc service manuall
     # Running ports are not that important, but it can be easier to differentiate between services
+    
   accommodation:
     build: ./accommodation
     image: accommodation:latest
@@ -161,7 +171,6 @@ services:
     volumes:
       - ./proto:/app/proto
     depends_on:
-      - mongo-notification
       - kafka
 
   review:
@@ -173,6 +182,28 @@ services:
       - ./proto:/app/proto
     depends_on:
       - mongo-review
+      - kafka
+
+  orchestrator:
+    build: ./orchestrator
+    image: orchestrator:latest
+    container_name: orchestrator
+    command: "python main.py runserver 50059"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      - mongo-orchestrator
+      - kafka
+  
+  accommodation_recomender:
+    build: ./accommodation_recomender
+    image: accommodation_recomender:latest
+    container_name: accommodation_recomender
+    command: "python main.py runserver 50060"
+    volumes:
+      - ./proto:/app/proto
+    depends_on:
+      - neo4j_recomender
       - kafka
 
   api_gateway:

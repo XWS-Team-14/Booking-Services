@@ -45,6 +45,10 @@ orchestrator_server:
   ip: "orchestrator"
   port: "50059"
 
+recomdender_server:
+  ip: "accommodation_recomender"
+  port: "50060"
+
 airline_server:
   ip: "app"
   port: "8000"
