@@ -45,6 +45,10 @@ orchestrator_server:
   ip: "orchestrator"
   port: "50059"
 
+airline_server:
+  ip: "app"
+  port: "8000"
+
 static_server:
   url: "http://cdn:8001/api/resources/images/"
   image_file_type: ".png"

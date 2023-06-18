@@ -54,7 +54,7 @@ async def search(
         )
     res = SearchResults.parse_obj(MessageToDict(data, preserving_proto_field_name=True))
     # fix paths for image_urls
-    updated_url = "http://localhost:8000/api/static/images/"
+    updated_url = "http://localhost:8888/api/static/images/"
     try:
         for item in res.items:
             updated_urls = []
