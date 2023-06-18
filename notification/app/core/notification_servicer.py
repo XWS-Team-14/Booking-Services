@@ -23,7 +23,6 @@ class NotificationServicer(notification_pb2_grpc.NotificationServiceServicer):
             Input: Notification.
             Output: Empty, or error. """
         logger.info('Request received')
-        print(request)
         ref = db.reference(f'notifications/{request.receiver.id}')
         sender = Sender(id=request.sender.id, name=request.sender.name)
         receiver = Receiver(id=request.receiver.id)
@@ -34,9 +33,7 @@ class NotificationServicer(notification_pb2_grpc.NotificationServiceServicer):
         notification = generate(notification, request.type)
         message = json.loads(json.dumps(notification, default=lambda o: o.__dict__))
         user_preferences = await Preference.find(Preference.user.id == request.receiver.id).to_list()
-        print(user_preferences)
         for preference in user_preferences:
-            print(preference.type)
             if preference.type == get_type(request.type):
                 print(preference.enabled)
                 if preference.enabled:
