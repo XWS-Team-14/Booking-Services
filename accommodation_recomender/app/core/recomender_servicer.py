@@ -19,6 +19,7 @@ class RecomenderServicer(accommodation_recomender_pb2_grpc.AccommodationRecomend
         try:
             user = User.nodes.get(user_id=request.id)
         except:
+            logger.info(f'User with given id does not exist in db, returning null')
             return accommodation_recomender_pb2.Accommodation_ids(ids=[''])
         #assuming that user who made a review visited, but other way arrount is not true
         logger.info(f'Fetching similar users')
@@ -32,10 +33,12 @@ class RecomenderServicer(accommodation_recomender_pb2_grpc.AccommodationRecomend
         if len(similar_users) == 0:
             logger.info(f'Found 0 similar users returning empty') 
             return accommodation_recomender_pb2.Accommodation_ids(ids=[''])
-        
+        logger.info(similar_users)
         logger.info(f'Fetching possible accommodations')
         possible_accomodations = set()
         for similar in similar_users:
+            logger.info(similar)
+            logger.info(similar.reviewed.match(grade__gte=3))
             possible_accomodations.update(similar.reviewed.match(grade__gte=3))  #exclude those who have gotten grade less than 2 
        
         if len(possible_accomodations) == 0:
