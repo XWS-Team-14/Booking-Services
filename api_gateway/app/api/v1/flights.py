@@ -33,9 +33,13 @@ class Flights:
     @router.post("/purchase", response_class=HTMLResponse, description="Purchase ticket")
     async def purchase(self, payload: schemas.TicketPurchase,
                        http_api_key: Annotated[Union[str, None], Header(convert_underscores=False)] = None):
-        path = f"{airline_server}/api/key/purchase"
-        data = json.dumps(payload.__dict__)
+        path = f"{airline_server}/api/key/purchase/"
         with httpx.Client() as client:
-            headers = {'HTTP_API_KEY': http_api_key}
-            response = client.post(path, json=data, headers=headers)
-            print(response)
+            headers = {'api-key': http_api_key}
+            response = client.post(path, json=payload.__dict__, headers=headers)
+        data = {
+            "result": "Success"
+        } if response.status_code == 200 else {
+            "result": response.json()
+        }
+        return Response(status_code=response.status_code, media_type='application/json', content=json.dumps(data))
