@@ -226,3 +226,20 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
     return Response(
         status_code=200, media_type="application/json", content=data.error_message
     )
+
+
+@router.get(
+    "/accommodation/{accommodation_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get all reviews by accommodation id",
+)
+async def getByAccommodation(accommodation_id):
+    logger.info("Gateway processing getPendingByAccommodationId Review request")
+
+    async with grpc.aio.insecure_channel(review_server) as channel:
+        stub = review_pb2_grpc.ReviewServiceStub(channel)
+        data = await stub.GetReviewsByAccommodation(review_pb2.AccommodationId(id=accommodation_id))
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )

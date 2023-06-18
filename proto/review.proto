@@ -12,6 +12,7 @@ service ReviewService {
   rpc DeleteReview(ReviewId) returns (Empty);
   rpc GetReviewsByPoster(Poster) returns (ReviewDtos);
   rpc GetAllAccommodationsWithFeaturedHost(Empty) returns (Accommodations);
+  rpc GetReviewsByAccommodation(AccommodationId) returns (ReviewDtos);
 
 }
 
@@ -68,4 +69,7 @@ message ReviewResponse{
 
 message Accommodations {
   repeated string accommodation_id = 1;
+}
+message AccommodationId{
+  string id = 1;
 }
