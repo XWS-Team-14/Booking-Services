@@ -7,6 +7,8 @@ from proto import accommodation_recomender_pb2_grpc, accommodation_recomender_pb
 from loguru import logger
 from neomodel import Q
 from datetime import datetime, timedelta, date
+from google.protobuf.json_format import Parse
+import json
 import time
 
 class RecomenderServicer(accommodation_recomender_pb2_grpc.AccommodationRecomenderServicer):
@@ -14,8 +16,10 @@ class RecomenderServicer(accommodation_recomender_pb2_grpc.AccommodationRecomend
     async def GetRecomended(self, request, context):
         start_neomodel()
         logger.success(f'Fetch recommended for user {request.id} request recieved')
-        user = User.nodes.get(user_id=request.id)
-        
+        try:
+            user = User.nodes.get(user_id=request.id)
+        except:
+            return accommodation_recomender_pb2.Accommodation_ids(ids=[''])
         #assuming that user who made a review visited, but other way arrount is not true
         logger.info(f'Fetching similar users')
         similar_users = set()
@@ -66,11 +70,10 @@ class RecomenderServicer(accommodation_recomender_pb2_grpc.AccommodationRecomend
             best_accoms = final_accomodations[:10]
             accom_ids = []
             for item in best_accoms:
-                accom_ids.append(str(item.accomodation_id))
+                accom_ids.append(item.accomodation_id)
             logger.info(f'Returnings ids: {accom_ids}') 
-            retval = accommodation_recomender_pb2.Accommodation_ids()
-            retval.ids.extend(accom_ids)
-            return retval
+
+            return accommodation_recomender_pb2.Accommodation_ids(ids = accom_ids)
         else:
             logger.info(f'Found none returning empty') 
             return accommodation_recomender_pb2.Accommodation_ids()
