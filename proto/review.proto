@@ -4,14 +4,16 @@ package review;
 service ReviewService {
   rpc Send (Empty) returns (Empty);
   rpc GetHostStatus(HostId) returns (HostStatus);
-  rpc CreateReview(Review) returns (ReviewResponse);
+  rpc CreateReview(Review) returns (AverageRatings);
   rpc GetAllReviews(Empty) returns (ReviewDtos);
   rpc GetReviewById(ReviewId) returns (Review);
   rpc GetReviewsByHost(HostId) returns (ReviewDtos);
-  rpc UpdateReview(UpdateReviewDto) returns (Review);
-  rpc DeleteReview(ReviewId) returns (Empty);
+  rpc UpdateReview(UpdateReviewDto) returns (AverageRatings);
+  rpc DeleteReview(ReviewId) returns (AverageRatings);
   rpc GetReviewsByPoster(Poster) returns (ReviewDtos);
   rpc GetAllAccommodationsWithFeaturedHost(Empty) returns (Accommodations);
+  rpc GetReviewsByAccommodation(AccommodationId) returns (ReviewDtos);
+
 
 }
 
@@ -26,6 +28,10 @@ message HostId {
   string id = 1;
 }
 
+message AverageRatings {
+  float host_average = 1;
+  float accommodation_average = 2;
+}
 message HostStatus {
   string id = 1;
   bool status = 2;
@@ -59,6 +65,8 @@ message Review{
 }
 message ReviewDtos{
   repeated Review items = 1;
+  optional float host_average = 2;
+  optional float accommodation_average = 3;
 }
 message ReviewResponse{
   Review review = 1;
@@ -68,4 +76,7 @@ message ReviewResponse{
 
 message Accommodations {
   repeated string accommodation_id = 1;
+}
+message AccommodationId{
+  string id = 1;
 }
