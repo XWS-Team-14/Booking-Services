@@ -49,6 +49,11 @@ class ReservationCrudStub(object):
                 request_serializer=reservation__crud__pb2.GuestId.SerializeToString,
                 response_deserializer=reservation__crud__pb2.ReservationDtos.FromString,
                 )
+        self.GetPastByGuest = channel.unary_unary(
+                '/ReservationCrud/GetPastByGuest',
+                request_serializer=reservation__crud__pb2.GuestId.SerializeToString,
+                response_deserializer=reservation__crud__pb2.ReservationDtos.FromString,
+                )
         self.GetReservationsForAcceptance = channel.unary_unary(
                 '/ReservationCrud/GetReservationsForAcceptance',
                 request_serializer=reservation__crud__pb2.ReservationDto.SerializeToString,
@@ -166,6 +171,12 @@ class ReservationCrudServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetByGuest(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPastByGuest(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -296,6 +307,11 @@ def add_ReservationCrudServicer_to_server(servicer, server):
             ),
             'GetByGuest': grpc.unary_unary_rpc_method_handler(
                     servicer.GetByGuest,
+                    request_deserializer=reservation__crud__pb2.GuestId.FromString,
+                    response_serializer=reservation__crud__pb2.ReservationDtos.SerializeToString,
+            ),
+            'GetPastByGuest': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPastByGuest,
                     request_deserializer=reservation__crud__pb2.GuestId.FromString,
                     response_serializer=reservation__crud__pb2.ReservationDtos.SerializeToString,
             ),
@@ -498,6 +514,23 @@ class ReservationCrud(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ReservationCrud/GetByGuest',
+            reservation__crud__pb2.GuestId.SerializeToString,
+            reservation__crud__pb2.ReservationDtos.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetPastByGuest(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ReservationCrud/GetPastByGuest',
             reservation__crud__pb2.GuestId.SerializeToString,
             reservation__crud__pb2.ReservationDtos.FromString,
             options, channel_credentials,

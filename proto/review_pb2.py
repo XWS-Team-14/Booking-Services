@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0creview.proto\x12\x06review\"]\n\x05\x45mpty\x12\x1a\n\rerror_message\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x02 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"\x14\n\x06Poster\x12\n\n\x02id\x18\x01 \x01(\t\"\x14\n\x06HostId\x12\n\n\x02id\x18\x01 \x01(\t\"~\n\nHostStatus\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\x08\x12\x1a\n\rerror_message\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x04 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"\x16\n\x08ReviewId\x12\n\n\x02id\x18\x01 \x01(\t\"P\n\x0fUpdateReviewDto\x12\n\n\x02id\x18\x01 \x01(\t\x12\x13\n\x0bhost_rating\x18\x02 \x01(\x05\x12\x1c\n\x14\x61\x63\x63ommodation_rating\x18\x03 \x01(\x05\"\x88\x01\n\x0c\x43reateReview\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07host_id\x18\x02 \x01(\t\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x03 \x01(\t\x12\x0e\n\x06poster\x18\x04 \x01(\t\x12\x13\n\x0bhost_rating\x18\x05 \x01(\x05\x12\x1c\n\x14\x61\x63\x63ommodation_rating\x18\x06 \x01(\x05\"\x95\x01\n\x06Review\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07host_id\x18\x02 \x01(\t\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x03 \x01(\t\x12\x0e\n\x06poster\x18\x04 \x01(\t\x12\x13\n\x0bhost_rating\x18\x05 \x01(\x05\x12\x1c\n\x14\x61\x63\x63ommodation_rating\x18\x06 \x01(\x05\x12\x11\n\ttimestamp\x18\x07 \x01(\t\"+\n\nReviewDtos\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.review.Review\"`\n\x0eReviewResponse\x12\x1e\n\x06review\x18\x01 \x01(\x0b\x32\x0e.review.Review\x12\x14\n\x07message\x18\x02 \x01(\tH\x00\x88\x01\x01\x12\x0c\n\x04\x63ode\x18\x03 \x01(\x05\x42\n\n\x08_message\"*\n\x0e\x41\x63\x63ommodations\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x01 \x03(\t\"\x1d\n\x0f\x41\x63\x63ommodationId\x12\n\n\x02id\x18\x01 \x01(\t2\xfe\x04\n\rReviewService\x12$\n\x04Send\x12\r.review.Empty\x1a\r.review.Empty\x12\x33\n\rGetHostStatus\x12\x0e.review.HostId\x1a\x12.review.HostStatus\x12\x36\n\x0c\x43reateReview\x12\x0e.review.Review\x1a\x16.review.ReviewResponse\x12\x32\n\rGetAllReviews\x12\r.review.Empty\x1a\x12.review.ReviewDtos\x12\x31\n\rGetReviewById\x12\x10.review.ReviewId\x1a\x0e.review.Review\x12\x36\n\x10GetReviewsByHost\x12\x0e.review.HostId\x1a\x12.review.ReviewDtos\x12\x37\n\x0cUpdateReview\x12\x17.review.UpdateReviewDto\x1a\x0e.review.Review\x12/\n\x0c\x44\x65leteReview\x12\x10.review.ReviewId\x1a\r.review.Empty\x12\x38\n\x12GetReviewsByPoster\x12\x0e.review.Poster\x1a\x12.review.ReviewDtos\x12M\n$GetAllAccommodationsWithFeaturedHost\x12\r.review.Empty\x1a\x16.review.Accommodations\x12H\n\x19GetReviewsByAccommodation\x12\x17.review.AccommodationId\x1a\x12.review.ReviewDtosb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0creview.proto\x12\x06review\"]\n\x05\x45mpty\x12\x1a\n\rerror_message\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x02 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"\x14\n\x06Poster\x12\n\n\x02id\x18\x01 \x01(\t\"\x14\n\x06HostId\x12\n\n\x02id\x18\x01 \x01(\t\"E\n\x0e\x41verageRatings\x12\x14\n\x0chost_average\x18\x01 \x01(\x02\x12\x1d\n\x15\x61\x63\x63ommodation_average\x18\x02 \x01(\x02\"~\n\nHostStatus\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\x08\x12\x1a\n\rerror_message\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nerror_code\x18\x04 \x01(\x05H\x01\x88\x01\x01\x42\x10\n\x0e_error_messageB\r\n\x0b_error_code\"\x16\n\x08ReviewId\x12\n\n\x02id\x18\x01 \x01(\t\"P\n\x0fUpdateReviewDto\x12\n\n\x02id\x18\x01 \x01(\t\x12\x13\n\x0bhost_rating\x18\x02 \x01(\x05\x12\x1c\n\x14\x61\x63\x63ommodation_rating\x18\x03 \x01(\x05\"\x88\x01\n\x0c\x43reateReview\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07host_id\x18\x02 \x01(\t\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x03 \x01(\t\x12\x0e\n\x06poster\x18\x04 \x01(\t\x12\x13\n\x0bhost_rating\x18\x05 \x01(\x05\x12\x1c\n\x14\x61\x63\x63ommodation_rating\x18\x06 \x01(\x05\"\x95\x01\n\x06Review\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07host_id\x18\x02 \x01(\t\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x03 \x01(\t\x12\x0e\n\x06poster\x18\x04 \x01(\t\x12\x13\n\x0bhost_rating\x18\x05 \x01(\x05\x12\x1c\n\x14\x61\x63\x63ommodation_rating\x18\x06 \x01(\x05\x12\x11\n\ttimestamp\x18\x07 \x01(\t\"\x95\x01\n\nReviewDtos\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.review.Review\x12\x19\n\x0chost_average\x18\x02 \x01(\x02H\x00\x88\x01\x01\x12\"\n\x15\x61\x63\x63ommodation_average\x18\x03 \x01(\x02H\x01\x88\x01\x01\x42\x0f\n\r_host_averageB\x18\n\x16_accommodation_average\"`\n\x0eReviewResponse\x12\x1e\n\x06review\x18\x01 \x01(\x0b\x32\x0e.review.Review\x12\x14\n\x07message\x18\x02 \x01(\tH\x00\x88\x01\x01\x12\x0c\n\x04\x63ode\x18\x03 \x01(\x05\x42\n\n\x08_message\"*\n\x0e\x41\x63\x63ommodations\x12\x18\n\x10\x61\x63\x63ommodation_id\x18\x01 \x03(\t\"\x1d\n\x0f\x41\x63\x63ommodationId\x12\n\n\x02id\x18\x01 \x01(\t2\x8f\x05\n\rReviewService\x12$\n\x04Send\x12\r.review.Empty\x1a\r.review.Empty\x12\x33\n\rGetHostStatus\x12\x0e.review.HostId\x1a\x12.review.HostStatus\x12\x36\n\x0c\x43reateReview\x12\x0e.review.Review\x1a\x16.review.AverageRatings\x12\x32\n\rGetAllReviews\x12\r.review.Empty\x1a\x12.review.ReviewDtos\x12\x31\n\rGetReviewById\x12\x10.review.ReviewId\x1a\x0e.review.Review\x12\x36\n\x10GetReviewsByHost\x12\x0e.review.HostId\x1a\x12.review.ReviewDtos\x12?\n\x0cUpdateReview\x12\x17.review.UpdateReviewDto\x1a\x16.review.AverageRatings\x12\x38\n\x0c\x44\x65leteReview\x12\x10.review.ReviewId\x1a\x16.review.AverageRatings\x12\x38\n\x12GetReviewsByPoster\x12\x0e.review.Poster\x1a\x12.review.ReviewDtos\x12M\n$GetAllAccommodationsWithFeaturedHost\x12\r.review.Empty\x1a\x16.review.Accommodations\x12H\n\x19GetReviewsByAccommodation\x12\x17.review.AccommodationId\x1a\x12.review.ReviewDtosb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'review_pb2', globals())
@@ -26,24 +26,26 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _POSTER._serialized_end=139
   _HOSTID._serialized_start=141
   _HOSTID._serialized_end=161
-  _HOSTSTATUS._serialized_start=163
-  _HOSTSTATUS._serialized_end=289
-  _REVIEWID._serialized_start=291
-  _REVIEWID._serialized_end=313
-  _UPDATEREVIEWDTO._serialized_start=315
-  _UPDATEREVIEWDTO._serialized_end=395
-  _CREATEREVIEW._serialized_start=398
-  _CREATEREVIEW._serialized_end=534
-  _REVIEW._serialized_start=537
-  _REVIEW._serialized_end=686
-  _REVIEWDTOS._serialized_start=688
-  _REVIEWDTOS._serialized_end=731
-  _REVIEWRESPONSE._serialized_start=733
-  _REVIEWRESPONSE._serialized_end=829
-  _ACCOMMODATIONS._serialized_start=831
-  _ACCOMMODATIONS._serialized_end=873
-  _ACCOMMODATIONID._serialized_start=875
-  _ACCOMMODATIONID._serialized_end=904
-  _REVIEWSERVICE._serialized_start=907
-  _REVIEWSERVICE._serialized_end=1545
+  _AVERAGERATINGS._serialized_start=163
+  _AVERAGERATINGS._serialized_end=232
+  _HOSTSTATUS._serialized_start=234
+  _HOSTSTATUS._serialized_end=360
+  _REVIEWID._serialized_start=362
+  _REVIEWID._serialized_end=384
+  _UPDATEREVIEWDTO._serialized_start=386
+  _UPDATEREVIEWDTO._serialized_end=466
+  _CREATEREVIEW._serialized_start=469
+  _CREATEREVIEW._serialized_end=605
+  _REVIEW._serialized_start=608
+  _REVIEW._serialized_end=757
+  _REVIEWDTOS._serialized_start=760
+  _REVIEWDTOS._serialized_end=909
+  _REVIEWRESPONSE._serialized_start=911
+  _REVIEWRESPONSE._serialized_end=1007
+  _ACCOMMODATIONS._serialized_start=1009
+  _ACCOMMODATIONS._serialized_end=1051
+  _ACCOMMODATIONID._serialized_start=1053
+  _ACCOMMODATIONID._serialized_end=1082
+  _REVIEWSERVICE._serialized_start=1085
+  _REVIEWSERVICE._serialized_end=1740
 # @@protoc_insertion_point(module_scope)

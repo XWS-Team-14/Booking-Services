@@ -15,8 +15,14 @@ class Host(Document):
     def increase_review_count(self):
         self.review_count += 1
 
+    def decrease_review_count(self):
+        self.review_count -= 1
+
     def increase_rating_sum(self, rating):
         self.rating_sum += rating
+
+    def decrease_rating_sum(self, rating):
+        self.rating_sum -= rating
 
     def increase_reservation_count(self):
         self.reservation_count += 1
