@@ -1,6 +1,9 @@
+import asyncio
+
 from loguru import logger
 import grpc
 
+from app.core.listener import listen
 from app.core.notification_servicer import NotificationServicer
 from app.db.mongodb import start_async_mongodb
 from proto import notification_pb2_grpc
@@ -48,4 +51,5 @@ async def serve(port):
         await server.stop(5)
 
     _cleanup_coroutines.append(server_graceful_shutdown())
+    asyncio.create_task(listen())
     await server.wait_for_termination()
