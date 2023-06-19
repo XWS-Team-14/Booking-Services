@@ -12,7 +12,7 @@ from app.schemas.review import (
 from app.utils.json_encoder import UUIDEncoder
 from fastapi import APIRouter, Cookie, Form, UploadFile, status
 from fastapi.responses import HTMLResponse, ORJSONResponse, Response
-from google.protobuf.json_format import MessageToDict, Parse
+from google.protobuf.json_format import MessageToDict, Parse, MessageToJson
 from jwt import ExpiredSignatureError, InvalidTokenError
 from loguru import logger
 
@@ -46,6 +46,36 @@ async def getAll():
     return Response(
         status_code=200, media_type="application/json", content=json
     )
+
+
+@router.get("/can-review")
+async def can_user_review(access_token: Annotated[str | None, Cookie()]):
+    try:
+        user_id = get_id_from_token(access_token)
+        user_role = get_role_from_token(access_token)
+    except ExpiredSignatureError:
+        return Response(
+            status_code=401, media_type="text/html", content="Token expired."
+        )
+    except InvalidTokenError:
+        return Response(
+            status_code=401, media_type="text/html", content="Invalid token."
+        )
+
+    if user_role != 'guest':
+        return Response(status_code=200, media_type="text/html", content="False")
+
+    async with grpc.aio.insecure_channel(reservation_server) as channel:
+        stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
+        reservations = await stub.GetPastByGuest(reservation_crud_pb2.GuestId(id=user_id))
+        if not reservations.items:
+            return Response(
+                status_code=200, media_type="text/html", content="False"
+            )
+        else:
+            return Response(
+                status_code=200, media_type="text/html", content="True"
+            )
 
 
 @router.get(
@@ -84,6 +114,7 @@ async def getByHost(host_id):
         status_code=200, media_type="application/json", content=json
     )
 
+
 @router.get(
     "/poster/{guest_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -100,19 +131,13 @@ async def getByPoster(guest_id):
         status_code=200, media_type="application/json", content=json
     )
 
+
 @router.post("/", response_class=HTMLResponse)
 async def create_review(
-        # Add additional data that needs to be here
         access_token: Annotated[str | None, Cookie()],
         item: CreateReview
 
 ):
-    """Post method used to save acoommodation
-
-    It saves images with their unique ID and then sends gRPC request to
-    accommodation service to save data about accommodation
-    """
-
     try:
         user_id = get_id_from_token(access_token)
         user_role = get_role_from_token(access_token)
@@ -125,10 +150,10 @@ async def create_review(
             status_code=401, media_type="text/html", content="Invalid token."
         )
     if user_role != "guest":
-        return Response(status_code=401, media_type="text/html", content="Unauthorized")
+        return Response(status_code=403, media_type="text/html", content="Unauthorized")
     async with grpc.aio.insecure_channel(reservation_server) as channel:
         stub = reservation_crud_pb2_grpc.ReservationCrudStub(channel)
-        reservations = await stub.GetByGuest(reservation_crud_pb2.GuestId(id =user_id))
+        reservations = await stub.GetByGuest(reservation_crud_pb2.GuestId(id=user_id))
         if not reservations.items:
             return Response(
                 status_code=400, media_type="text/html", content="reservations is null"
@@ -156,13 +181,13 @@ async def create_review(
             response = await stub.CreateReview(review)
 
         return Response(
-            status_code=response.code,
+            status_code=200,
             media_type="text/html",
-            content="success",
+            content=MessageToJson(response),
         )
     else:
         return Response(
-            status_code=400, media_type="text/html", content="eservations.items"
+            status_code=403, media_type="text/html", content="Unable to create review."
         )
 
 
@@ -194,7 +219,7 @@ async def update(item: UpdateReviewDto, access_token: Annotated[str | None, Cook
         review.host_rating = item.host_rating
         response = await stub.UpdateReview(review)
     return Response(
-        status_code=200, media_type="application/json", content="success"
+        status_code=200, media_type="application/json", content=MessageToJson(response)
     )
 
 
@@ -220,9 +245,9 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
 
     async with grpc.aio.insecure_channel(review_server) as channel:
         stub = review_pb2_grpc.ReviewServiceStub(channel)
-        data = await stub.DeleteReview(review_pb2.ReviewId(id=item_id))
+        response = await stub.DeleteReview(review_pb2.ReviewId(id=item_id))
     return Response(
-        status_code=200, media_type="application/json", content=data.error_message
+        status_code=200, media_type="application/json", content=MessageToJson(response)
     )
 
 
@@ -241,4 +266,3 @@ async def getByAccommodation(accommodation_id):
     return Response(
         status_code=200, media_type="application/json", content=json
     )
-

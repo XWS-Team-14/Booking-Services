@@ -227,6 +227,18 @@ class ReservationServicer(reservation_crud_pb2_grpc.ReservationCrudServicer):
                 logger.info("retval.items.accommodationId: "+ reservation_dto.accommodation.id)
         return retVal
 
+    async def GetPastByGuest(self, request, context):
+        logger.success('Request for fetching reservations by guest accepted')
+        reservations = await Reservation.find_all(fetch_links=True).to_list()
+        retVal = reservation_crud_pb2.ReservationDtos()
+        for reservation in reservations:
+            if reservation.ending_date <= datetime.today():
+                reservation_dto = ReservationHelper.convertToDto(reservation)
+                if reservation_dto.guest.id == request.id:
+                    retVal.items.append(reservation_dto)
+                    logger.info("retval.items.accommodationId: " + reservation_dto.accommodation.id)
+        return retVal
+
     async def GetActiveByGuest(self, request, context):
         logger.success('Request for fetching reservations by guest accepted')
         reservations = await Reservation.find_all(fetch_links=True).to_list()

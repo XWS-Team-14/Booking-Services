@@ -1,5 +1,6 @@
 import uuid
 
+from beanie.exceptions import DocumentNotFound
 from loguru import logger
 from proto import review_pb2_grpc, review_pb2
 from datetime import datetime
@@ -9,6 +10,7 @@ from app.models.host import Host
 from app.models.accommodation import Accommodation
 from app.models.review import Review
 from .review_helper import ReviewHelper
+
 
 class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
     async def GetHostStatus(self, request, context):
@@ -22,40 +24,38 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
 
     async def CreateReview(self, request, context):
         logger.info('Creating review')
-        if request is None:
-            logger.info('request is none')
-            raise TypeError
         host = await Host.get(uuid.UUID(request.host_id))
-        logger.info('host fetched')
         if host is None:
-            return review_pb2.ReviewResponse(review=None, message="Host not found", code=404)
-        logger.info('Host Found')
+            host = Host(id=uuid.UUID(request.host_id))
+            host = await host.insert()
+        print('Host found')
         accommodation = await Accommodation.get(uuid.UUID(request.accommodation_id))
         if accommodation is None:
-            return review_pb2.ReviewResponse(review=None, message="Accommodation not found", code=404)
+            accommodation = Accommodation(id=uuid.UUID(request.accommodation_id), host=host)
+            accommodation = await accommodation.insert()
         logger.info('Accommodation found')
         review = Review(
-                        id=uuid.UUID(request.id),
-                        host=host,
-                        accommodation=accommodation,
-                        poster=request.poster,
-                        timestamp=datetime.today(),
-                        host_rating=request.host_rating,
-                        accommodation_rating=request.accommodation_rating
-                        )
+            id=uuid.UUID(request.id),
+            host=host,
+            accommodation=accommodation,
+            poster=request.poster,
+            timestamp=datetime.now(),
+            host_rating=request.host_rating,
+            accommodation_rating=request.accommodation_rating
+        )
         await review.insert()
         logger.info("Inserted review")
         host.increase_review_count()
         host.increase_rating_sum(request.host_rating)
-        logger.info("incresed sum and count")
+        logger.info("increased sum and count")
         await host.replace()
         logger.info("replaced host")
         accommodation.review_count += 1
-        accommodation.rating_sum+= request.accommodation_rating
-        logger.info("incresed sum and count")
+        accommodation.rating_sum += request.accommodation_rating
+        logger.info("increased sum and count")
         await accommodation.replace()
         logger.info("replaced accommodation")
-        return review_pb2.ReviewResponse(review=ReviewHelper.convertReviewToDto(review), message="Review saved", code=200)
+        return review_pb2.AverageRatings(host_average=host.get_average_rating(), accommodation_average=accommodation.get_average_rating())
 
     async def GetAllReviews(self, request, context):
         logger.success('Request for fetch all reviews accepted')
@@ -64,7 +64,7 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         logger.info('fetched data converting')
         for review in reviews:
             retVal.items.append(ReviewHelper.convertReviewToDto(review))
-        logger.success('Succesfully fetched')
+        logger.success('Successfully fetched')
         return retVal
 
     async def GetReviewsByHost(self, request, context):
@@ -101,34 +101,34 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
             logger.success('Succesfully fetched')
             return ReviewHelper.convertReviewToDto(item)
 
-
     async def UpdateReview(self, request, context):
-            logger.success('Request for update of review accepted')
-            item = await Review.get(uuid.UUID(request.id), fetch_links=True)
-            if not item:
-                logger.info('Update failed, document with given id not found')
-                return review_pb2.Empty(error_message="Failed, not found", error_code=404)
-            host = await Host.get(item.host.id)
-            if host is None:
-                return review_pb2.Empty(error_message="Failed, not found", error_code=404)
-            logger.info("before edit: "+str(host.rating_sum))
-            host.increase_rating_sum(request.host_rating - item.host_rating)
-            logger.info("After edit: "+str(host.rating_sum))
-            await host.replace()
-            accommodation = await Accommodation.get(item.accommodation.id)
-            if accommodation is None:
-                return review_pb2.Empty(error_message="Failed, not found accomm", error_code=404)
-            logger.info("before edit accom: "+ str(accommodation.rating_sum))
-            accommodation.rating_sum += (request.accommodation_rating - item.accommodation_rating)
-            logger.info("after edit accom: " + str(accommodation.rating_sum))
-            await accommodation.replace()
+        logger.success('Request for update of review accepted')
+        item = await Review.get(uuid.UUID(request.id), fetch_links=True)
+        if not item:
+            logger.info('Update failed, document with given id not found')
+            return review_pb2.Empty(error_message="Failed, not found", error_code=404)
+        host = await Host.get(item.host.id)
+        if host is None:
+            return review_pb2.Empty(error_message="Failed, not found", error_code=404)
+        logger.info("before edit: " + str(host.rating_sum))
+        host.increase_rating_sum(request.host_rating - item.host_rating)
+        logger.info("After edit: " + str(host.rating_sum))
+        await host.replace()
+        accommodation = await Accommodation.get(item.accommodation.id)
+        if accommodation is None:
+            return review_pb2.Empty(error_message="Failed, not found accomm", error_code=404)
+        logger.info("before edit accom: " + str(accommodation.rating_sum))
+        accommodation.rating_sum += (request.accommodation_rating - item.accommodation_rating)
+        logger.info("after edit accom: " + str(accommodation.rating_sum))
+        await accommodation.replace()
 
-            item.timestamp = datetime.today()
-            item.host_rating = request.host_rating
-            item.accommodation_rating = request.accommodation_rating
-            await item.replace()
-            logger.success('Review succesfully updated')
-            return ReviewHelper.convertReviewToDto(item)
+        item.timestamp = datetime.today()
+        item.host_rating = request.host_rating
+        item.accommodation_rating = request.accommodation_rating
+        await item.replace()
+        logger.success('Review succesfully updated')
+        return review_pb2.AverageRatings(host_average=host.get_average_rating(), accommodation_average=accommodation.get_average_rating())
+
 
     async def DeleteReview(self, request, context):
         logger.success('Request for cancellation of Review accepted')
@@ -140,16 +140,16 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         except (ValueError, DocumentNotFound):
             logger.info('Delete failed, document with given id not found')
             return review_pb2.Review()
-        item.host.review_count -= 1
-        item.host.increase_rating_sum(-item.host_rating)
+        item.host.decrease_review_count()
+        item.host.decrease_rating_sum(item.host_rating)
         item.accommodation.review_count -= 1
         item.accommodation.rating_sum -= item.accommodation_rating
         await item.host.replace()
         await item.accommodation.replace()
         await item.delete()
 
-        logger.success('review succesfully deleted')
-        return review_pb2.Empty(error_message="Success", error_code = 200)
+        logger.success('review successfully deleted')
+        return review_pb2.AverageRatings(host_average=item.host.get_average_rating(), accommodation_average=item.accommodation.get_average_rating())
 
     async def GetAllAccommodationsWithFeaturedHost(self, request, context):
         all_accommodations = await Accommodation.find_all()
@@ -160,13 +160,19 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
 
         return review_pb2.Accommodations(accommodation_id=featured_accommodations)
 
-    async def GetReviewsByAccommodation(self,request,context):
+    async def GetReviewsByAccommodation(self, request, context):
         logger.success('Request for fetching reviews by accommodation accepted')
         reviews = await Review.find_all(fetch_links=True).to_list()
         retVal = review_pb2.ReviewDtos()
+        accommodation = await Accommodation.get(request.id, fetch_links=True)
+        if accommodation is None:
+            return review_pb2.ReviewDtos(items=[], accommodation_average=0, host_average=0)
+        host = accommodation.host
         for review in reviews:
             if str(review.accommodation.id) == request.id:
                 retVal.items.append(ReviewHelper.convertReviewToDto(review))
+                retVal.accommodation_average = accommodation.get_average_rating()
+                retVal.host_average = host.get_average_rating()
                 logger.info("Appended it")
         return retVal
 
