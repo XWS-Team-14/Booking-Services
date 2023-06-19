@@ -35,7 +35,6 @@ async def search(
     amenities: Annotated[Union[list[str], None], Query()] = None,
     must_be_featured_host: bool | None = False
 ):
-    print(amenities)
     amenities = [] if amenities is None else amenities
     price_max = -1 if price_max is None else price_max
     params = SearchParams(

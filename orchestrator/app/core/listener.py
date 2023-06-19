@@ -19,17 +19,17 @@ async def listen_to_delete_messages():
     await consumer.start()
     try:
         async for message in consumer:
-            logger.info("Recieved deletion message")
+            logger.info("Received deletion message")
             logger.info(message)
             log = await Log.find(Log.transaction_id == uuid.UUID(message.value['transaction_id'])).first_or_none()
             if log is None:
                 logger.info("Malformed message, transaction_id does not match any stored, ignoring message")
                 continue
             if message.value['status'] == 'fail':
-                logger.info("Failiure message, setting transaciton status as failed")
+                logger.info("Failure message, setting transaction status as failed")
                 log.status = StatusEnum.fail
                 await log.replace()
-                logger.info("Failiure message, sending out rollback message")
+                logger.info("Failure message, sending out rollback message")
                 if message.value['source'] != 'user_control':
                     kafka_producer.send('user-delete', {
                         'transaction_id': str(message.value['transaction_id']),
@@ -56,6 +56,9 @@ async def listen_to_delete_messages():
                 if log.confirmations == 4:
                     logger.info("Transaction has gotten all success responses, updating transaction status as success")
                     log.status = StatusEnum.success
+                    kafka_producer.send('delete-status-update', {
+                        'status': 'success'
+                    })
                 await log.replace()
                 logger.info("Updated transaction log")
                 logger.info(log)

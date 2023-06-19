@@ -58,6 +58,7 @@ class OrchestratorServicer(orchestrator_pb2_grpc.OrchestratorServicer):
         
         logger.info(accomomodation_ids)
         #send out kafka messages
+
         kafka_producer.send('user-delete', {
             'item': str(request.id),
             'transaction_id': str(log.transaction_id),
