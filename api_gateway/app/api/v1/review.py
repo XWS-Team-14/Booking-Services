@@ -106,10 +106,8 @@ async def getByPoster(guest_id):
 async def create_review(
         # Add additional data that needs to be here
         access_token: Annotated[str | None, Cookie()],
-        host_id: Annotated[str, Form()],
-        accommodation_id: Annotated[str, Form()],
-        host_rating: Annotated[int, Form()],
-        accommodation_rating: Annotated[int, Form()],
+        item: CreateReview
+
 ):
     """Post method used to save acoommodation
 
@@ -150,10 +148,10 @@ async def create_review(
             stub = review_pb2_grpc.ReviewServiceStub(channel)
             review = review_pb2.Review(
                 id=str(uuid4()),
-                host_id=host_id,
-                accommodation_id=accommodation_id,
-                host_rating=host_rating,
-                accommodation_rating=accommodation_rating,
+                host_id=item.host_id,
+                accommodation_id=item.accommodation_id,
+                host_rating=item.host_rating,
+                accommodation_rating=item.accommodation_rating,
                 poster=user_id
             )
 
@@ -198,7 +196,7 @@ async def update(item: UpdateReviewDto, access_token: Annotated[str | None, Cook
         review.host_rating = item.host_rating
         response = await stub.UpdateReview(review)
     return Response(
-        status_code=200, media_type="application/json", content=response
+        status_code=200, media_type="application/json", content="success"
     )
 
 
@@ -228,3 +226,21 @@ async def delete(item_id, access_token: Annotated[str | None, Cookie()] = None):
     return Response(
         status_code=200, media_type="application/json", content=data.error_message
     )
+
+
+@router.get(
+    "/accommodation/{accommodation_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Get all reviews by accommodation id",
+)
+async def getByAccommodation(accommodation_id):
+    logger.info("Gateway processing getPendingByAccommodationId Review request")
+
+    async with grpc.aio.insecure_channel(review_server) as channel:
+        stub = review_pb2_grpc.ReviewServiceStub(channel)
+        data = await stub.GetReviewsByAccommodation(review_pb2.AccommodationId(id=accommodation_id))
+        json = json_format.MessageToJson(data, preserving_proto_field_name=True)
+    return Response(
+        status_code=200, media_type="application/json", content=json
+    )
+
