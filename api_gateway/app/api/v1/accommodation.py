@@ -23,10 +23,11 @@ from proto import (
     accommodation_pb2_grpc,
     reservation_crud_pb2,
     reservation_crud_pb2_grpc,
+review_pb2_grpc, review_pb2
 )
 
 from ...config import get_yaml_config
-from ...constants import accommodation_server, reservation_server
+from ...constants import accommodation_server, reservation_server, review_server
 from ...utils.get_server import get_server
 from ...utils.jwt import get_id_from_token, get_role_from_token
 from opentelemetry.instrumentation.grpc import aio_client_interceptors
@@ -129,6 +130,15 @@ async def save_accommodation(
         await stub.CreateAccommodation(
             reservation_crud_pb2.AccommodationResDto(
                 id=str(accommodation.id), automaticAccept=True if auto_accept_flag == 'true' else False
+            )
+        )
+
+    async with grpc.aio.insecure_channel(review_server, interceptors=aio_client_interceptors()) as channel:
+        stub = review_pb2_grpc.ReviewServiceStub(channel)
+        await stub.CreateHostAndAccommodation(
+            review_pb2.HostAccommodation(
+                host_id=str(user_id),
+                accommodation_id=str(accommodation.id)
             )
         )
     return Response(

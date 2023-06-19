@@ -188,9 +188,12 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
     async def GetAllAccommodationsWithFeaturedHost(self, request, context):
         all_accommodations = await Accommodation.find_all(fetch_links=True).to_list()
         featured_accommodations = []
+        print(all_accommodations)
         for accommodation in all_accommodations:
             if accommodation.host.is_featured():
-                featured_accommodations.append(accommodation)
+                featured_accommodations.append(str(accommodation.id))
+        print(featured_accommodations)
+        print(review_pb2.Accommodations(accommodation_id=featured_accommodations))
 
         return review_pb2.Accommodations(accommodation_id=featured_accommodations)
 
@@ -210,3 +213,12 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
                 logger.info("Appended it")
         return retVal
 
+    async def CreateHostAndAccommodation(self, request, context):
+        host = await Host.get(uuid.UUID(request.host_id))
+        if host is None:
+            host = Host(id=uuid.UUID(request.host_id))
+            host = await host.insert()
+        accommodation = Accommodation(id=uuid.UUID(request.accommodation_id), host=host)
+        accommodation = await accommodation.insert()
+
+        return review_pb2.Empty()

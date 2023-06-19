@@ -13,6 +13,7 @@ service ReviewService {
   rpc GetReviewsByPoster(Poster) returns (ReviewDtos);
   rpc GetAllAccommodationsWithFeaturedHost(Empty) returns (Accommodations);
   rpc GetReviewsByAccommodation(AccommodationId) returns (ReviewDtos);
+  rpc CreateHostAndAccommodation(HostAccommodation) returns (Empty);
 
 
 }
@@ -79,4 +80,9 @@ message Accommodations {
 }
 message AccommodationId{
   string id = 1;
+}
+
+message HostAccommodation {
+  string host_id = 1;
+  string accommodation_id = 2;
 }
