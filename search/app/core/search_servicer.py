@@ -55,13 +55,13 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
         parsed_avvs = ExpandedAvailabilityDtos.parse_obj(
             MessageToDict(avvs, preserving_proto_field_name=True)
         )
+
+        grpc_review_response = None
+
         if parsed_request.must_be_featured_host:
             async with grpc.aio.insecure_channel(review_server) as channel:
                 stub_review = review_pb2_grpc.ReviewServiceStub(channel)
                 grpc_review_response = MessageToDict(await stub_review.GetAllAccommodationsWithFeaturedHost(review_pb2.Empty()))
-                if grpc_review_response.error_message:
-                    logger.info(f"{grpc_review_response.error_code}: {grpc_review_response.error_message}")
-
         result = SearchResults.construct()
 
         if parsed_accs.response.status_code != 200:
@@ -71,11 +71,15 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
                 json.dumps(result.dict(), cls=UUIDEncoder), search_pb2.SearchResults()
             )
 
+
         acc_dct = {parsed_accs.items[i].id: parsed_accs.items[i] for i in range(0, len(parsed_accs.items))}
         avv_dct = {parsed_avvs.items[i].accommodation_id: parsed_avvs.items[i] for i in range(0, len(parsed_avvs.items))}
-        for item_id in acc_dct:
+        feat_list = grpc_review_response['accommodationId'] if grpc_review_response is not None else None
+        feat_dict = {feat_list[i]: i for i in range(0, len(feat_list))} if feat_list is not None else None
+        for item_id in avv_dct:
             item = acc_dct[item_id]
             availability = avv_dct[item_id]
+            featured = feat_dict.get(str(item_id)) if feat_dict is not None else None
             amenities = item.features
             price = availability.total_price
             price_min = parsed_request.price_min
@@ -88,6 +92,10 @@ class SearchServicer(search_pb2_grpc.SearchServicer):
 
             if not (price_min <= price <= price_max):
                 can_be_added = False
+
+            if parsed_request.must_be_featured_host:
+                if featured is None:
+                    can_be_added = False
 
             if can_be_added:
                 item = SearchResult.construct().create(item, availability)
