@@ -9,6 +9,7 @@ from loguru import logger
 from app import db
 from app.config import get_yaml_config
 from app.core.notification_helper import get_type, generate
+from app.models.accommodation import Accommodation
 from app.models.notification import Notification
 from app.models.preference import Preference
 from app.models.receiver import Receiver
@@ -27,14 +28,17 @@ async def listen():
 
     try:
         async for message in consumer:
+            print(message)
             message = message.value
             featured = message['featured']
             user_id = message['host']
             ref = db.reference(f'notifications/{user_id}')
             receiver = Receiver(id=user_id)
+            sender = Sender(id="", name="")
+            accommodation = Accommodation(id="", name="")
             notification = Notification(type=get_type('featured-host-gained' if featured else 'featured-host-lost'), status='unread',
-                                        timestamp=datetime.now(), sender=None, receiver=receiver,
-                                        accommodation=None, title='', content='')
+                                        timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), sender=sender, receiver=receiver,
+                                        accommodation=accommodation, title='', content='')
             notification = generate(notification, 'featured-host-gained' if featured else 'featured-host-lost')
             message = json.loads(json.dumps(notification, default=lambda o: o.__dict__))
             user_preferences = await Preference.find(Preference.user.id == user_id).to_list()
