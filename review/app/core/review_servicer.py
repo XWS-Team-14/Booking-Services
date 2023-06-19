@@ -10,6 +10,7 @@ from app.models.host import Host
 from app.models.accommodation import Accommodation
 from app.models.review import Review
 from .review_helper import ReviewHelper
+from ..constants import kafka_producer
 
 
 class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
@@ -34,6 +35,8 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
             accommodation = Accommodation(id=uuid.UUID(request.accommodation_id), host=host)
             accommodation = await accommodation.insert()
         logger.info('Accommodation found')
+
+        original_status = host.is_featured()
         review = Review(
             id=uuid.UUID(request.id),
             host=host,
@@ -55,6 +58,16 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         logger.info("increased sum and count")
         await accommodation.replace()
         logger.info("replaced accommodation")
+
+        new_status = host.is_featured()
+        print(original_status, new_status)
+
+        if original_status != new_status:
+            kafka_producer.send('status', {
+                'host': str(host.id),
+                'featured': new_status,
+                'timestamp': str(datetime.utcnow())
+            })
         return review_pb2.AverageRatings(host_average=host.get_average_rating(), accommodation_average=accommodation.get_average_rating())
 
     async def GetAllReviews(self, request, context):
@@ -110,6 +123,7 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         host = await Host.get(item.host.id)
         if host is None:
             return review_pb2.Empty(error_message="Failed, not found", error_code=404)
+        original_status = host.is_featured()
         logger.info("before edit: " + str(host.rating_sum))
         host.increase_rating_sum(request.host_rating - item.host_rating)
         logger.info("After edit: " + str(host.rating_sum))
@@ -127,6 +141,15 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         item.accommodation_rating = request.accommodation_rating
         await item.replace()
         logger.success('Review succesfully updated')
+        new_status = host.is_featured()
+        print(original_status, new_status)
+
+        if original_status != new_status:
+            kafka_producer.send('status', {
+                'host': str(host.id),
+                'featured': new_status,
+                'timestamp': str(datetime.utcnow())
+            })
         return review_pb2.AverageRatings(host_average=host.get_average_rating(), accommodation_average=accommodation.get_average_rating())
 
 
@@ -140,6 +163,8 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         except (ValueError, DocumentNotFound):
             logger.info('Delete failed, document with given id not found')
             return review_pb2.Review()
+
+        original_status = item.host.is_featured()
         item.host.decrease_review_count()
         item.host.decrease_rating_sum(item.host_rating)
         item.accommodation.review_count -= 1
@@ -149,6 +174,15 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         await item.delete()
 
         logger.success('review successfully deleted')
+        new_status = item.host.is_featured()
+        print(original_status, new_status)
+
+        if original_status != new_status:
+            kafka_producer.send('status', {
+                'host': str(item.host.id),
+                'featured': new_status,
+                'timestamp': str(datetime.utcnow())
+            })
         return review_pb2.AverageRatings(host_average=item.host.get_average_rating(), accommodation_average=item.accommodation.get_average_rating())
 
     async def GetAllAccommodationsWithFeaturedHost(self, request, context):
