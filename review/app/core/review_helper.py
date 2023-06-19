@@ -12,6 +12,7 @@ class ReviewHelper:
 
 
     def convertReviewToDto(review):
+        print(review)
         retVal = review_pb2.Review()
         retVal.id = str(review.id)
         retVal.host_id = str(review.host.id)

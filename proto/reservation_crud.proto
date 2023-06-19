@@ -8,6 +8,7 @@ service ReservationCrud {
   rpc Update (ReservationDto) returns (ReservationResult);
   rpc GetByHost(HostId) returns (ReservationDtos);
   rpc GetByGuest(GuestId) returns (ReservationDtos);
+  rpc GetPastByGuest(GuestId) returns (ReservationDtos);
   rpc GetReservationsForAcceptance(ReservationDto) returns (ReservationDtos);
   rpc UpdateReservationStatus(ReservationIdStatus) returns (ReservationDto);
   rpc GetPendingReservationsByHost(HostId) returns (ReservationDtos);
