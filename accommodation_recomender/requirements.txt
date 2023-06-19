@@ -6,6 +6,7 @@ loguru
 PyYAML
 kafka-python
 aiokafka
+python-logging-loki
 opentelemetry-distro
 opentelemetry-exporter-jaeger-thrift
 opentelemetry-instrumentation-grpc
