@@ -145,11 +145,12 @@ async def create(
         availability.base_price = item.base_price
         availability.pricing_type = item.pricing_type
         for pricing in item.special_pricing:
-            availability.special_pricing.append(
-                availability_crud_pb2.SpecialPricing(
-                    title=pricing.title, pricing_markup=pricing.pricing_markup
+            if pricing.title != 'string':
+                availability.special_pricing.append(
+                    availability_crud_pb2.SpecialPricing(
+                        title=pricing.title, pricing_markup=pricing.pricing_markup
+                    )
                 )
-            )
 
         response = await stub.Create(availability)
         if response.status == "Invalid date":
@@ -184,11 +185,12 @@ async def update(
         availability.base_price = item.base_price
         availability.pricing_type = item.pricing_type
         for pricing in item.special_pricing:
-            availability.special_pricing.append(
-                availability_crud_pb2.SpecialPricing(
-                    title=pricing.title, pricing_markup=pricing.pricing_markup
+            if pricing.title != 'string':
+                availability.special_pricing.append(
+                    availability_crud_pb2.SpecialPricing(
+                        title=pricing.title, pricing_markup=pricing.pricing_markup
+                    )
                 )
-            )
 
         response = await stub.Update(availability)
     return Response(
