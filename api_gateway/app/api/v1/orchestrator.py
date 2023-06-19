@@ -14,6 +14,7 @@ from websockets.exceptions import ConnectionClosedError
 from proto import orchestrator_pb2, orchestrator_pb2_grpc
 from ...constants import orchestrator_server, kafka_server
 from loguru import logger
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
 from jwt import ExpiredSignatureError, InvalidTokenError
 
 from ...utils.jwt import get_role_from_token, get_id_from_token
@@ -24,7 +25,7 @@ router = APIRouter(tags=["Orchestrator"], )
 @router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT, description="Delete User via SAGA", )
 async def deleteUser(access_token: Annotated[str | None, Cookie()] = None):
     logger.info("Gateway processing delete user via saga request")
-    async with grpc.aio.insecure_channel(orchestrator_server) as channel:
+    async with grpc.aio.insecure_channel(orchestrator_server, interceptors=aio_client_interceptors()) as channel:
         try:
             user_id = get_id_from_token(access_token)
             user_role = get_role_from_token(access_token)

@@ -7,3 +7,8 @@ aiokafka
 grpcio
 grpcio-tools
 asyncio
+python-logging-loki
+opentelemetry-distro
+opentelemetry-exporter-jaeger-thrift
+opentelemetry-instrumentation-kafka-python
+opentelemetry-instrumentation-grpc

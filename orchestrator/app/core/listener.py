@@ -9,11 +9,10 @@ import uuid
 
 from app.constants import kafka_server, kafka_producer
 
-
 async def listen_to_delete_messages():
     logger.info('Listening for saga response messages')
     loop = asyncio.get_event_loop()
-    consumer = AIOKafkaConsumer("orchestrator-responses", loop=loop,
+    consumer = AIOKafkaConsumer("orchestrator-responces", loop=loop,
                                 bootstrap_servers=kafka_server,
                                 value_deserializer=lambda m: json.loads(m.decode('ascii')))
 

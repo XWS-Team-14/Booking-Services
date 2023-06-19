@@ -7,8 +7,8 @@ from .availability import router as availability_router
 from .reservation import router as reservation_router
 from .search import router as search_router
 from .notification import router as notification_router
-from .accommodation_recomendator import router as accommodation_recomender_router
 from .orchestrator import router as orchestrator_router
+from .accommodation_recomendator import router as accommodation_recomender_router
 from .flights import router as flights_router
 from ...config import get_yaml_config
 from .review import  router as review_router

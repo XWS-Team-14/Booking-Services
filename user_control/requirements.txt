@@ -9,3 +9,4 @@ aiokafka
 opentelemetry-distro
 opentelemetry-exporter-jaeger-thrift
 opentelemetry-instrumentation-grpc
+opentelemetry-instrumentation-kafka-python
