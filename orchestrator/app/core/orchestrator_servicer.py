@@ -20,6 +20,8 @@ from proto import (
     accommodation_pb2_grpc
     )
 
+from opentelemetry.instrumentation.grpc import aio_client_interceptors
+
 class OrchestratorServicer(orchestrator_pb2_grpc.OrchestratorServicer):
     async def DeleteUser(self, request, context):
         logger.info(f'Recieved delete user {request.id} command')
@@ -39,7 +41,7 @@ class OrchestratorServicer(orchestrator_pb2_grpc.OrchestratorServicer):
         
         #fetch accommodation id's via grpc - suboptimal if I have the time it will be upgraded
         
-        async with grpc.aio.insecure_channel(accommodation_server) as channel:
+        async with grpc.aio.insecure_channel(accommodation_server, interceptors=aio_client_interceptors()) as channel:
             stub = accommodation_pb2_grpc.AccommodationServiceStub(channel)
             dto = accommodation_pb2.InputId(
                 id=request.id,
@@ -56,6 +58,7 @@ class OrchestratorServicer(orchestrator_pb2_grpc.OrchestratorServicer):
         
         logger.info(accomomodation_ids)
         #send out kafka messages
+
         kafka_producer.send('user-delete', {
             'item': str(request.id),
             'transaction_id': str(log.transaction_id),

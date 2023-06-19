@@ -12,3 +12,7 @@ kafka_server:
 accommodation_server:
   ip: "accommodation"
   port: "50051"
+
+loki:
+  url: "loki:3100"
+  service: "orchestrator-service"
