@@ -201,16 +201,17 @@ class ReviewServicer(review_pb2_grpc.ReviewServiceServicer):
         logger.success('Request for fetching reviews by accommodation accepted')
         reviews = await Review.find_all(fetch_links=True).to_list()
         retVal = review_pb2.ReviewDtos()
-        accommodation = await Accommodation.get(request.id, fetch_links=True)
+        accommodation = await Accommodation.get(uuid.UUID(request.id), fetch_links=True)
         if accommodation is None:
             return review_pb2.ReviewDtos(items=[], accommodation_average=0, host_average=0)
         host = accommodation.host
         for review in reviews:
             if str(review.accommodation.id) == request.id:
                 retVal.items.append(ReviewHelper.convertReviewToDto(review))
-                retVal.accommodation_average = accommodation.get_average_rating()
-                retVal.host_average = host.get_average_rating()
                 logger.info("Appended it")
+
+        retVal.accommodation_average = accommodation.get_average_rating()
+        retVal.host_average = host.get_average_rating()
         return retVal
 
     async def CreateHostAndAccommodation(self, request, context):

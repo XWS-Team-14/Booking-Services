@@ -27,7 +27,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
-    #- 27017:27017
+    #  - 27017:27017
 
   mongo-reservation:
     image: mongo
@@ -53,9 +53,9 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-    ports:
-    - 27017:27017
-    
+    #ports:
+    #  - 27017:27017
+
   mongo-notification:
     image: mongo
     restart: always
@@ -64,7 +64,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     #ports:
     #- 27017:27017
-    
+
   mongo-orchestrator:
     image: mongo
     restart: always
@@ -82,10 +82,9 @@ services:
     ports:
       - 7474:7474
       - 7687:7687
-      
     # Services, expose ports when you want to test your grpc service manuall
     # Running ports are not that important, but it can be easier to differentiate between services
-    
+
   accommodation:
     build: ./accommodation
     image: accommodation:latest
@@ -195,7 +194,7 @@ services:
     depends_on:
       - mongo-orchestrator
       - kafka
-  
+
   accommodation_recomender:
     build: ./accommodation_recomender
     image: accommodation_recomender:latest
@@ -318,4 +317,3 @@ services:
     ports:
       - "6831:6831/udp"
       - "16686:16686"
-
